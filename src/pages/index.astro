@@ -1,0 +1,61 @@
+---
+import { getLatestEarnings } from '../lib/sheets';
+import { COMPANIES } from '../lib/constants';
+
+// Google Sheetsからデータ取得
+const earningsData = await getLatestEarnings();
+
+// ページタイトル
+const title = 'デベロッパー決算まとめ';
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+</head>
+<body style="font-family: sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <h1>{title}</h1>
+  
+  <h2>📊 企業リスト（{COMPANIES.length}社）</h2>
+  <ul>
+    {COMPANIES.map(company => (
+      <li style={`color: ${company.color}`}>
+        {company.name} - 決算月: {company.fiscalMonth}月
+      </li>
+    ))}
+  </ul>
+
+  <h2>📈 最新決算データ</h2>
+  {earningsData.length > 0 ? (
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr style="background: #f0f0f0;">
+          <th style="padding: 10px;">企業名</th>
+          <th style="padding: 10px;">決算期</th>
+          <th style="padding: 10px;">営業収益</th>
+          <th style="padding: 10px;">営業利益</th>
+          <th style="padding: 10px;">経常利益</th>
+          <th style="padding: 10px;">純利益</th>
+        </tr>
+      </thead>
+      <tbody>
+        {earningsData.map(data => (
+          <tr>
+            <td style="padding: 10px;">{data.companyName}</td>
+            <td style="padding: 10px;">{data.fiscalPeriod}</td>
+            <td style="padding: 10px; text-align: right;">{data.revenue.toLocaleString()}億円</td>
+            <td style="padding: 10px; text-align: right;">{data.operatingProfit.toLocaleString()}億円</td>
+            <td style="padding: 10px; text-align: right;">{data.ordinaryProfit.toLocaleString()}億円</td>
+            <td style="padding: 10px; text-align: right;">{data.netProfit.toLocaleString()}億円</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p style="color: red;">データを取得できませんでした。環境変数を確認してください。</p>
+  )}
+</body>
+</html>
