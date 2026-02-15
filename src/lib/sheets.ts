@@ -1,18 +1,21 @@
 import { google } from 'googleapis';
+import fs from 'fs';
 
-// Google Sheets APIの認証設定
+// JSON ファイルから直接認証情報を読み込む
+const jsonFile = '/Users/takumisugimoto/Desktop/deveryman-ir-657d407324c4.json';
+const credentials = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+
 const auth = new google.auth.GoogleAuth({
   credentials: {
-    client_email: import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
-    private_key: (import.meta.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+    client_email: credentials.client_email,
+    private_key: credentials.private_key,
   },
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
-const SPREADSHEET_ID = import.meta.env.GOOGLE_SHEETS_ID;
+const SPREADSHEET_ID = '1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI';
 
-// データ型の定義
 export interface CompanyData {
   companyName: string;
   companyId: string;
@@ -26,27 +29,25 @@ export interface CompanyData {
   irLink: string;
 }
 
-// Google Sheetsからデータを取得する関数
 export async function getLatestEarnings(): Promise<CompanyData[]> {
   try {
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: '最新決算!A2:J',
     });
-
-    const rows = response.data.values || [];
     
-    return rows.map((row) => ({
-      companyName: row[0] || '',
-      companyId: row[1] || '',
-      fiscalPeriod: row[2] || '',
+    const rows = response.data.values || [];
+    return rows.map(row => ({
+      companyName: row[0] ?? '',
+      companyId: row[1] ?? '',
+      fiscalPeriod: row[2] ?? '',
       revenue: parseFloat(row[3]) || 0,
       operatingProfit: parseFloat(row[4]) || 0,
       ordinaryProfit: parseFloat(row[5]) || 0,
       netProfit: parseFloat(row[6]) || 0,
       profitMargin: parseFloat(row[7]) || 0,
-      announcementDate: row[8] || '',
-      irLink: row[9] || '',
+      announcementDate: row[8] ?? '',
+      irLink: row[9] ?? ''
     }));
   } catch (error) {
     console.error('Error fetching data from Google Sheets:', error);
