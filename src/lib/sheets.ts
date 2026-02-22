@@ -1,24 +1,21 @@
 import { google } from 'googleapis';
 
-const credentials = {
-  client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
-  private_key: (process.env.GOOGLE_PRIVATE_KEY || '')
-    .replace(/\\n/g, '\n')  // エスケープされた \n を実際の改行に変換
-    .trim(),
-};
-
+// Cloudflare Pages 環境変数から認証情報を取得
 const auth = new google.auth.GoogleAuth({
-  credentials,
+  credentials: {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
+    private_key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+  },
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_ID || '1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI';
 
-export interface CompanyData {
-  companyName: string;
+export interface EarningsData {
+  company: string;
   companyId: string;
-  fiscalPeriod: string;
+  period: string;
   revenue: number;
   operatingProfit: number;
   ordinaryProfit: number;
@@ -28,18 +25,22 @@ export interface CompanyData {
   irLink: string;
 }
 
-export async function getLatestEarnings(): Promise<CompanyData[]> {
+export async function getLatestEarnings(): Promise<EarningsData[]> {
   try {
+    console.log('[Sheets] Fetching data from Google Sheets...');
+    
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: '最新決算!A2:J',
+      range: '最新決算!A2:J100', // ヘッダー行（A1:J1）をスキップ
     });
 
     const rows = response.data.values || [];
-    return rows.map(row => ({
-      companyName: row[0] || '',
+    console.log(`[Sheets] Retrieved ${rows.length} rows`);
+
+    return rows.map((row) => ({
+      company: row[0] || '',
       companyId: row[1] || '',
-      fiscalPeriod: row[2] || '',
+      period: row[2] || '',
       revenue: parseFloat(row[3]) || 0,
       operatingProfit: parseFloat(row[4]) || 0,
       ordinaryProfit: parseFloat(row[5]) || 0,
@@ -49,7 +50,7 @@ export async function getLatestEarnings(): Promise<CompanyData[]> {
       irLink: row[9] || '',
     }));
   } catch (error) {
-    console.error('Error fetching data from Google Sheets:', error);
+    console.error('[Sheets] Error fetching data:', error);
     return [];
   }
 }
