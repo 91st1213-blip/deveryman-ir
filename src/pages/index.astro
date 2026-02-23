@@ -1,10 +1,8 @@
 ---
 import { getLatestEarnings } from '../lib/sheets';
 
-// Google Sheets からデータを取得
 const earningsData = await getLatestEarnings();
 
-// 企業IDからカラーを取得
 const COMPANY_COLORS: Record<string, string> = {
   mitsui: '#0066CC',
   mitsubishi: '#DC143C',
@@ -15,7 +13,6 @@ const COMPANY_COLORS: Record<string, string> = {
   hulic: '#FFD700',
 };
 
-// カード表示用データを生成
 const companies = earningsData.map(item => ({
   id: item.companyId,
   name: item.company,
@@ -23,6 +20,12 @@ const companies = earningsData.map(item => ({
   color: COMPANY_COLORS[item.companyId] || '#666666',
   revenue: item.revenue,
   profit: item.operatingProfit,
+  ordinaryProfit: item.ordinaryProfit,
+  netProfit: item.netProfit,
+  profitMargin: item.profitMargin,
+  stockPrice: item.stockPrice,
+  announcementDate: item.announcementDate,
+  irLink: item.irLink,
 }));
 ---
 <!DOCTYPE html>
@@ -31,7 +34,6 @@ const companies = earningsData.map(item => ({
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>デベロッパー決算まとめ | デベリーマン4.0</title>
-  <meta name="description" content="大手不動産デベロッパー7社の最新決算データを一覧表示">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -50,7 +52,7 @@ const companies = earningsData.map(item => ({
     }
     .companies-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
       margin-bottom: 3rem;
     }
@@ -88,6 +90,9 @@ const companies = earningsData.map(item => ({
       display: flex;
       justify-content: space-around;
       gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
     }
     .metric { text-align: center; }
     .metric-label {
@@ -96,7 +101,7 @@ const companies = earningsData.map(item => ({
       margin-bottom: 0.5rem;
     }
     .metric-value {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: bold;
       color: #333;
     }
@@ -104,6 +109,41 @@ const companies = earningsData.map(item => ({
       font-size: 0.9rem;
       color: #999;
       margin-left: 0.2rem;
+    }
+    .additional-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+    .info-label {
+      color: #666;
+      font-weight: 500;
+    }
+    .info-value {
+      font-weight: bold;
+      color: #333;
+    }
+    .ir-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: opacity 0.3s ease;
+    }
+    .ir-link:hover {
+      opacity: 0.9;
     }
     .table-container {
       background: white;
@@ -126,17 +166,21 @@ const companies = earningsData.map(item => ({
       padding: 1rem;
       text-align: left;
       font-weight: 600;
+      font-size: 0.9rem;
     }
     td {
       padding: 1rem;
       border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
     }
     tr:hover { background: #f8f9fa; }
     .number { text-align: right; }
     @media (max-width: 768px) {
       h1 { font-size: 1.8rem; }
       .companies-grid { grid-template-columns: 1fr; }
-      .metric-value { font-size: 1.5rem; }
+      .metric-value { font-size: 1.4rem; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 0.6rem; }
     }
   </style>
 </head>
@@ -170,6 +214,35 @@ const companies = earningsData.map(item => ({
                 </div>
               </div>
             </div>
+            
+            <div class="additional-info">
+              <div class="info-row">
+                <span class="info-label">経常利益</span>
+                <span class="info-value">{company.ordinaryProfit.toLocaleString()}億円</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">純利益</span>
+                <span class="info-value">{company.netProfit.toLocaleString()}億円</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">利益率</span>
+                <span class="info-value">{company.profitMargin.toFixed(1)}%</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">株価</span>
+                <span class="info-value">{company.stockPrice > 0 ? company.stockPrice.toLocaleString() + '円' : 'N/A'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">決算公表日</span>
+                <span class="info-value">{company.announcementDate}</span>
+              </div>
+            </div>
+            
+            {company.irLink && (
+              <a href={company.irLink} target="_blank" rel="noopener noreferrer" class="ir-link">
+                IR情報を見る →
+              </a>
+            )}
           </div>
         </div>
       ))}
