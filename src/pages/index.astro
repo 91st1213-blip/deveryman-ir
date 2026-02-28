@@ -1,282 +1,660 @@
 ---
-import { getLatestEarnings } from '../lib/sheets';
+// deveryman-ir | src/pages/index.astro
+// Updated: 2025-02-28
 
-const earningsData = await getLatestEarnings();
-
-const COMPANY_COLORS: Record<string, string> = {
-  mitsui: '#0066CC',
-  mitsubishi: '#DC143C',
-  sumitomo: '#00A550',
-  tokyo: '#7B68EE',
-  nomura: '#FF8C00',
-  tokyu: '#FF1493',
-  hulic: '#FFD700',
+const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
+  "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
+  "三菱地所":     { bg: "#c41e3a", accent: "#e85555", text: "#fbeaea" },
+  "住友不動産":   { bg: "#1a5e2a", accent: "#3aaa5c", text: "#e8f5ec" },
+  "東京建物":     { bg: "#8b4513", accent: "#d4813a", text: "#fdf0e0" },
+  "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc", text: "#eaeaf8" },
+  "東急不動産HD": { bg: "#006060", accent: "#28b0b0", text: "#e0f5f5" },
+  "ヒューリック": { bg: "#5b2580", accent: "#aa5fdd", text: "#f3e8fc" },
 };
 
-const companies = earningsData.map(item => ({
-  id: item.companyId,
-  name: item.company,
-  fiscalMonth: item.period.includes('/3') ? 3 : 12,
-  color: COMPANY_COLORS[item.companyId] || '#666666',
-  revenue: item.revenue,
-  profit: item.operatingProfit,
-  ordinaryProfit: item.ordinaryProfit,
-  netProfit: item.netProfit,
-  profitMargin: item.profitMargin,
-  stockPrice: item.stockPrice,
-  announcementDate: item.announcementDate,
-  irLink: item.irLink,
-}));
+const companies = [
+  {
+    name: "三井不動産", secCode: "8801", period: "2025/3",
+    revenue: 28000, operatingProfit: 4200, ordinaryProfit: 3800, netProfit: 1500,
+    profitMargin: 15.0, stockPrice: 2086, yoyGrowth: 6.2, roe: 8.2,
+    irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/"
+  },
+  {
+    name: "三菱地所", secCode: "8802", period: "2025/3",
+    revenue: 32000, operatingProfit: 5500, ordinaryProfit: 5200, netProfit: 2800,
+    profitMargin: 17.2, stockPrice: 2315, yoyGrowth: 4.8, roe: 9.1,
+    irLink: "https://www.mec.co.jp/j/investor/"
+  },
+  {
+    name: "住友不動産", secCode: "8830", period: "2025/3",
+    revenue: 11000, operatingProfit: 2200, ordinaryProfit: 2000, netProfit: 1200,
+    profitMargin: 20.0, stockPrice: 4210, yoyGrowth: 3.1, roe: 12.3,
+    irLink: "https://www.sumitomo-rd.co.jp/ir/"
+  },
+  {
+    name: "東京建物", secCode: "8804", period: "2024/12",
+    revenue: 5800, operatingProfit: 900, ordinaryProfit: 850, netProfit: 500,
+    profitMargin: 15.5, stockPrice: 1982, yoyGrowth: -1.2, roe: 7.8,
+    irLink: "https://www.tatemono.com/ir/"
+  },
+  {
+    name: "野村不動産HD", secCode: "3231", period: "2025/3",
+    revenue: 7200, operatingProfit: 1100, ordinaryProfit: 1050, netProfit: 600,
+    profitMargin: 15.3, stockPrice: 3620, yoyGrowth: 8.5, roe: 10.2,
+    irLink: "https://www.nomura-re-hd.co.jp/ir/"
+  },
+  {
+    name: "東急不動産HD", secCode: "3289", period: "2025/3",
+    revenue: 10500, operatingProfit: 1800, ordinaryProfit: 1700, netProfit: 950,
+    profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
+    irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
+  },
+  {
+    name: "ヒューリック", secCode: "3003", period: "2024/12",
+    revenue: 3800, operatingProfit: 1500, ordinaryProfit: 1450, netProfit: 900,
+    profitMargin: 39.5, stockPrice: 1412, yoyGrowth: 2.3, roe: 11.5,
+    irLink: "https://www.hulic.co.jp/ir/"
+  },
+];
+
+const newsItems = [
+  { date: "2025-02-14", company: "東京建物", category: "IR", title: "2024年12月期 通期決算発表", desc: "売上高前期比+8%、営業利益は過去最高を更新。分譲住宅の好調が寄与。", url: "https://www.tatemono.com/ir/" },
+  { date: "2025-02-13", company: "ヒューリック", category: "IR", title: "2024年12月期 通期決算発表", desc: "営業利益率39.5%を維持。オフィスビル運用が安定収益を牽引。", url: "https://www.hulic.co.jp/ir/" },
+  { date: "2025-02-10", company: "三菱地所", category: "PR", title: "丸の内エリア新棟着工", desc: "丸の内2-1-1地区の複合ビル（延床12万㎡）が着工。2028年竣工予定。", url: "https://www.mec.co.jp/j/news/" },
+  { date: "2025-02-07", company: "三井不動産", category: "PR", title: "日本橋再開発第3期着工", desc: "COREDO室町エリア隣接地に複合施設を着工。商業・オフィス・レジデンスの複合開発。", url: "https://www.mitsuifudosan.co.jp/corporate/news/" },
+  { date: "2025-01-30", company: "住友不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益8,200億円（前年同期比+5%）。分譲マンション引渡し好調。", url: "https://www.sumitomo-rd.co.jp/ir/" },
+  { date: "2025-01-28", company: "野村不動産HD", category: "PR", title: "渋谷道玄坂再開発発表", desc: "延床約8万㎡のオフィス・ホテル複合施設。2027年竣工に向け計画が進む。", url: "https://www.nomura-re-hd.co.jp/news/" },
+  { date: "2025-01-25", company: "東急不動産HD", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計売上9,200億円。渋谷・港区エリアの開発案件が順調に進捗。", url: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
+  { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
+];
+
+const projects = [
+  { company: "三菱地所", name: "大手町・丸の内・有楽町地区 再開発", location: "千代田区", scale: "延床約50万㎡", status: "進行中", year: "2027" },
+  { company: "三井不動産", name: "日本橋1丁目中地区 再開発", location: "中央区日本橋", scale: "延床約26万㎡", status: "着工済", year: "2026" },
+  { company: "野村不動産HD", name: "渋谷区道玄坂1丁目 再開発", location: "渋谷区", scale: "延床約8万㎡", status: "計画中", year: "2027" },
+  { company: "東急不動産HD", name: "渋谷駅東口 開発", location: "渋谷区", scale: "延床約16万㎡", status: "進行中", year: "2028" },
+  { company: "住友不動産", name: "西新宿三丁目 再開発", location: "新宿区", scale: "延床約27万㎡", status: "計画中", year: "2029" },
+  { company: "東京建物", name: "八重洲二丁目北 再開発", location: "中央区", scale: "延床約7万㎡", status: "完成", year: "2024" },
+];
+
+const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
 ---
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>デベロッパー決算まとめ | デベリーマン4.0</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大手不動産デベロッパー IR ダッシュボード | deveryman-ir</title>
+  <meta name="description" content="三井不動産・三菱地所など大手7社の最新決算・株価・再開発情報をまとめて確認" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: "Noto Sans JP", -apple-system, sans-serif;
+      background: #0a0f1e;
+      color: #e8eaf0;
       min-height: 100vh;
-      padding: 2rem 1rem;
+      line-height: 1.6;
     }
-    .container { max-width: 1400px; margin: 0 auto; }
-    h1 {
-      color: white;
-      font-size: 2.5rem;
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── HEADER ─── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,30,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 0;
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 900; letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo span { font-weight: 400; opacity: 0.7; }
+    .nav { display: flex; gap: 24px; }
+    .nav a {
+      font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: #fff; }
+    .badge-updated {
+      font-size: 0.75rem; background: rgba(96,165,250,0.15);
+      border: 1px solid rgba(96,165,250,0.3);
+      color: #93c5fd; padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 40px 0 24px;
+      background: radial-gradient(ellipse at 50% -20%, rgba(96,165,250,0.12) 0%, transparent 70%);
       text-align: center;
-      margin-bottom: 3rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-    .companies-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
+    .hero-eyebrow {
+      font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #60a5fa; margin-bottom: 12px;
     }
+    .hero-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 900;
+      line-height: 1.2; margin-bottom: 12px;
+    }
+    .hero-title em {
+      font-style: normal;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 0.88rem; color: rgba(255,255,255,0.5);
+      max-width: 480px; margin: 0 auto;
+    }
+
+    /* ─── SECTION HEADER ─── */
+    .section { padding: 32px 0; }
+    .section-header {
+      display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px;
+    }
+    .section-title {
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .section-count {
+      font-size: 0.75rem; color: rgba(255,255,255,0.4);
+    }
+    .section-divider {
+      border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
+    }
+
+    /* ─── COMPANY CARDS (横1行スクロール) ─── */
+    .cards-nav {
+      display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px;
+    }
+    .nav-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.15); }
+    .cards-scroll-wrapper {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+    .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
     .company-card {
-      background: white;
-      border-radius: 16px;
+      min-width: 200px;
+      max-width: 210px;
+      flex-shrink: 0;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
     .company-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
     }
     .card-header {
-      padding: 1.5rem;
-      color: white;
-      text-align: center;
+      padding: 10px 12px 8px;
+      position: relative;
     }
-    .company-name {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    .fiscal-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-    .card-body { padding: 1.5rem; }
-    .metrics {
-      display: flex;
-      justify-content: space-around;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid #eee;
-    }
-    .metric { text-align: center; }
-    .metric-label {
-      font-size: 0.85rem;
-      color: #666;
-      margin-bottom: 0.5rem;
-    }
-    .metric-value {
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: #333;
-    }
-    .metric-unit {
-      font-size: 0.9rem;
-      color: #999;
-      margin-left: 0.2rem;
-    }
-    .additional-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      font-size: 0.9rem;
-    }
-    .info-label {
-      color: #666;
-      font-weight: 500;
-    }
-    .info-value {
-      font-weight: bold;
-      color: #333;
-    }
-    .ir-link {
-      display: block;
-      text-align: center;
-      margin-top: 1rem;
-      padding: 0.8rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: opacity 0.3s ease;
-    }
-    .ir-link:hover {
+    .card-header-bg {
+      position: absolute; inset: 0;
       opacity: 0.9;
     }
-    .table-container {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    .card-header-content { position: relative; z-index: 1; }
+    .card-top-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 4px;
     }
-    h2 {
-      font-size: 1.8rem;
-      color: #333;
-      margin-bottom: 1.5rem;
+    .company-name {
+      font-size: 0.88rem; font-weight: 700; color: #fff;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .sec-code { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+
+    .card-body { padding: 10px 12px 12px; }
+    .fiscal-badge {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
+      background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+      padding: 2px 8px; border-radius: 20px; white-space: nowrap; width: fit-content;
+      margin-bottom: 8px;
     }
-    th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 1rem;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.9rem;
+
+    .metrics-mini {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
     }
-    td {
-      padding: 1rem;
-      border-bottom: 1px solid #eee;
-      font-size: 0.9rem;
+    .metric-row {
+      display: flex; justify-content: space-between; align-items: baseline;
     }
-    tr:hover { background: #f8f9fa; }
-    .number { text-align: right; }
+    .metric-label {
+      font-size: 0.65rem; color: rgba(255,255,255,0.45);
+    }
+    .metric-value {
+      font-size: 0.8rem; font-weight: 700; color: #e8eaf0;
+    }
+
+    .margin-bar-wrap { margin-bottom: 10px; }
+    .margin-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;
+    }
+    .margin-bar-track {
+      height: 3px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden;
+    }
+    .margin-bar-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, #34d399, #10b981);
+      transition: width 0.8s ease;
+    }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .stock-info { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+    .stock-info strong { color: #e8eaf0; font-weight: 600; }
+    .ir-link {
+      font-size: 0.68rem; font-weight: 600; color: #93c5fd;
+      display: flex; align-items: center; gap: 3px;
+      background: rgba(96,165,250,0.1); padding: 3px 8px; border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .ir-link:hover { background: rgba(96,165,250,0.2); }
+
+    /* ─── NEWS TICKER (横スクロールアニメーション) ─── */
+    .news-ticker-section {
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 0;
+    }
+    .news-ticker-track {
+      display: flex;
+      gap: 16px;
+      animation: ticker-scroll 40s linear infinite;
+      width: max-content;
+    }
+    .news-ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .news-card {
+      width: 300px;
+      min-height: 150px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .news-card:hover { border-color: rgba(96,165,250,0.4); }
+    .news-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .news-card-date { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+    .news-category {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .news-category.IR {
+      background: rgba(96,165,250,0.15); color: #93c5fd;
+    }
+    .news-category.PR {
+      background: rgba(167,139,250,0.15); color: #c4b5fd;
+    }
+    .news-card-title { font-size: 0.85rem; font-weight: 700; color: #e8eaf0; margin-bottom: 6px; line-height: 1.4; }
+    .news-card-desc { font-size: 0.72rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    /* ─── SUMMARY TABLE ─── */
+    .table-wrap {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; overflow: hidden;
+    }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      background: rgba(255,255,255,0.05);
+      padding: 10px 14px; text-align: right;
+      font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.45);
+      letter-spacing: 0.05em; white-space: nowrap;
+    }
+    .data-table th:first-child { text-align: left; }
+    .data-table td {
+      padding: 12px 14px; text-align: right;
+      font-size: 0.82rem; font-weight: 500; color: #e8eaf0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      white-space: nowrap;
+    }
+    .data-table td:first-child { text-align: left; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .company-label {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .company-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .yoy-growth { font-size: 0.75rem; font-weight: 600; }
+    .yoy-positive { color: #34d399; }
+    .yoy-negative { color: #f87171; }
+    .margin-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .margin-high { background: rgba(52,211,153,0.15); color: #34d399; }
+    .margin-mid  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+    .margin-low  { background: rgba(239,68,68,0.15);   color: #f87171; }
+
+    /* ─── PROJECTS TABLE ─── */
+    .project-status {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .status-active   { background: rgba(52,211,153,0.15); color: #34d399; }
+    .status-plan     { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+    .status-complete { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    .status-started  { background: rgba(96,165,250,0.15);  color: #93c5fd; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 0; margin-top: 40px;
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-text { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+    .footer-links a:hover { color: rgba(255,255,255,0.6); }
+
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
-      h1 { font-size: 1.8rem; }
-      .companies-grid { grid-template-columns: 1fr; }
-      .metric-value { font-size: 1.4rem; }
-      table { font-size: 0.8rem; }
-      th, td { padding: 0.6rem; }
+      .nav { display: none; }
+      .hero-title { font-size: 1.4rem; }
+      .data-table { font-size: 0.72rem; }
+      .data-table th, .data-table td { padding: 8px 8px; }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>🏢 デベロッパー決算まとめ</h1>
-    
-    <div class="companies-grid">
-      {companies.map(company => (
-        <div class="company-card">
-          <div class="card-header" style={`background: ${company.color};`}>
-            <div class="company-name">{company.name}</div>
-            <div class="fiscal-info">
-              <span class="fiscal-badge">📅 {company.fiscalMonth}月決算</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="metrics">
-              <div class="metric">
-                <div class="metric-label">営業収益</div>
-                <div class="metric-value">
-                  {(company.revenue / 10000).toFixed(1)}
-                  <span class="metric-unit">兆円</span>
+
+  <!-- ─── HEADER ─── -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">deveryman<span>-ir</span></div>
+        <nav class="nav">
+          <a href="#companies">企業カード</a>
+          <a href="#news">ニュース</a>
+          <a href="#summary">決算サマリー</a>
+          <a href="#projects">再開発PJ</a>
+        </nav>
+        <div class="badge-updated">更新: {updatedAt}</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">Real Estate Developer IR Dashboard</p>
+      <h1 class="hero-title">大手不動産デベロッパー<br /><em>7社の最新IR情報</em></h1>
+      <p class="hero-sub">三井・三菱・住友・東京建物・野村・東急・ヒューリック<br />決算データ・株価・再開発プロジェクトを一覧</p>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 1: 企業カード (横1行スクロール) ─── -->
+  <section class="section" id="companies">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">📊 企業カード</h2>
+        <span class="section-count">{companies.length}社</span>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="cards-nav">
+        <button class="nav-btn" id="btn-left">◀</button>
+        <button class="nav-btn" id="btn-right">▶</button>
+      </div>
+
+      <div class="cards-scroll-wrapper" id="cards-scroll">
+        {companies.map((c) => {
+          const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
+          return (
+            <article class="company-card">
+              <div class="card-header">
+                <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
+                <div class="card-header-content">
+                  <div class="card-top-row">
+                    <span class="company-name">{c.name}</span>
+                  </div>
+                  <span class="sec-code">東証 {c.secCode}</span>
                 </div>
               </div>
-              <div class="metric">
-                <div class="metric-label">営業利益</div>
-                <div class="metric-value">
-                  {company.profit.toLocaleString()}
-                  <span class="metric-unit">億円</span>
+
+              <div class="card-body">
+                <div class="fiscal-badge">{c.period} 決算</div>
+
+                <div class="metrics-mini">
+                  <div class="metric-row">
+                    <span class="metric-label">営業収益</span>
+                    <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
+                  </div>
+                  <div class="metric-row">
+                    <span class="metric-label">営業利益</span>
+                    <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
+                  </div>
+                </div>
+
+                <div class="margin-bar-wrap">
+                  <div class="margin-bar-label">
+                    <span>利益率</span>
+                    <span>{c.profitMargin.toFixed(1)}%</span>
+                  </div>
+                  <div class="margin-bar-track">
+                    <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
+                  </div>
+                </div>
+
+                <div class="card-footer">
+                  <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong> (2/28終値)</span>
+                  <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">
+                    IR ↗
+                  </a>
                 </div>
               </div>
-            </div>
-            
-            <div class="additional-info">
-              <div class="info-row">
-                <span class="info-label">経常利益</span>
-                <span class="info-value">{company.ordinaryProfit.toLocaleString()}億円</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">純利益</span>
-                <span class="info-value">{company.netProfit.toLocaleString()}億円</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">利益率</span>
-                <span class="info-value">{company.profitMargin.toFixed(1)}%</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">株価</span>
-                <span class="info-value">{company.stockPrice > 0 ? company.stockPrice.toLocaleString() + '円' : 'N/A'}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">決算公表日</span>
-                <span class="info-value">{company.announcementDate}</span>
-              </div>
-            </div>
-            
-            {company.irLink && (
-              <a href={company.irLink} target="_blank" rel="noopener noreferrer" class="ir-link">
-                IR情報を見る →
-              </a>
-            )}
-          </div>
-        </div>
-      ))}
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 2: 最新ニュース横スクロール ─── -->
+  <section class="news-ticker-section" id="news">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
+        <span class="section-count">自動スクロール（ホバーで停止）</span>
+      </div>
     </div>
 
-    <div class="table-container">
-      <h2>📊 最新決算データ</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>企業名</th>
-            <th>決算期</th>
-            <th class="number">営業収益（億円）</th>
-            <th class="number">営業利益（億円）</th>
-            <th class="number">経常利益（億円）</th>
-            <th class="number">純利益（億円）</th>
-            <th class="number">利益率（%）</th>
-          </tr>
-        </thead>
-        <tbody>
-          {earningsData.map(item => (
-            <tr>
-              <td><strong>{item.company}</strong></td>
-              <td>{item.period}</td>
-              <td class="number">{item.revenue.toLocaleString()}</td>
-              <td class="number">{item.operatingProfit.toLocaleString()}</td>
-              <td class="number">{item.ordinaryProfit.toLocaleString()}</td>
-              <td class="number">{item.netProfit.toLocaleString()}</td>
-              <td class="number">{item.profitMargin.toFixed(1)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div class="news-ticker-track">
+      {[...newsItems, ...newsItems].map((n) => (
+        <a class="news-card" href={n.url} target="_blank" rel="noopener">
+          <div class="news-card-top">
+            <span class="news-card-date">{n.date}</span>
+            <span class={`news-category ${n.category}`}>{n.category}</span>
+          </div>
+          <div class="news-card-title">{n.company} - {n.title}</div>
+          <div class="news-card-desc">{n.desc}</div>
+        </a>
+      ))}
     </div>
-  </div>
+  </section>
+
+  <!-- ─── SECTION 3: 最新決算サマリー ─── -->
+  <section class="section" id="summary">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">📋 最新決算サマリー</h2>
+        <span class="section-count">単位: 億円</span>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>企業名</th>
+              <th>決算期</th>
+              <th>営業収益</th>
+              <th>前期比</th>
+              <th>営業利益</th>
+              <th>利益率</th>
+              <th>経常利益</th>
+              <th>純利益</th>
+              <th>ROE</th>
+              <th>株価</th>
+            </tr>
+          </thead>
+          <tbody>
+            {companies.map((c) => {
+              const col = COMPANY_COLORS[c.name] ?? { bg: "#555" };
+              const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
+              const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
+              return (
+                <tr>
+                  <td>
+                    <div class="company-label">
+                      <div class="company-dot" style={`background:${col.accent ?? col.bg}`} />
+                      {c.name}
+                    </div>
+                  </td>
+                  <td>{c.period}</td>
+                  <td>{c.revenue.toLocaleString()}</td>
+                  <td><span class={`yoy-growth ${yoyClass}`}>{c.yoyGrowth > 0 ? '+' : ''}{c.yoyGrowth.toFixed(1)}%</span></td>
+                  <td>{c.operatingProfit.toLocaleString()}</td>
+                  <td><span class={`margin-pill ${mClass}`}>{c.profitMargin.toFixed(1)}%</span></td>
+                  <td>{c.ordinaryProfit.toLocaleString()}</td>
+                  <td>{c.netProfit.toLocaleString()}</td>
+                  <td>{c.roe.toFixed(1)}%</td>
+                  <td>¥{c.stockPrice.toLocaleString()}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 4: 再開発プロジェクト ─── -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
+        <span class="section-count">{projects.length} 件</span>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>企業名</th>
+              <th style="text-align:left;">プロジェクト名</th>
+              <th>エリア</th>
+              <th>規模</th>
+              <th>完成予定</th>
+              <th>状況</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map((p) => {
+              const statusMap = {
+                "進行中": "status-active",
+                "着工済": "status-started",
+                "計画中": "status-plan",
+                "完成": "status-complete"
+              };
+              const col = COMPANY_COLORS[p.company] ?? { bg: "#555" };
+              return (
+                <tr>
+                  <td>
+                    <div class="company-label">
+                      <div class="company-dot" style={`background:${col.accent ?? col.bg}`} />
+                      {p.company}
+                    </div>
+                  </td>
+                  <td style="text-align:left;">{p.name}</td>
+                  <td>{p.location}</td>
+                  <td>{p.scale}</td>
+                  <td>{p.year}年</td>
+                  <td>
+                    <span class={`project-status ${statusMap[p.status] ?? "status-plan"}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-text">© 2025 deveryman-ir. データはモック値を含みます。投資判断は自己責任でお願いします。</p>
+        <div class="footer-links">
+          <a href="https://twitter.com/deveryman_inv" target="_blank">X (Twitter)</a>
+          <a href="https://disclosure.edinet-fsa.go.jp/" target="_blank">EDINET</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── CARD SCROLL JS ─── -->
+  <script>
+    const wrapper = document.getElementById('cards-scroll');
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    if (wrapper && btnLeft && btnRight) {
+      btnLeft.onclick = () => wrapper.scrollBy({ left: -230, behavior: 'smooth' });
+      btnRight.onclick = () => wrapper.scrollBy({ left: 230, behavior: 'smooth' });
+    }
+  </script>
+
 </body>
 </html>
