@@ -9,7 +9,6 @@ const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string 
   "東京建物":     { bg: "#8b4513", accent: "#d4813a", text: "#fdf0e0" },
   "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc", text: "#eaeaf8" },
   "東急不動産HD": { bg: "#006060", accent: "#28b0b0", text: "#e0f5f5" },
-  "ヒューリック": { bg: "#5b2580", accent: "#aa5fdd", text: "#f3e8fc" },
 };
 
 const companies = [
@@ -49,17 +48,10 @@ const companies = [
     profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
     irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
   },
-  {
-    name: "ヒューリック", secCode: "3003", period: "2024/12",
-    revenue: 3800, operatingProfit: 1500, ordinaryProfit: 1450, netProfit: 900,
-    profitMargin: 39.5, stockPrice: 1412, yoyGrowth: 2.3, roe: 11.5,
-    irLink: "https://www.hulic.co.jp/ir/"
-  },
 ];
 
 const newsItems = [
   { date: "2025-02-14", company: "東京建物", category: "IR", title: "2024年12月期 通期決算発表", desc: "売上高前期比+8%、営業利益は過去最高を更新。分譲住宅の好調が寄与。", url: "https://www.tatemono.com/ir/" },
-  { date: "2025-02-13", company: "ヒューリック", category: "IR", title: "2024年12月期 通期決算発表", desc: "営業利益率39.5%を維持。オフィスビル運用が安定収益を牽引。", url: "https://www.hulic.co.jp/ir/" },
   { date: "2025-02-10", company: "三菱地所", category: "PR", title: "丸の内エリア新棟着工", desc: "丸の内2-1-1地区の複合ビル（延床12万㎡）が着工。2028年竣工予定。", url: "https://www.mec.co.jp/j/news/" },
   { date: "2025-02-07", company: "三井不動産", category: "PR", title: "日本橋再開発第3期着工", desc: "COREDO室町エリア隣接地に複合施設を着工。商業・オフィス・レジデンスの複合開発。", url: "https://www.mitsuifudosan.co.jp/corporate/news/" },
   { date: "2025-01-30", company: "住友不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益8,200億円（前年同期比+5%）。分譲マンション引渡し好調。", url: "https://www.sumitomo-rd.co.jp/ir/" },
@@ -86,7 +78,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>大手不動産デベロッパー IR ダッシュボード | deveryman-ir</title>
-  <meta name="description" content="三井不動産・三菱地所など大手7社の最新決算・株価・再開発情報をまとめて確認" />
+  <meta name="description" content="三井不動産・三菱地所など大手6社の最新決算・再開発情報をまとめて確認" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -295,7 +287,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     .news-ticker-track {
       display: flex;
       gap: 16px;
-      animation: ticker-scroll 40s linear infinite;
+      animation: ticker-scroll 60s linear infinite;
       width: max-content;
     }
     .news-ticker-track:hover { animation-play-state: paused; }
@@ -425,8 +417,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
   <section class="hero">
     <div class="container">
       <p class="hero-eyebrow">Real Estate Developer IR Dashboard</p>
-      <h1 class="hero-title">大手不動産デベロッパー<br /><em>7社の最新IR情報</em></h1>
-      <p class="hero-sub">三井・三菱・住友・東京建物・野村・東急・ヒューリック<br />決算データ・株価・再開発プロジェクトを一覧</p>
+      <h1 class="hero-title">大手不動産デベロッパー<br /><em>6社の最新IR情報</em></h1>
+      <p class="hero-sub">三井・三菱・住友・東建・野村・東急<br />決算データ・再開発プロジェクトを一覧</p>
     </div>
   </section>
 
