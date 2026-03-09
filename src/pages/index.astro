@@ -579,19 +579,21 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         transform: translateY(-50%);
       }
     }
-
-    /* === NEWS CARD: RICH DESIGN === */
+    /* === NEWS CARD: ONE-LINE DESIGN === */
     .news-card {
-      display: block;
-      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
       background: rgba(255, 255, 255, 0.03);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       flex-shrink: 0;
       text-decoration: none;
       color: inherit;
-      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
     }
     .news-card:first-child {
       border-radius: 12px 12px 0 0;
@@ -603,14 +605,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     .news-card:hover {
       background: rgba(255, 255, 255, 0.06);
     }
-    .news-card-row1 {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
     .news-card-date {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.35);
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
@@ -634,26 +630,32 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       background: rgba(167, 139, 250, 0.15);
       color: #c4b5fd;
     }
-    .news-card-company-title {
-      font-size: 0.85rem;
+    .news-card-company {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-color, #93c5fd);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .news-card-sep {
+      color: rgba(255, 255, 255, 0.15);
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+    .news-card-title {
+      font-size: 0.82rem;
       font-weight: 700;
       color: #e8eaf0;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .news-card-desc {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.38);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
-    }
-    .news-card-company-name {
-      color: var(--accent-color, #93c5fd);
-    }
-    .news-card-row2 {
-      font-size: 0.78rem;
-      color: rgba(255, 255, 255, 0.4);
-      line-height: 1.5;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding-left: 0;
     }
     .news-empty {
       padding: 60px 20px;
@@ -1171,17 +1173,13 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         var accent = colorMap[n.company] || '#60a5fa';
         return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener"'
           + ' style="--accent-color:' + accent + ';">'
-          + '<div class="news-card-row1">'
-            + '<span class="news-card-date">' + n.date + '</span>'
-            + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
-            + '<span class="news-card-company-title">'
-              + '<span class="news-card-company-name">' + n.company + '</span>'
-              + ' — ' + n.title
-            + '</span>'
-          + '</div>'
-          + '<div class="news-card-row2">'
-            + n.desc
-          + '</div>'
+          + '<span class="news-card-date">' + n.date + '</span>'
+          + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
+          + '<span class="news-card-company">' + n.company + '</span>'
+          + '<span class="news-card-sep">\u2014</span>'
+          + '<span class="news-card-title">' + n.title + '</span>'
+          + '<span class="news-card-sep">\uff5c</span>'
+          + '<span class="news-card-desc">' + n.desc + '</span>'
         + '</a>';
       }).join('');
 
