@@ -1,995 +1,1222 @@
-     1	---
-     2	// deveryman-ir | src/pages/index.astro
-     3	// 大手不動産デベロッパー6社 IRダッシュボード
-     4	// Updated: 2026-03-09 — 全UIリニューアル + 広告バナー枠
-     5	
-     6	const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
-     7	  "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
-     8	  "三菱地所":     { bg: "#c41e3a", accent: "#e85555", text: "#fbeaea" },
-     9	  "住友不動産":   { bg: "#1a5e2a", accent: "#3aaa5c", text: "#e8f5ec" },
-    10	  "東京建物":     { bg: "#8b4513", accent: "#d4813a", text: "#fdf0e0" },
-    11	  "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc", text: "#eaeaf8" },
-    12	  "東急不動産HD": { bg: "#006060", accent: "#28b0b0", text: "#e0f5f5" },
-    13	};
-    14	
-    15	const companies = [
-    16	  {
-    17	    name: "三井不動産", secCode: "8801", period: "2025/3",
-    18	    revenue: 28000, operatingProfit: 4200, ordinaryProfit: 3800, netProfit: 1500,
-    19	    profitMargin: 15.0, stockPrice: 2086, yoyGrowth: 6.2, roe: 8.2,
-    20	    irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/"
-    21	  },
-    22	  {
-    23	    name: "三菱地所", secCode: "8802", period: "2025/3",
-    24	    revenue: 32000, operatingProfit: 5500, ordinaryProfit: 5200, netProfit: 2800,
-    25	    profitMargin: 17.2, stockPrice: 2315, yoyGrowth: 4.8, roe: 9.1,
-    26	    irLink: "https://www.mec.co.jp/j/investor/"
-    27	  },
-    28	  {
-    29	    name: "住友不動産", secCode: "8830", period: "2025/3",
-    30	    revenue: 11000, operatingProfit: 2200, ordinaryProfit: 2000, netProfit: 1200,
-    31	    profitMargin: 20.0, stockPrice: 4210, yoyGrowth: 3.1, roe: 12.3,
-    32	    irLink: "https://www.sumitomo-rd.co.jp/ir/"
-    33	  },
-    34	  {
-    35	    name: "東京建物", secCode: "8804", period: "2024/12",
-    36	    revenue: 5800, operatingProfit: 900, ordinaryProfit: 850, netProfit: 500,
-    37	    profitMargin: 15.5, stockPrice: 1982, yoyGrowth: -1.2, roe: 7.8,
-    38	    irLink: "https://www.tatemono.com/ir/"
-    39	  },
-    40	  {
-    41	    name: "野村不動産HD", secCode: "3231", period: "2025/3",
-    42	    revenue: 7200, operatingProfit: 1100, ordinaryProfit: 1050, netProfit: 600,
-    43	    profitMargin: 15.3, stockPrice: 3620, yoyGrowth: 8.5, roe: 10.2,
-    44	    irLink: "https://www.nomura-re-hd.co.jp/ir/"
-    45	  },
-    46	  {
-    47	    name: "東急不動産HD", secCode: "3289", period: "2025/3",
-    48	    revenue: 10500, operatingProfit: 1800, ordinaryProfit: 1700, netProfit: 950,
-    49	    profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
-    50	    irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
-    51	  },
-    52	];
-    53	
-    54	const newsItems = [
-    55	  { date: "2025-02-14", company: "東京建物", category: "IR", title: "2024年12月期 通期決算発表", desc: "売上高前期比+8%、営業利益は過去最高を更新。分譲住宅の好調が寄与。", url: "https://www.tatemono.com/ir/" },
-    56	  { date: "2025-02-10", company: "三菱地所", category: "PR", title: "丸の内エリア新棟着工", desc: "丸の内2-1-1地区の複合ビル（延床12万㎡）が着工。2028年竣工予定。", url: "https://www.mec.co.jp/j/news/" },
-    57	  { date: "2025-02-07", company: "三井不動産", category: "PR", title: "日本橋再開発第3期着工", desc: "COREDO室町エリア隣接地に複合施設を着工。商業・オフィス・レジデンスの複合開発。", url: "https://www.mitsuifudosan.co.jp/corporate/news/" },
-    58	  { date: "2025-01-30", company: "住友不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益8,200億円（前年同期比+5%）。分譲マンション引渡し好調。", url: "https://www.sumitomo-rd.co.jp/ir/" },
-    59	  { date: "2025-01-28", company: "野村不動産HD", category: "PR", title: "渋谷道玄坂再開発発表", desc: "延床約8万㎡のオフィス・ホテル複合施設。2027年竣工に向け計画が進む。", url: "https://www.nomura-re-hd.co.jp/news/" },
-    60	  { date: "2025-01-25", company: "東急不動産HD", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計売上9,200億円。渋谷・港区エリアの開発案件が順調に進捗。", url: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
-    61	  { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
-    62	];
-    63	
-    64	const projects = [
-    65	  { company: "三菱地所", name: "大手町・丸の内・有楽町地区 再開発", location: "千代田区", scale: "延床約50万㎡", status: "進行中", year: "2027" },
-    66	  { company: "三井不動産", name: "日本橋1丁目中地区 再開発", location: "中央区日本橋", scale: "延床約26万㎡", status: "着工済", year: "2026" },
-    67	  { company: "野村不動産HD", name: "渋谷区道玄坂1丁目 再開発", location: "渋谷区", scale: "延床約8万㎡", status: "計画中", year: "2027" },
-    68	  { company: "東急不動産HD", name: "渋谷駅東口 開発", location: "渋谷区", scale: "延床約16万㎡", status: "進行中", year: "2028" },
-    69	  { company: "住友不動産", name: "西新宿三丁目 再開発", location: "新宿区", scale: "延床約27万㎡", status: "計画中", year: "2029" },
-    70	  { company: "東京建物", name: "八重洲二丁目北 再開発", location: "中央区", scale: "延床約7万㎡", status: "完成", year: "2024" },
-    71	];
-    72	
-    73	const projectStatusMap: Record<string, string> = {
-    74	  "進行中": "status-active",
-    75	  "着工済": "status-started",
-    76	  "計画中": "status-plan",
-    77	  "完成": "status-complete"
-    78	};
-    79	
-    80	const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
-    81	---
-    82	
-    83	<html lang="ja">
-    84	<head>
-    85	  <meta charset="UTF-8" />
-    86	  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    87	  <title>大手不動産デベロッパー IR ダッシュボード | deveryman-ir</title>
-    88	  <meta name="description" content="三井不動産・三菱地所など大手6社の最新決算・再開発情報をまとめて確認" />
-    89	
-    90	  <link rel="preconnect" href="https://fonts.googleapis.com" />
-    91	  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    92	  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
-    93	
-    94	  <style>
-    95	    /* ═══════════════════════════════════════
-    96	       RESET & BASE
-    97	       ═══════════════════════════════════════ */
-    98	    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    99	    html { scroll-behavior: smooth; }
-   100	    body {
-   101	      font-family: "Noto Sans JP", -apple-system, sans-serif;
-   102	      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 100%);
-   103	      color: #e8eaf0;
-   104	      min-height: 100vh;
-   105	      line-height: 1.6;
-   106	    }
-   107	    a { color: inherit; text-decoration: none; }
-   108	
-   109	    /* ═══════════════════════════════════════
-   110	       LAYOUT
-   111	       ═══════════════════════════════════════ */
-   112	    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-   113	
-   114	    /* ═══════════════════════════════════════
-   115	       HEADER
-   116	       ═══════════════════════════════════════ */
-   117	    .header {
-   118	      position: sticky; top: 0; z-index: 100;
-   119	      background: rgba(10,15,30,0.92);
-   120	      backdrop-filter: blur(16px);
-   121	      -webkit-backdrop-filter: blur(16px);
-   122	      border-bottom: 1px solid rgba(255,255,255,0.08);
-   123	      padding: 16px 0;
-   124	    }
-   125	    .header-inner {
-   126	      display: flex; align-items: center; justify-content: space-between;
-   127	    }
-   128	    .logo {
-   129	      font-size: 1.25rem; font-weight: 900; letter-spacing: -0.02em;
-   130	      background: linear-gradient(90deg, #60a5fa, #a78bfa);
-   131	      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-   132	    }
-   133	    .logo span { font-weight: 400; opacity: 0.7; }
-   134	    .nav { display: flex; gap: 24px; }
-   135	    .nav a {
-   136	      font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.6);
-   137	      transition: color 0.2s;
-   138	    }
-   139	    .nav a:hover { color: #fff; }
-   140	    .badge-updated {
-   141	      font-size: 0.75rem; background: rgba(96,165,250,0.15);
-   142	      border: 1px solid rgba(96,165,250,0.3);
-   143	      color: #93c5fd; padding: 4px 12px; border-radius: 20px;
-   144	    }
-   145	
-   146	    /* ═══════════════════════════════════════
-   147	       AD BANNER SLOTS
-   148	       ═══════════════════════════════════════ */
-   149	    .ad-banner {
-   150	      width: 100%;
-   151	      display: flex;
-   152	      align-items: center;
-   153	      justify-content: center;
-   154	      overflow: hidden;
-   155	    }
-   156	    .ad-banner-header {
-   157	      background: rgba(255,255,255,0.03);
-   158	      border-bottom: 1px solid rgba(255,255,255,0.06);
-   159	      min-height: 90px;
-   160	      padding: 8px 0;
-   161	    }
-   162	    .ad-banner-footer {
-   163	      background: rgba(255,255,255,0.03);
-   164	      border-top: 1px solid rgba(255,255,255,0.06);
-   165	      border-bottom: 1px solid rgba(255,255,255,0.06);
-   166	      min-height: 90px;
-   167	      padding: 8px 0;
-   168	    }
-   169	    /* プレースホルダー表示（広告未設定時） */
-   170	    .ad-placeholder {
-   171	      display: flex;
-   172	      align-items: center;
-   173	      justify-content: center;
-   174	      gap: 8px;
-   175	      width: 100%;
-   176	      max-width: 728px;
-   177	      height: 90px;
-   178	      border: 1px dashed rgba(255,255,255,0.1);
-   179	      border-radius: 8px;
-   180	      color: rgba(255,255,255,0.15);
-   181	      font-size: 0.72rem;
-   182	      letter-spacing: 0.05em;
-   183	      user-select: none;
-   184	    }
-   185	    .ad-placeholder-icon {
-   186	      font-size: 1rem;
-   187	      opacity: 0.4;
-   188	    }
-   189	    /* 広告画像が入った場合はプレースホルダーを非表示 */
-   190	    .ad-banner img {
-   191	      max-width: 728px;
-   192	      width: 100%;
-   193	      height: auto;
-   194	      max-height: 90px;
-   195	      object-fit: contain;
-   196	      border-radius: 6px;
-   197	    }
-   198	    .ad-banner a {
-   199	      display: flex;
-   200	      align-items: center;
-   201	      justify-content: center;
-   202	    }
-   203	
-   204	    /* ═══════════════════════════════════════
-   205	       HERO
-   206	       ═══════════════════════════════════════ */
-   207	    .hero {
-   208	      padding: 40px 0 24px;
-   209	      background: radial-gradient(ellipse at 50% -20%, rgba(96,165,250,0.12) 0%, transparent 70%);
-   210	      text-align: center;
-   211	    }
-   212	    .hero-eyebrow {
-   213	      font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
-   214	      color: #60a5fa; margin-bottom: 12px;
-   215	    }
-   216	    .hero-title {
-   217	      font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 900;
-   218	      line-height: 1.2; margin-bottom: 12px;
-   219	    }
-   220	    .hero-title em {
-   221	      font-style: normal;
-   222	      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
-   223	      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-   224	    }
-   225	    .hero-sub {
-   226	      font-size: 0.88rem; color: rgba(255,255,255,0.5);
-   227	      max-width: 480px; margin: 0 auto;
-   228	    }
-   229	
-   230	    /* ═══════════════════════════════════════
-   231	       SECTION COMMON
-   232	       ═══════════════════════════════════════ */
-   233	    .section { padding: 32px 0; }
-   234	    .section-header {
-   235	      display: flex; align-items: center; justify-content: space-between;
-   236	      gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
-   237	    }
-   238	    .section-title-wrap {
-   239	      display: flex; align-items: baseline; gap: 12px;
-   240	    }
-   241	    .section-title { font-size: 1.1rem; font-weight: 700; }
-   242	    .section-count { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
-   243	    .section-divider {
-   244	      border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
-   245	    }
-   246	
-   247	    /* ═══════════════════════════════════════
-   248	       COMPANY CARDS — ボタンとカード同一行
-   249	       ═══════════════════════════════════════ */
-   250	    .cards-row {
-   251	      display: flex;
-   252	      align-items: center;
-   253	      gap: 0;
-   254	    }
-   255	    /* スタイリッシュ矢印ボタン */
-   256	    .scroll-arrow {
-   257	      flex-shrink: 0;
-   258	      width: 44px; height: 44px;
-   259	      border: 1px solid rgba(255,255,255,0.12);
-   260	      background: rgba(255,255,255,0.05);
-   261	      color: rgba(255,255,255,0.7);
-   262	      border-radius: 12px;
-   263	      cursor: pointer;
-   264	      display: flex; align-items: center; justify-content: center;
-   265	      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-   266	      backdrop-filter: blur(12px);
-   267	      -webkit-backdrop-filter: blur(12px);
-   268	      position: relative;
-   269	      overflow: hidden;
-   270	      z-index: 2;
-   271	    }
-   272	    .scroll-arrow::before {
-   273	      content: '';
-   274	      position: absolute; inset: 0;
-   275	      background: linear-gradient(135deg, rgba(96,165,250,0.25) 0%, rgba(167,139,250,0.25) 100%);
-   276	      opacity: 0;
-   277	      transition: opacity 0.3s ease;
-   278	      border-radius: 12px;
-   279	    }
-   280	    .scroll-arrow:hover {
-   281	      border-color: rgba(96,165,250,0.5);
-   282	      color: #fff;
-   283	      transform: scale(1.1);
-   284	      box-shadow: 0 0 24px rgba(96,165,250,0.25), 0 4px 16px rgba(0,0,0,0.3);
-   285	    }
-   286	    .scroll-arrow:hover::before { opacity: 1; }
-   287	    .scroll-arrow:active {
-   288	      transform: scale(0.95);
-   289	      box-shadow: 0 0 8px rgba(96,165,250,0.15);
-   290	    }
-   291	    .scroll-arrow svg {
-   292	      width: 20px; height: 20px;
-   293	      position: relative; z-index: 1;
-   294	      transition: transform 0.2s ease;
-   295	    }
-   296	    .scroll-arrow:hover svg { transform: scale(1.15); }
-   297	    .scroll-arrow-left { margin-right: 14px; }
-   298	    .scroll-arrow-right { margin-left: 14px; }
-   299	
-   300	    .cards-scroll-wrapper {
-   301	      display: flex;
-   302	      gap: 14px;
-   303	      overflow-x: auto;
-   304	      scroll-behavior: smooth;
-   305	      scrollbar-width: none;
-   306	      padding: 4px 0 8px;
-   307	      flex: 1;
-   308	      min-width: 0;
-   309	    }
-   310	    .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
-   311	
-   312	    .company-card {
-   313	      min-width: 200px;
-   314	      max-width: 210px;
-   315	      flex-shrink: 0;
-   316	      border-radius: 12px;
-   317	      overflow: hidden;
-   318	      background: rgba(255,255,255,0.04);
-   319	      border: 1px solid rgba(255,255,255,0.08);
-   320	      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-   321	      cursor: pointer;
-   322	    }
-   323	    .company-card:hover {
-   324	      transform: translateY(-4px);
-   325	      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-   326	      border-color: rgba(255,255,255,0.15);
-   327	    }
-   328	    .card-header { padding: 10px 12px 8px; position: relative; }
-   329	    .card-header-bg { position: absolute; inset: 0; opacity: 0.9; }
-   330	    .card-header-content { position: relative; z-index: 1; }
-   331	    .card-top-row {
-   332	      display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px;
-   333	    }
-   334	    .company-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
-   335	    .sec-code { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
-   336	    .card-body { padding: 10px 12px 12px; }
-   337	    .fiscal-badge {
-   338	      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
-   339	      background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
-   340	      padding: 2px 8px; border-radius: 20px; white-space: nowrap; width: fit-content;
-   341	      margin-bottom: 8px;
-   342	    }
-   343	    .metrics-mini { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-   344	    .metric-row { display: flex; justify-content: space-between; align-items: baseline; }
-   345	    .metric-label { font-size: 0.65rem; color: rgba(255,255,255,0.45); }
-   346	    .metric-value { font-size: 0.8rem; font-weight: 700; color: #e8eaf0; }
-   347	    .margin-bar-wrap { margin-bottom: 10px; }
-   348	    .margin-bar-label {
-   349	      display: flex; justify-content: space-between;
-   350	      font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-bottom: 4px;
-   351	    }
-   352	    .margin-bar-track {
-   353	      height: 3px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden;
-   354	    }
-   355	    .margin-bar-fill {
-   356	      height: 100%; border-radius: 99px;
-   357	      background: linear-gradient(90deg, #34d399, #10b981);
-   358	      transition: width 0.8s ease;
-   359	    }
-   360	    .card-footer {
-   361	      display: flex; align-items: center; justify-content: space-between;
-   362	      padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.07);
-   363	    }
-   364	    .stock-info { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
-   365	    .stock-info strong { color: #e8eaf0; font-weight: 600; }
-   366	    .ir-link {
-   367	      font-size: 0.68rem; font-weight: 600; color: #93c5fd;
-   368	      display: flex; align-items: center; gap: 3px;
-   369	      background: rgba(96,165,250,0.1); padding: 3px 8px; border-radius: 6px;
-   370	      transition: background 0.2s;
-   371	    }
-   372	    .ir-link:hover { background: rgba(96,165,250,0.2); }
-   373	
-   374	    /* ═══════════════════════════════════════
-   375	       FILTER BUTTONS
-   376	       ═══════════════════════════════════════ */
-   377	    .filter-group {
-   378	      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
-   379	      padding-bottom: 2px;
-   380	    }
-   381	    .filter-group::-webkit-scrollbar { display: none; }
-   382	    .filter-btn {
-   383	      background: rgba(255,255,255,0.05);
-   384	      border: 1px solid rgba(255,255,255,0.1);
-   385	      color: rgba(255,255,255,0.6);
-   386	      padding: 6px 14px;
-   387	      border-radius: 20px;
-   388	      font-size: 0.75rem;
-   389	      font-weight: 600;
-   390	      cursor: pointer;
-   391	      white-space: nowrap;
-   392	      transition: all 0.25s ease;
-   393	    }
-   394	    .filter-btn:hover {
-   395	      background: rgba(255,255,255,0.1);
-   396	      color: #fff;
-   397	    }
-   398	    .filter-btn.active {
-   399	      background: linear-gradient(135deg, rgba(96,165,250,0.3) 0%, rgba(167,139,250,0.3) 100%);
-   400	      border-color: rgba(96,165,250,0.5);
-   401	      color: #fff;
-   402	      box-shadow: 0 0 12px rgba(96,165,250,0.15);
-   403	    }
-   404	
-   405	    /* ═══════════════════════════════════════
-   406	       NEWS TICKER — 縦自動スクロール
-   407	       ═══════════════════════════════════════ */
-   408	    .news-ticker-section {
-   409	      background: rgba(255,255,255,0.02);
-   410	      border-top: 1px solid rgba(255,255,255,0.08);
-   411	      border-bottom: 1px solid rgba(255,255,255,0.08);
-   412	      padding: 24px 0;
-   413	    }
-   414	    .news-scroll-wrapper {
-   415	      height: 420px;
-   416	      overflow: hidden;
-   417	      position: relative;
-   418	      background: rgba(15,23,42,0.4);
-   419	      border: 1px solid rgba(255,255,255,0.06);
-   420	      border-radius: 16px;
-   421	    }
-   422	    .news-scroll-wrapper::before,
-   423	    .news-scroll-wrapper::after {
-   424	      content: '';
-   425	      position: absolute;
-   426	      left: 0; right: 0;
-   427	      height: 40px;
-   428	      z-index: 2;
-   429	      pointer-events: none;
-   430	    }
-   431	    .news-scroll-wrapper::before {
-   432	      top: 0;
-   433	      background: linear-gradient(to bottom, rgba(15,23,42,0.9), transparent);
-   434	    }
-   435	    .news-scroll-wrapper::after {
-   436	      bottom: 0;
-   437	      background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);
-   438	    }
-   439	    .news-ticker-track {
-   440	      display: flex;
-   441	      flex-direction: column;
-   442	      gap: 8px;
-   443	      padding: 12px;
-   444	    }
-   445	    .news-ticker-track:hover {
-   446	      animation-play-state: paused !important;
-   447	    }
-   448	    @keyframes ticker-scroll-vertical {
-   449	      0%   { transform: translateY(0); }
-   450	      100% { transform: translateY(-50%); }
-   451	    }
-   452	
-   453	    /* ニュースカード: リッチカードデザイン */
-   454	    .news-card {
-   455	      display: flex;
-   456	      flex-direction: column;
-   457	      gap: 8px;
-   458	      padding: 14px 16px 14px 20px;
-   459	      background: rgba(255,255,255,0.04);
-   460	      border: 1px solid rgba(255,255,255,0.07);
-   461	      border-radius: 12px;
-   462	      border-left: 3px solid var(--accent-color, rgba(96,165,250,0.4));
-   463	      cursor: pointer;
-   464	      transition: all 0.25s ease;
-   465	      flex-shrink: 0;
-   466	      text-decoration: none;
-   467	      color: inherit;
-   468	      position: relative;
-   469	    }
-   470	    .news-card:hover {
-   471	      background: rgba(255,255,255,0.07);
-   472	      border-color: rgba(255,255,255,0.12);
-   473	      border-left-color: var(--accent-color, #60a5fa);
-   474	      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 12px var(--accent-glow, rgba(96,165,250,0.1));
-   475	      transform: translateX(2px);
-   476	    }
-   477	    .news-card-meta {
-   478	      display: flex;
-   479	      align-items: center;
-   480	      gap: 10px;
-   481	    }
-   482	    .news-card-date {
-   483	      font-size: 0.7rem;
-   484	      color: rgba(255,255,255,0.35);
-   485	      white-space: nowrap;
-   486	      font-variant-numeric: tabular-nums;
-   487	    }
-   488	    .news-category {
-   489	      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
-   490	      padding: 2px 8px; border-radius: 4px; white-space: nowrap;
-   491	      text-align: center; text-transform: uppercase;
-   492	    }
-   493	    .news-category.IR {
-   494	      background: rgba(96,165,250,0.15); color: #93c5fd;
-   495	    }
-   496	    .news-category.PR {
-   497	      background: rgba(167,139,250,0.15); color: #c4b5fd;
-   498	    }
-   499	    .news-card-company {
-   500	      font-size: 0.7rem;
-   501	      font-weight: 600;
-   502	      color: var(--accent-color, #93c5fd);
-   503	      white-space: nowrap;
-   504	    }
-   505	    .news-card-body {
-   506	      display: flex;
-   507	      align-items: baseline;
-   508	      gap: 0;
-   509	      min-width: 0;
-   510	      overflow: hidden;
-   511	    }
-   512	    .news-card-title {
-   513	      font-size: 0.82rem; font-weight: 700; color: #e8eaf0;
-   514	      white-space: nowrap; flex-shrink: 0;
-   515	    }
-   516	    .news-card-sep {
-   517	      color: rgba(255,255,255,0.15);
-   518	      margin: 0 10px;
-   519	      flex-shrink: 0;
-   520	      font-size: 0.7rem;
-   521	    }
-   522	    .news-card-desc {
-   523	      font-size: 0.78rem;
-   524	      color: rgba(255,255,255,0.4);
-   525	      white-space: nowrap;
-   526	      overflow: hidden;
-   527	      text-overflow: ellipsis;
-   528	      min-width: 0;
-   529	    }
-   530	    .news-empty {
-   531	      padding: 60px 20px;
-   532	      text-align: center;
-   533	      color: rgba(255,255,255,0.3);
-   534	      font-size: 0.85rem;
-   535	    }
-   536	
-   537	    /* ═══════════════════════════════════════
-   538	       SUMMARY TABLE
-   539	       ═══════════════════════════════════════ */
-   540	    .table-wrap {
-   541	      background: rgba(255,255,255,0.03);
-   542	      border: 1px solid rgba(255,255,255,0.08);
-   543	      border-radius: 16px; overflow: hidden;
-   544	    }
-   545	    .data-table { width: 100%; border-collapse: collapse; }
-   546	    .data-table th {
-   547	      background: rgba(255,255,255,0.05);
-   548	      padding: 10px 14px; text-align: right;
-   549	      font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.45);
-   550	      letter-spacing: 0.05em; white-space: nowrap;
-   551	    }
-   552	    .data-table th:first-child { text-align: left; }
-   553	    .data-table td {
-   554	      padding: 12px 14px; text-align: right;
-   555	      font-size: 0.82rem; font-weight: 500; color: #e8eaf0;
-   556	      border-top: 1px solid rgba(255,255,255,0.05);
-   557	      white-space: nowrap;
-   558	    }
-   559	    .data-table td:first-child { text-align: left; }
-   560	    .data-table tr:hover td { background: rgba(255,255,255,0.03); }
-   561	    .company-label { display: flex; align-items: center; gap: 8px; }
-   562	    .company-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-   563	    .yoy-growth { font-size: 0.75rem; font-weight: 600; }
-   564	    .yoy-positive { color: #34d399; }
-   565	    .yoy-negative { color: #f87171; }
-   566	    .margin-pill {
-   567	      display: inline-block; padding: 2px 8px; border-radius: 20px;
-   568	      font-size: 0.72rem; font-weight: 600;
-   569	    }
-   570	    .margin-high { background: rgba(52,211,153,0.15); color: #34d399; }
-   571	    .margin-mid  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
-   572	    .margin-low  { background: rgba(239,68,68,0.15);   color: #f87171; }
-   573	
-   574	    /* ═══════════════════════════════════════
-   575	       PROJECTS TABLE
-   576	       ═══════════════════════════════════════ */
-   577	    .project-status {
-   578	      display: inline-block; font-size: 0.7rem; font-weight: 600;
-   579	      padding: 3px 10px; border-radius: 20px;
-   580	    }
-   581	    .status-active   { background: rgba(52,211,153,0.15); color: #34d399; }
-   582	    .status-plan     { background: rgba(251,191,36,0.15);  color: #fbbf24; }
-   583	    .status-complete { background: rgba(148,163,184,0.15); color: #94a3b8; }
-   584	    .status-started  { background: rgba(96,165,250,0.15);  color: #93c5fd; }
-   585	
-   586	    /* ═══════════════════════════════════════
-   587	       FOOTER
-   588	       ═══════════════════════════════════════ */
-   589	    .footer {
-   590	      border-top: 1px solid rgba(255,255,255,0.06);
-   591	      padding: 28px 0; margin-top: 40px;
-   592	    }
-   593	    .footer-inner {
-   594	      display: flex; align-items: center; justify-content: space-between;
-   595	      flex-wrap: wrap; gap: 12px;
-   596	    }
-   597	    .footer-text { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
-   598	    .footer-links { display: flex; gap: 20px; }
-   599	    .footer-links a { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
-   600	    .footer-links a:hover { color: rgba(255,255,255,0.6); }
-   601	
-   602	    /* ═══════════════════════════════════════
-   603	       RESPONSIVE
-   604	       ═══════════════════════════════════════ */
-   605	    @media (max-width: 768px) {
-   606	      .nav { display: none; }
-   607	      .hero-title { font-size: 1.4rem; }
-   608	      .data-table { font-size: 0.72rem; }
-   609	      .data-table th, .data-table td { padding: 8px 8px; }
-   610	      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-   611	      .filter-group { align-self: stretch; }
-   612	      .scroll-arrow { width: 36px; height: 36px; border-radius: 10px; }
-   613	      .scroll-arrow svg { width: 16px; height: 16px; }
-   614	      .scroll-arrow-left { margin-right: 8px; }
-   615	      .scroll-arrow-right { margin-left: 8px; }
-   616	      .news-card { padding: 10px 12px 10px 16px; gap: 5px; }
-   617	      .news-card-meta { gap: 6px; }
-   618	      .news-card-title { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
-   619	      .news-card-desc { font-size: 0.7rem; }
-   620	      .news-card-sep { margin: 0 6px; }
-   621	      .news-scroll-wrapper { height: 380px; }
-   622	      .ad-placeholder { max-width: 320px; height: 50px; }
-   623	      .ad-banner-header, .ad-banner-footer { min-height: 50px; }
-   624	      .ad-banner img { max-height: 50px; }
-   625	    }
-   626	  </style>
-   627	</head>
-   628	
-   629	<body>
-   630	
-   631	  <!-- ═══ HEADER ═══ -->
-   632	  <header class="header">
-   633	    <div class="container">
-   634	      <div class="header-inner">
-   635	        <div class="logo">deveryman<span>-ir</span></div>
-   636	        <nav class="nav">
-   637	          <a href="#companies">企業カード</a>
-   638	          <a href="#news">ニュース</a>
-   639	          <a href="#summary">決算サマリー</a>
-   640	          <a href="#projects">再開発PJ</a>
-   641	        </nav>
-   642	        <div class="badge-updated">更新: {updatedAt}</div>
-   643	      </div>
-   644	    </div>
-   645	  </header>
-   646	
-   647	  <!-- ═══ HEADER AD BANNER ═══ -->
-   648	  <div class="ad-banner ad-banner-header" id="ad-header">
-   649	    <div class="ad-placeholder">
-   650	      <span class="ad-placeholder-icon">📢</span>
-   651	      AD SPACE — HEADER（728×90）
-   652	    </div>
-   653	    <!-- ★ 広告を入れる場合:
-   654	    <a href="https://example.com" target="_blank" rel="noopener sponsored">
-   655	      <img src="https://example.com/banner-728x90.png" alt="広告バナー" width="728" height="90" loading="lazy" />
-   656	    </a>
-   657	    -->
-   658	  </div>
-   659	
-   660	  <!-- ═══ HERO ═══ -->
-   661	  <section class="hero">
-   662	    <div class="container">
-   663	      <p class="hero-eyebrow">Real Estate Developer IR Dashboard</p>
-   664	      <h1 class="hero-title">大手不動産デベロッパー<br /><em>6社の最新IR情報</em></h1>
-   665	      <p class="hero-sub">三井・三菱・住友・東建・野村・東急<br />決算データ・再開発プロジェクトを一覧</p>
-   666	    </div>
-   667	  </section>
-   668	
-   669	  <!-- ═══ SECTION 1: 企業カード ═══ -->
-   670	  <section class="section" id="companies">
-   671	    <div class="container">
-   672	      <div class="section-header">
-   673	        <div class="section-title-wrap">
-   674	          <h2 class="section-title">📊 企業カード</h2>
-   675	          <span class="section-count">{companies.length}社</span>
-   676	        </div>
-   677	      </div>
-   678	      <hr class="section-divider" />
-   679	
-   680	      <div class="cards-row">
-   681	        <button class="scroll-arrow scroll-arrow-left" id="btn-left" aria-label="左へスクロール">
-   682	          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-   683	        </button>
-   684	
-   685	        <div class="cards-scroll-wrapper" id="cards-scroll">
-   686	          {companies.map((c) => {
-   687	            const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
-   688	            return (
-   689	              <article class="company-card">
-   690	                <div class="card-header">
-   691	                  <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
-   692	                  <div class="card-header-content">
-   693	                    <div class="card-top-row">
-   694	                      <span class="company-name">{c.name}</span>
-   695	                    </div>
-   696	                    <span class="sec-code">東証 {c.secCode}</span>
-   697	                  </div>
-   698	                </div>
-   699	                <div class="card-body">
-   700	                  <div class="fiscal-badge">{c.period} 決算</div>
-   701	                  <div class="metrics-mini">
-   702	                    <div class="metric-row">
-   703	                      <span class="metric-label">営業収益</span>
-   704	                      <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
-   705	                    </div>
-   706	                    <div class="metric-row">
-   707	                      <span class="metric-label">営業利益</span>
-   708	                      <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
-   709	                    </div>
-   710	                  </div>
-   711	                  <div class="margin-bar-wrap">
-   712	                    <div class="margin-bar-label">
-   713	                      <span>利益率</span>
-   714	                      <span>{c.profitMargin.toFixed(1)}%</span>
-   715	                    </div>
-   716	                    <div class="margin-bar-track">
-   717	                      <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
-   718	                    </div>
-   719	                  </div>
-   720	                  <div class="card-footer">
-   721	                    <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong></span>
-   722	                    <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">IR ↗</a>
-   723	                  </div>
-   724	                </div>
-   725	              </article>
-   726	            );
-   727	          })}
-   728	        </div>
-   729	
-   730	        <button class="scroll-arrow scroll-arrow-right" id="btn-right" aria-label="右へスクロール">
-   731	          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-   732	        </button>
-   733	      </div>
-   734	    </div>
-   735	  </section>
-   736	
-   737	  <!-- ═══ SECTION 2: 最新ニュース（JSのみでレンダリング） ═══ -->
-   738	  <section class="news-ticker-section" id="news">
-   739	    <div class="container">
-   740	      <div class="section-header">
-   741	        <div class="section-title-wrap">
-   742	          <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
-   743	          <span class="section-count">自動スクロール（ホバーで停止）</span>
-   744	        </div>
-   745	        <div class="filter-group" id="news-filter">
-   746	          <button class="filter-btn active" data-filter="all">すべて</button>
-   747	          <button class="filter-btn" data-filter="三井不動産">三井</button>
-   748	          <button class="filter-btn" data-filter="三菱地所">三菱</button>
-   749	          <button class="filter-btn" data-filter="住友不動産">住友</button>
-   750	          <button class="filter-btn" data-filter="東京建物">東建</button>
-   751	          <button class="filter-btn" data-filter="野村不動産HD">野村</button>
-   752	          <button class="filter-btn" data-filter="東急不動産HD">東急</button>
-   753	        </div>
-   754	      </div>
-   755	    </div>
-   756	    <div class="container">
-   757	      <div class="news-scroll-wrapper">
-   758	        <div class="news-ticker-track" id="news-ticker-track">
-   759	          <!-- ★ JSの renderNews() で描画。SSRでは空コンテナのみ -->
-   760	        </div>
-   761	      </div>
-   762	    </div>
-   763	  </section>
-   764	
-   765	  <!-- ═══ SECTION 3: 最新決算サマリー ═══ -->
-   766	  <section class="section" id="summary">
-   767	    <div class="container">
-   768	      <div class="section-header">
-   769	        <div class="section-title-wrap">
-   770	          <h2 class="section-title">📋 最新決算サマリー</h2>
-   771	          <span class="section-count">単位: 億円</span>
-   772	        </div>
-   773	      </div>
-   774	      <hr class="section-divider" />
-   775	
-   776	      <div class="table-wrap" style="overflow-x:auto;">
-   777	        <table class="data-table">
-   778	          <thead>
-   779	            <tr>
-   780	              <th>企業名</th>
-   781	              <th>決算期</th>
-   782	              <th>営業収益</th>
-   783	              <th>前期比</th>
-   784	              <th>営業利益</th>
-   785	              <th>利益率</th>
-   786	              <th>経常利益</th>
-   787	              <th>純利益</th>
-   788	              <th>ROE</th>
-   789	              <th>株価</th>
-   790	            </tr>
-   791	          </thead>
-   792	          <tbody>
-   793	            {companies.map((c) => {
-   794	              const col = COMPANY_COLORS[c.name] ?? { bg: "#555", accent: "#555", text: "#eee" };
-   795	              const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
-   796	              const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
-   797	              return (
-   798	                <tr>
-   799	                  <td>
-   800	                    <div class="company-label">
-   801	                      <div class="company-dot" style={`background:${col.accent}`} />
-   802	                      {c.name}
-   803	                    </div>
-   804	                  </td>
-   805	                  <td>{c.period}</td>
-   806	                  <td>{c.revenue.toLocaleString()}</td>
-   807	                  <td><span class={`yoy-growth ${yoyClass}`}>{c.yoyGrowth > 0 ? '+' : ''}{c.yoyGrowth.toFixed(1)}%</span></td>
-   808	                  <td>{c.operatingProfit.toLocaleString()}</td>
-   809	                  <td><span class={`margin-pill ${mClass}`}>{c.profitMargin.toFixed(1)}%</span></td>
-   810	                  <td>{c.ordinaryProfit.toLocaleString()}</td>
-   811	                  <td>{c.netProfit.toLocaleString()}</td>
-   812	                  <td>{c.roe.toFixed(1)}%</td>
-   813	                  <td>¥{c.stockPrice.toLocaleString()}</td>
-   814	                </tr>
-   815	              );
-   816	            })}
-   817	          </tbody>
-   818	        </table>
-   819	      </div>
-   820	    </div>
-   821	  </section>
-   822	
-   823	  <!-- ═══ SECTION 4: 再開発プロジェクト ═══ -->
-   824	  <section class="section" id="projects">
-   825	    <div class="container">
-   826	      <div class="section-header">
-   827	        <div class="section-title-wrap">
-   828	          <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
-   829	          <span class="section-count">{projects.length} 件</span>
-   830	        </div>
-   831	      </div>
-   832	      <hr class="section-divider" />
-   833	
-   834	      <div class="table-wrap" style="overflow-x:auto;">
-   835	        <table class="data-table">
-   836	          <thead>
-   837	            <tr>
-   838	              <th>企業名</th>
-   839	              <th style="text-align:left;">プロジェクト名</th>
-   840	              <th>エリア</th>
-   841	              <th>規模</th>
-   842	              <th>完成予定</th>
-   843	              <th>状況</th>
-   844	            </tr>
-   845	          </thead>
-   846	          <tbody>
-   847	            {projects.map((p) => {
-   848	              const col = COMPANY_COLORS[p.company] ?? { bg: "#555", accent: "#555", text: "#eee" };
-   849	              const statusClass = projectStatusMap[p.status] ?? "status-plan";
-   850	              return (
-   851	                <tr>
-   852	                  <td>
-   853	                    <div class="company-label">
-   854	                      <div class="company-dot" style={`background:${col.accent}`} />
-   855	                      {p.company}
-   856	                    </div>
-   857	                  </td>
-   858	                  <td style="text-align:left;">{p.name}</td>
-   859	                  <td>{p.location}</td>
-   860	                  <td>{p.scale}</td>
-   861	                  <td>{p.year}年</td>
-   862	                  <td>
-   863	                    <span class={`project-status ${statusClass}`}>
-   864	                      {p.status}
-   865	                    </span>
-   866	                  </td>
-   867	                </tr>
-   868	              );
-   869	            })}
-   870	          </tbody>
-   871	        </table>
-   872	      </div>
-   873	    </div>
-   874	  </section>
-   875	
-   876	  <!-- ═══ FOOTER AD BANNER ═══ -->
-   877	  <div class="ad-banner ad-banner-footer" id="ad-footer">
-   878	    <div class="ad-placeholder">
-   879	      <span class="ad-placeholder-icon">📢</span>
-   880	      AD SPACE — FOOTER（728×90）
-   881	    </div>
-   882	    <!-- ★ 広告を入れる場合:
-   883	    <a href="https://example.com" target="_blank" rel="noopener sponsored">
-   884	      <img src="https://example.com/banner-728x90.png" alt="広告バナー" width="728" height="90" loading="lazy" />
-   885	    </a>
-   886	    -->
-   887	  </div>
-   888	
-   889	  <!-- ═══ FOOTER ═══ -->
-   890	  <footer class="footer">
-   891	    <div class="container">
-   892	      <div class="footer-inner">
-   893	        <p class="footer-text">© 2026 deveryman-ir. データはモック値を含みます。投資判断は自己責任でお願いします。</p>
-   894	        <div class="footer-links">
-   895	          <a href="https://twitter.com/deveryman_inv" target="_blank">X (Twitter)</a>
-   896	          <a href="https://disclosure.edinet-fsa.go.jp/" target="_blank">EDINET</a>
-   897	        </div>
-   898	      </div>
-   899	    </div>
-   900	  </footer>
-   901	
-   902	  <!-- ═══════════════════════════════════════
-   903	       SCRIPTS
-   904	       ═══════════════════════════════════════ -->
-   905	  <script is:inline define:vars={{ newsItems }}>
-   906	    // ────────────────────────────────────
-   907	    //  renderNews: ニュースをJSのみで描画
-   908	    // ────────────────────────────────────
-   909	    function renderNews(filterValue) {
-   910	      var track = document.getElementById('news-ticker-track');
-   911	      if (!track) return;
-   912	
-   913	      var filtered = filterValue === 'all'
-   914	        ? newsItems
-   915	        : newsItems.filter(function(n) { return n.company === filterValue; });
-   916	
-   917	      if (filtered.length === 0) {
-   918	        track.innerHTML = '<div class="news-empty">現在表示できるニュースはありません</div>';
-   919	        track.style.animation = 'none';
-   920	        return;
-   921	      }
-   922	
-   923	      var displayNews = filterValue === 'all'
-   924	        ? filtered.concat(filtered)
-   925	        : filtered;
-   926	
-   927	      var colorMap = {
-   928	        '三井不動産':   '#4a90d9',
-   929	        '三菱地所':     '#e85555',
-   930	        '住友不動産':   '#3aaa5c',
-   931	        '東京建物':     '#d4813a',
-   932	        '野村不動産HD': '#6a6adc',
-   933	        '東急不動産HD': '#28b0b0'
-   934	      };
-   935	
-   936	      var html = displayNews.map(function(n) {
-   937	        var accent = colorMap[n.company] || '#60a5fa';
-   938	        return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener"'
-   939	          + ' style="--accent-color:' + accent + '; --accent-glow:' + accent + '33;">'
-   940	          + '<span class="news-card-meta">'
-   941	            + '<span class="news-card-date">' + n.date + '</span>'
-   942	            + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
-   943	            + '<span class="news-card-company">' + n.company + '</span>'
-   944	          + '</span>'
-   945	          + '<span class="news-card-body">'
-   946	            + '<span class="news-card-title">' + n.title + '</span>'
-   947	            + '<span class="news-card-sep">\u2014</span>'
-   948	            + '<span class="news-card-desc">' + n.desc + '</span>'
-   949	          + '</span>'
-   950	        + '</a>';
-   951	      }).join('');
-   952	
-   953	      track.innerHTML = html;
-   954	
-   955	      track.style.animation = 'none';
-   956	      if (filterValue === 'all') {
-   957	        void track.offsetHeight;
-   958	        track.style.animation = 'ticker-scroll-vertical 50s linear infinite';
-   959	      }
-   960	    }
-   961	
-   962	    // ────────────────────────────────────
-   963	    //  フィルターボタン
-   964	    // ────────────────────────────────────
-   965	    document.querySelectorAll('.filter-btn').forEach(function(btn) {
-   966	      btn.addEventListener('click', function(e) {
-   967	        document.querySelectorAll('.filter-btn').forEach(function(b) {
-   968	          b.classList.remove('active');
-   969	        });
-   970	        e.currentTarget.classList.add('active');
-   971	        renderNews(e.currentTarget.getAttribute('data-filter'));
-   972	      });
-   973	    });
-   974	
-   975	    // 初期描画
-   976	    renderNews('all');
-   977	
-   978	    // ────────────────────────────────────
-   979	    //  企業カード横スクロールボタン
-   980	    // ────────────────────────────────────
-   981	    var wrapper = document.getElementById('cards-scroll');
-   982	    var btnLeft = document.getElementById('btn-left');
-   983	    var btnRight = document.getElementById('btn-right');
-   984	    if (wrapper && btnLeft && btnRight) {
-   985	      btnLeft.onclick = function() {
-   986	        wrapper.scrollBy({ left: -230, behavior: 'smooth' });
-   987	      };
-   988	      btnRight.onclick = function() {
-   989	        wrapper.scrollBy({ left: 230, behavior: 'smooth' });
-   990	      };
-   991	    }
-   992	  </script>
-   993	
-   994	</body>
-   995	</html>
+---
+// deveryman-ir | src/pages/index.astro
+// Updated: 2026-03-09 — Build fix + News card rich UI + Ad banners
+
+const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
+  "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
+  "三菱地所":     { bg: "#c41e3a", accent: "#e85555", text: "#fbeaea" },
+  "住友不動産":   { bg: "#1a5e2a", accent: "#3aaa5c", text: "#e8f5ec" },
+  "東京建物":     { bg: "#8b4513", accent: "#d4813a", text: "#fdf0e0" },
+  "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc", text: "#eaeaf8" },
+  "東急不動産HD": { bg: "#006060", accent: "#28b0b0", text: "#e0f5f5" },
+};
+
+const companies = [
+  {
+    name: "三井不動産", secCode: "8801", period: "2025/3",
+    revenue: 28000, operatingProfit: 4200, ordinaryProfit: 3800, netProfit: 1500,
+    profitMargin: 15.0, stockPrice: 2086, yoyGrowth: 6.2, roe: 8.2,
+    irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/"
+  },
+  {
+    name: "三菱地所", secCode: "8802", period: "2025/3",
+    revenue: 32000, operatingProfit: 5500, ordinaryProfit: 5200, netProfit: 2800,
+    profitMargin: 17.2, stockPrice: 2315, yoyGrowth: 4.8, roe: 9.1,
+    irLink: "https://www.mec.co.jp/j/investor/"
+  },
+  {
+    name: "住友不動産", secCode: "8830", period: "2025/3",
+    revenue: 11000, operatingProfit: 2200, ordinaryProfit: 2000, netProfit: 1200,
+    profitMargin: 20.0, stockPrice: 4210, yoyGrowth: 3.1, roe: 12.3,
+    irLink: "https://www.sumitomo-rd.co.jp/ir/"
+  },
+  {
+    name: "東京建物", secCode: "8804", period: "2024/12",
+    revenue: 5800, operatingProfit: 900, ordinaryProfit: 850, netProfit: 500,
+    profitMargin: 15.5, stockPrice: 1982, yoyGrowth: -1.2, roe: 7.8,
+    irLink: "https://www.tatemono.com/ir/"
+  },
+  {
+    name: "野村不動産HD", secCode: "3231", period: "2025/3",
+    revenue: 7200, operatingProfit: 1100, ordinaryProfit: 1050, netProfit: 600,
+    profitMargin: 15.3, stockPrice: 3620, yoyGrowth: 8.5, roe: 10.2,
+    irLink: "https://www.nomura-re-hd.co.jp/ir/"
+  },
+  {
+    name: "東急不動産HD", secCode: "3289", period: "2025/3",
+    revenue: 10500, operatingProfit: 1800, ordinaryProfit: 1700, netProfit: 950,
+    profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
+    irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
+  },
+];
+
+const newsItems = [
+  { date: "2025-02-14", company: "東京建物", category: "IR", title: "2024年12月期 通期決算発表", desc: "売上高前期比+8%、営業利益は過去最高を更新。分譲住宅の好調が寄与。", url: "https://www.tatemono.com/ir/" },
+  { date: "2025-02-10", company: "三菱地所", category: "PR", title: "丸の内エリア新棟着工", desc: "丸の内2-1-1地区の複合ビル（延床12万㎡）が着工。2028年竣工予定。", url: "https://www.mec.co.jp/j/news/" },
+  { date: "2025-02-07", company: "三井不動産", category: "PR", title: "日本橋再開発第3期着工", desc: "COREDO室町エリア隣接地に複合施設を着工。商業・オフィス・レジデンスの複合開発。", url: "https://www.mitsuifudosan.co.jp/corporate/news/" },
+  { date: "2025-01-30", company: "住友不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益8,200億円（前年同期比+5%）。分譲マンション引渡し好調。", url: "https://www.sumitomo-rd.co.jp/ir/" },
+  { date: "2025-01-28", company: "野村不動産HD", category: "PR", title: "渋谷道玄坂再開発発表", desc: "延床約8万㎡のオフィス・ホテル複合施設。2027年竣工に向け計画が進む。", url: "https://www.nomura-re-hd.co.jp/news/" },
+  { date: "2025-01-25", company: "東急不動産HD", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計売上9,200億円。渋谷・港区エリアの開発案件が順調に進捗。", url: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
+  { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
+];
+
+const projects = [
+  { company: "三菱地所", name: "大手町・丸の内・有楽町地区 再開発", location: "千代田区", scale: "延床約50万㎡", status: "進行中", year: "2027" },
+  { company: "三井不動産", name: "日本橋1丁目中地区 再開発", location: "中央区日本橋", scale: "延床約26万㎡", status: "着工済", year: "2026" },
+  { company: "野村不動産HD", name: "渋谷区道玄坂1丁目 再開発", location: "渋谷区", scale: "延床約8万㎡", status: "計画中", year: "2027" },
+  { company: "東急不動産HD", name: "渋谷駅東口 開発", location: "渋谷区", scale: "延床約16万㎡", status: "進行中", year: "2028" },
+  { company: "住友不動産", name: "西新宿三丁目 再開発", location: "新宿区", scale: "延床約27万㎡", status: "計画中", year: "2029" },
+  { company: "東京建物", name: "八重洲二丁目北 再開発", location: "中央区", scale: "延床約7万㎡", status: "完成", year: "2024" },
+];
+
+const projectStatusMap: Record<string, string> = {
+  "進行中": "status-active",
+  "着工済": "status-started",
+  "計画中": "status-plan",
+  "完成": "status-complete"
+};
+
+const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
+---
+
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>大手不動産デベロッパー IR ダッシュボード | deveryman-ir</title>
+  <meta name="description" content="三井不動産・三菱地所など大手6社の最新決算・再開発情報をまとめて確認" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+  <style is:global>
+    /* === RESET & BASE === */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Noto Sans JP', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 100%);
+      color: #e8eaf0;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* === LAYOUT === */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* === HEADER === */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 15, 30, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 0;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo span {
+      font-weight: 400;
+      opacity: 0.7;
+    }
+    .nav {
+      display: flex;
+      gap: 24px;
+    }
+    .nav a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.2s;
+    }
+    .nav a:hover {
+      color: #fff;
+    }
+    .badge-updated {
+      font-size: 0.75rem;
+      background: rgba(96, 165, 250, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* === AD BANNER SLOTS === */
+    .ad-banner {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .ad-banner-header {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 90px;
+      padding: 8px 0;
+    }
+    .ad-banner-footer {
+      background: rgba(255, 255, 255, 0.03);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 90px;
+      padding: 8px 0;
+    }
+    .ad-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 728px;
+      height: 90px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+    .ad-placeholder-icon {
+      font-size: 1rem;
+      opacity: 0.4;
+    }
+    .ad-banner img {
+      max-width: 728px;
+      width: 100%;
+      height: auto;
+      max-height: 90px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .ad-banner a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* === HERO === */
+    .hero {
+      padding: 40px 0 24px;
+      background: radial-gradient(ellipse at 50% -20%, rgba(96, 165, 250, 0.12) 0%, transparent 70%);
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .hero-title em {
+      font-style: normal;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.5);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* === SECTION COMMON === */
+    .section {
+      padding: 32px 0;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .section-count {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .section-divider {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+    }
+
+    /* === COMPANY CARDS ROW === */
+    .cards-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .scroll-arrow {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+    .scroll-arrow::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.25) 0%, rgba(167, 139, 250, 0.25) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+    }
+    .scroll-arrow:hover {
+      border-color: rgba(96, 165, 250, 0.5);
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 0 24px rgba(96, 165, 250, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    .scroll-arrow:hover::before {
+      opacity: 1;
+    }
+    .scroll-arrow:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.15);
+    }
+    .scroll-arrow svg {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.2s ease;
+    }
+    .scroll-arrow:hover svg {
+      transform: scale(1.15);
+    }
+    .scroll-arrow-left {
+      margin-right: 14px;
+    }
+    .scroll-arrow-right {
+      margin-left: 14px;
+    }
+    .cards-scroll-wrapper {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 4px 0 8px;
+      flex: 1;
+      min-width: 0;
+    }
+    .cards-scroll-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+    .company-card {
+      min-width: 200px;
+      max-width: 210px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      cursor: pointer;
+    }
+    .company-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .card-header {
+      padding: 10px 12px 8px;
+      position: relative;
+    }
+    .card-header-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.9;
+    }
+    .card-header-content {
+      position: relative;
+      z-index: 1;
+    }
+    .card-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .company-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sec-code {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .card-body {
+      padding: 10px 12px 12px;
+    }
+    .fiscal-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      width: fit-content;
+      margin-bottom: 8px;
+    }
+    .metrics-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .metric-label {
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .metric-value {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #e8eaf0;
+    }
+    .margin-bar-wrap {
+      margin-bottom: 10px;
+    }
+    .margin-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 4px;
+    }
+    .margin-bar-track {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .margin-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #34d399, #10b981);
+      transition: width 0.8s ease;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .stock-info {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .stock-info strong {
+      color: #e8eaf0;
+      font-weight: 600;
+    }
+    .ir-link {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(96, 165, 250, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .ir-link:hover {
+      background: rgba(96, 165, 250, 0.2);
+    }
+
+    /* === FILTER BUTTONS === */
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .filter-group::-webkit-scrollbar {
+      display: none;
+    }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, rgba(167, 139, 250, 0.3) 100%);
+      border-color: rgba(96, 165, 250, 0.5);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(96, 165, 250, 0.15);
+    }
+
+    /* === NEWS TICKER === */
+    .news-ticker-section {
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 0;
+    }
+    .news-scroll-wrapper {
+      height: 440px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+    }
+    .news-scroll-wrapper::before,
+    .news-scroll-wrapper::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 48px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .news-scroll-wrapper::before {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), transparent);
+    }
+    .news-scroll-wrapper::after {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+    }
+    .news-ticker-track {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 16px;
+    }
+    .news-ticker-track:hover {
+      animation-play-state: paused !important;
+    }
+    @keyframes ticker-scroll-vertical {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-50%);
+      }
+    }
+
+    /* === NEWS CARD: RICH DESIGN === */
+    .news-card {
+      display: block;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+    .news-card:first-child {
+      border-radius: 12px 12px 0 0;
+    }
+    .news-card:last-child {
+      border-radius: 0 0 12px 12px;
+      border-bottom: none;
+    }
+    .news-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .news-card-row1 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .news-card-date {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .news-category {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .news-category.IR {
+      background: rgba(96, 165, 250, 0.15);
+      color: #93c5fd;
+    }
+    .news-category.PR {
+      background: rgba(167, 139, 250, 0.15);
+      color: #c4b5fd;
+    }
+    .news-card-company-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #e8eaf0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .news-card-company-name {
+      color: var(--accent-color, #93c5fd);
+    }
+    .news-card-row2 {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-left: 0;
+    }
+    .news-empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.85rem;
+    }
+
+    /* === SUMMARY TABLE === */
+    .table-wrap {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 14px;
+      text-align: right;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .data-table th:first-child {
+      text-align: left;
+    }
+    .data-table td {
+      padding: 12px 14px;
+      text-align: right;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #e8eaf0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+    .data-table td:first-child {
+      text-align: left;
+    }
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .company-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .company-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .yoy-growth {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .yoy-positive {
+      color: #34d399;
+    }
+    .yoy-negative {
+      color: #f87171;
+    }
+    .margin-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .margin-high {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+    }
+    .margin-mid {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+    .margin-low {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
+
+    /* === PROJECTS TABLE === */
+    .project-status {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .status-active {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+    }
+    .status-plan {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+    .status-complete {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+    }
+    .status-started {
+      background: rgba(96, 165, 250, 0.15);
+      color: #93c5fd;
+    }
+
+    /* === FOOTER === */
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 28px 0;
+      margin-top: 40px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-text {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .footer-links a:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      .nav {
+        display: none;
+      }
+      .hero-title {
+        font-size: 1.4rem;
+      }
+      .data-table {
+        font-size: 0.72rem;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 8px 8px;
+      }
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .filter-group {
+        align-self: stretch;
+      }
+      .scroll-arrow {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+      .scroll-arrow svg {
+        width: 16px;
+        height: 16px;
+      }
+      .scroll-arrow-left {
+        margin-right: 8px;
+      }
+      .scroll-arrow-right {
+        margin-left: 8px;
+      }
+      .news-card {
+        padding: 12px 14px;
+      }
+      .news-card-row1 {
+        gap: 6px;
+      }
+      .news-card-company-title {
+        font-size: 0.78rem;
+      }
+      .news-card-row2 {
+        font-size: 0.7rem;
+      }
+      .news-scroll-wrapper {
+        height: 380px;
+      }
+      .ad-placeholder {
+        max-width: 320px;
+        height: 50px;
+      }
+      .ad-banner-header,
+      .ad-banner-footer {
+        min-height: 50px;
+      }
+      .ad-banner img {
+        max-height: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">deveryman<span>-ir</span></div>
+        <nav class="nav">
+          <a href="#companies">企業カード</a>
+          <a href="#news">ニュース</a>
+          <a href="#summary">決算サマリー</a>
+          <a href="#projects">再開発PJ</a>
+        </nav>
+        <div class="badge-updated">更新: {updatedAt}</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HEADER AD BANNER -->
+  <div class="ad-banner ad-banner-header" id="ad-header">
+    <div class="ad-placeholder">
+      <span class="ad-placeholder-icon">📢</span>
+      AD SPACE — HEADER（728×90）
+    </div>
+    <!-- To use: replace .ad-placeholder with:
+    <a href="https://example.com" target="_blank" rel="noopener sponsored">
+      <img src="https://example.com/banner-728x90.png" alt="Ad" width="728" height="90" loading="lazy" />
+    </a>
+    -->
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">Real Estate Developer IR Dashboard</p>
+      <h1 class="hero-title">大手不動産デベロッパー<br /><em>6社の最新IR情報</em></h1>
+      <p class="hero-sub">三井・三菱・住友・東建・野村・東急<br />決算データ・再開発プロジェクトを一覧</p>
+    </div>
+  </section>
+
+  <!-- SECTION 1: Company Cards -->
+  <section class="section" id="companies">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">📊 企業カード</h2>
+          <span class="section-count">{companies.length}社</span>
+        </div>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="cards-row">
+        <button class="scroll-arrow scroll-arrow-left" id="btn-left" aria-label="左へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+
+        <div class="cards-scroll-wrapper" id="cards-scroll">
+          {companies.map((c) => {
+            const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
+            return (
+              <article class="company-card">
+                <div class="card-header">
+                  <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
+                  <div class="card-header-content">
+                    <div class="card-top-row">
+                      <span class="company-name">{c.name}</span>
+                    </div>
+                    <span class="sec-code">東証 {c.secCode}</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="fiscal-badge">{c.period} 決算</div>
+                  <div class="metrics-mini">
+                    <div class="metric-row">
+                      <span class="metric-label">営業収益</span>
+                      <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
+                    </div>
+                    <div class="metric-row">
+                      <span class="metric-label">営業利益</span>
+                      <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
+                    </div>
+                  </div>
+                  <div class="margin-bar-wrap">
+                    <div class="margin-bar-label">
+                      <span>利益率</span>
+                      <span>{c.profitMargin.toFixed(1)}%</span>
+                    </div>
+                    <div class="margin-bar-track">
+                      <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong></span>
+                    <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">IR ↗</a>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <button class="scroll-arrow scroll-arrow-right" id="btn-right" aria-label="右へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: News (JS-rendered only) -->
+  <section class="news-ticker-section" id="news">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
+          <span class="section-count">自動スクロール（ホバーで停止）</span>
+        </div>
+        <div class="filter-group" id="news-filter">
+          <button class="filter-btn active" data-filter="all">すべて</button>
+          <button class="filter-btn" data-filter="三井不動産">三井</button>
+          <button class="filter-btn" data-filter="三菱地所">三菱</button>
+          <button class="filter-btn" data-filter="住友不動産">住友</button>
+          <button class="filter-btn" data-filter="東京建物">東建</button>
+          <button class="filter-btn" data-filter="野村不動産HD">野村</button>
+          <button class="filter-btn" data-filter="東急不動産HD">東急</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="news-scroll-wrapper">
+        <div class="news-ticker-track" id="news-ticker-track">
+          <!-- renderNews() populates this via JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Financial Summary -->
+  <section class="section" id="summary">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">📋 最新決算サマリー</h2>
+          <span class="section-count">単位: 億円</span>
+        </div>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>企業名</th>
+              <th>決算期</th>
+              <th>営業収益</th>
+              <th>前期比</th>
+              <th>営業利益</th>
+              <th>利益率</th>
+              <th>経常利益</th>
+              <th>純利益</th>
+              <th>ROE</th>
+              <th>株価</th>
+            </tr>
+          </thead>
+          <tbody>
+            {companies.map((c) => {
+              const col = COMPANY_COLORS[c.name] ?? { bg: "#555", accent: "#555", text: "#eee" };
+              const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
+              const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
+              return (
+                <tr>
+                  <td>
+                    <div class="company-label">
+                      <div class="company-dot" style={`background:${col.accent}`} />
+                      {c.name}
+                    </div>
+                  </td>
+                  <td>{c.period}</td>
+                  <td>{c.revenue.toLocaleString()}</td>
+                  <td><span class={`yoy-growth ${yoyClass}`}>{c.yoyGrowth > 0 ? '+' : ''}{c.yoyGrowth.toFixed(1)}%</span></td>
+                  <td>{c.operatingProfit.toLocaleString()}</td>
+                  <td><span class={`margin-pill ${mClass}`}>{c.profitMargin.toFixed(1)}%</span></td>
+                  <td>{c.ordinaryProfit.toLocaleString()}</td>
+                  <td>{c.netProfit.toLocaleString()}</td>
+                  <td>{c.roe.toFixed(1)}%</td>
+                  <td>¥{c.stockPrice.toLocaleString()}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: Projects -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
+          <span class="section-count">{projects.length} 件</span>
+        </div>
+      </div>
+      <hr class="section-divider" />
+
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>企業名</th>
+              <th style="text-align:left;">プロジェクト名</th>
+              <th>エリア</th>
+              <th>規模</th>
+              <th>完成予定</th>
+              <th>状況</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map((p) => {
+              const col = COMPANY_COLORS[p.company] ?? { bg: "#555", accent: "#555", text: "#eee" };
+              const statusClass = projectStatusMap[p.status] ?? "status-plan";
+              return (
+                <tr>
+                  <td>
+                    <div class="company-label">
+                      <div class="company-dot" style={`background:${col.accent}`} />
+                      {p.company}
+                    </div>
+                  </td>
+                  <td style="text-align:left;">{p.name}</td>
+                  <td>{p.location}</td>
+                  <td>{p.scale}</td>
+                  <td>{p.year}年</td>
+                  <td>
+                    <span class={`project-status ${statusClass}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER AD BANNER -->
+  <div class="ad-banner ad-banner-footer" id="ad-footer">
+    <div class="ad-placeholder">
+      <span class="ad-placeholder-icon">📢</span>
+      AD SPACE — FOOTER（728×90）
+    </div>
+    <!-- To use: replace .ad-placeholder with:
+    <a href="https://example.com" target="_blank" rel="noopener sponsored">
+      <img src="https://example.com/banner-728x90.png" alt="Ad" width="728" height="90" loading="lazy" />
+    </a>
+    -->
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-text">&copy; 2026 deveryman-ir. データはモック値を含みます。投資判断は自己責任でお願いします。</p>
+        <div class="footer-links">
+          <a href="https://twitter.com/deveryman_inv" target="_blank">X (Twitter)</a>
+          <a href="https://disclosure.edinet-fsa.go.jp/" target="_blank">EDINET</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script is:inline define:vars={{ newsItems }}>
+    function renderNews(filterValue) {
+      var track = document.getElementById('news-ticker-track');
+      if (!track) return;
+
+      var filtered = filterValue === 'all'
+        ? newsItems
+        : newsItems.filter(function(n) { return n.company === filterValue; });
+
+      if (filtered.length === 0) {
+        track.innerHTML = '<div class="news-empty">現在表示できるニュースはありません</div>';
+        track.style.animation = 'none';
+        return;
+      }
+
+      var displayNews = filterValue === 'all'
+        ? filtered.concat(filtered)
+        : filtered;
+
+      var colorMap = {
+        '三井不動産':   '#4a90d9',
+        '三菱地所':     '#e85555',
+        '住友不動産':   '#3aaa5c',
+        '東京建物':     '#d4813a',
+        '野村不動産HD': '#6a6adc',
+        '東急不動産HD': '#28b0b0'
+      };
+
+      var html = displayNews.map(function(n) {
+        var accent = colorMap[n.company] || '#60a5fa';
+        return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener"'
+          + ' style="--accent-color:' + accent + ';">'
+          + '<div class="news-card-row1">'
+            + '<span class="news-card-date">' + n.date + '</span>'
+            + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
+            + '<span class="news-card-company-title">'
+              + '<span class="news-card-company-name">' + n.company + '</span>'
+              + ' — ' + n.title
+            + '</span>'
+          + '</div>'
+          + '<div class="news-card-row2">'
+            + n.desc
+          + '</div>'
+        + '</a>';
+      }).join('');
+
+      track.innerHTML = html;
+
+      track.style.animation = 'none';
+      if (filterValue === 'all') {
+        void track.offsetHeight;
+        track.style.animation = 'ticker-scroll-vertical 50s linear infinite';
+      }
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        document.querySelectorAll('.filter-btn').forEach(function(b) {
+          b.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
+        renderNews(e.currentTarget.getAttribute('data-filter'));
+      });
+    });
+
+    renderNews('all');
+
+    var wrapper = document.getElementById('cards-scroll');
+    var btnLeft = document.getElementById('btn-left');
+    var btnRight = document.getElementById('btn-right');
+    if (wrapper && btnLeft && btnRight) {
+      btnLeft.onclick = function() {
+        wrapper.scrollBy({ left: -230, behavior: 'smooth' });
+      };
+      btnRight.onclick = function() {
+        wrapper.scrollBy({ left: 230, behavior: 'smooth' });
+      };
+    }
+  </script>
+
+</body>
+</html>
