@@ -1,6 +1,7 @@
 ---
 // deveryman-ir | src/pages/index.astro
-// Updated: 2025-02-28
+// 大手不動産デベロッパー6社 IRダッシュボード
+// Updated: 2026-03-09
 
 const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
   "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
@@ -69,10 +70,16 @@ const projects = [
   { company: "東京建物", name: "八重洲二丁目北 再開発", location: "中央区", scale: "延床約7万㎡", status: "完成", year: "2024" },
 ];
 
-const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
+const projectStatusMap: Record<string, string> = {
+  "進行中": "status-active",
+  "着工済": "status-started",
+  "計画中": "status-plan",
+  "完成": "status-complete"
+};
+
+const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
 ---
 
-<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -80,32 +87,38 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
   <title>大手不動産デベロッパー IR ダッシュボード | deveryman-ir</title>
   <meta name="description" content="三井不動産・三菱地所など大手6社の最新決算・再開発情報をまとめて確認" />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── RESET & BASE ─── */
+    /* ═══════════════════════════════════════
+       RESET & BASE
+       ═══════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Noto Sans JP", -apple-system, sans-serif;
-      background: #0a0f1e;
+      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 100%);
       color: #e8eaf0;
       min-height: 100vh;
       line-height: 1.6;
     }
     a { color: inherit; text-decoration: none; }
 
-    /* ─── LAYOUT ─── */
+    /* ═══════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════ */
     .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
-    /* ─── HEADER ─── */
+    /* ═══════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════ */
     .header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(10,15,30,0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(10,15,30,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.08);
       padding: 16px 0;
     }
@@ -130,7 +143,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       color: #93c5fd; padding: 4px 12px; border-radius: 20px;
     }
 
-    /* ─── HERO ─── */
+    /* ═══════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════ */
     .hero {
       padding: 40px 0 24px;
       background: radial-gradient(ellipse at 50% -20%, rgba(96,165,250,0.12) 0%, transparent 70%);
@@ -154,46 +169,89 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       max-width: 480px; margin: 0 auto;
     }
 
-    /* ─── SECTION HEADER ─── */
+    /* ═══════════════════════════════════════
+       SECTION COMMON
+       ═══════════════════════════════════════ */
     .section { padding: 32px 0; }
     .section-header {
-      display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
     }
-    .section-title {
-      font-size: 1.1rem; font-weight: 700;
+    .section-title-wrap {
+      display: flex; align-items: baseline; gap: 12px;
     }
-    .section-count {
-      font-size: 0.75rem; color: rgba(255,255,255,0.4);
-    }
+    .section-title { font-size: 1.1rem; font-weight: 700; }
+    .section-count { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
     .section-divider {
       border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
     }
 
-    /* ─── COMPANY CARDS (横1行スクロール) ─── */
-    .cards-nav {
-      display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px;
+    /* ═══════════════════════════════════════
+       COMPANY CARDS — ボタンとカード同一行
+       ═══════════════════════════════════════ */
+    .cards-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
     }
-    .nav-btn {
-      background: rgba(255,255,255,0.08);
+
+    /* スタイリッシュ矢印ボタン */
+    .scroll-arrow {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
       border: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
-      width: 32px; height: 32px;
-      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.7);
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 1rem;
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
     }
-    .nav-btn:hover { background: rgba(255,255,255,0.15); }
+    .scroll-arrow::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(96,165,250,0.25) 0%, rgba(167,139,250,0.25) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+    }
+    .scroll-arrow:hover {
+      border-color: rgba(96,165,250,0.5);
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 0 24px rgba(96,165,250,0.25), 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .scroll-arrow:hover::before { opacity: 1; }
+    .scroll-arrow:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 8px rgba(96,165,250,0.15);
+    }
+    .scroll-arrow svg {
+      width: 20px; height: 20px;
+      position: relative; z-index: 1;
+      transition: transform 0.2s ease;
+    }
+    .scroll-arrow:hover svg { transform: scale(1.15); }
+    .scroll-arrow-left { margin-right: 14px; }
+    .scroll-arrow-right { margin-left: 14px; }
+
     .cards-scroll-wrapper {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       overflow-x: auto;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      padding-bottom: 8px;
+      padding: 4px 0 8px;
+      flex: 1;
+      min-width: 0;
     }
     .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
+
     .company-card {
       min-width: 200px;
       max-width: 210px;
@@ -202,31 +260,22 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       overflow: hidden;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       cursor: pointer;
     }
     .company-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      border-color: rgba(255,255,255,0.15);
     }
-    .card-header {
-      padding: 10px 12px 8px;
-      position: relative;
-    }
-    .card-header-bg {
-      position: absolute; inset: 0;
-      opacity: 0.9;
-    }
+    .card-header { padding: 10px 12px 8px; position: relative; }
+    .card-header-bg { position: absolute; inset: 0; opacity: 0.9; }
     .card-header-content { position: relative; z-index: 1; }
     .card-top-row {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 4px;
+      display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px;
     }
-    .company-name {
-      font-size: 0.88rem; font-weight: 700; color: #fff;
-    }
+    .company-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
     .sec-code { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
-
     .card-body { padding: 10px 12px 12px; }
     .fiscal-badge {
       font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
@@ -234,20 +283,10 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       padding: 2px 8px; border-radius: 20px; white-space: nowrap; width: fit-content;
       margin-bottom: 8px;
     }
-
-    .metrics-mini {
-      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
-    }
-    .metric-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-    }
-    .metric-label {
-      font-size: 0.65rem; color: rgba(255,255,255,0.45);
-    }
-    .metric-value {
-      font-size: 0.8rem; font-weight: 700; color: #e8eaf0;
-    }
-
+    .metrics-mini { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .metric-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .metric-label { font-size: 0.65rem; color: rgba(255,255,255,0.45); }
+    .metric-value { font-size: 0.8rem; font-weight: 700; color: #e8eaf0; }
     .margin-bar-wrap { margin-bottom: 10px; }
     .margin-bar-label {
       display: flex; justify-content: space-between;
@@ -261,7 +300,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       background: linear-gradient(90deg, #34d399, #10b981);
       transition: width 0.8s ease;
     }
-
     .card-footer {
       display: flex; align-items: center; justify-content: space-between;
       padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.07);
@@ -276,57 +314,133 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     }
     .ir-link:hover { background: rgba(96,165,250,0.2); }
 
-/* ─── NEWS TICKER (縦スクロールアニメーション) ─── */
-.news-ticker-section {
-  background: rgba(255,255,255,0.02);
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 20px 0;
-}
-.news-scroll-wrapper {
-  height: 400px;
-  overflow: hidden;
-  position: relative;
-}
-.news-ticker-track {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.news-ticker-track:hover { animation-play-state: paused; }
-@keyframes ticker-scroll-vertical {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
-}
-.news-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  flex-shrink: 0;
-}
-.news-card:hover { 
-  border-color: rgba(96,165,250,0.4);
-  background: rgba(255,255,255,0.06);
-}
-.news-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.news-card-date { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
-.news-category {
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;
-  padding: 2px 8px; border-radius: 4px; white-space: nowrap;
-}
-.news-category.IR {
-  background: rgba(96,165,250,0.15); color: #93c5fd;
-}
-.news-category.PR {
-  background: rgba(167,139,250,0.15); color: #c4b5fd;
-}
-.news-card-title { font-size: 0.85rem; font-weight: 700; color: #e8eaf0; margin-bottom: 6px; line-height: 1.4; }
-.news-card-desc { font-size: 0.72rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+    /* ═══════════════════════════════════════
+       FILTER BUTTONS
+       ═══════════════════════════════════════ */
+    .filter-group {
+      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .filter-group::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+    .filter-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(96,165,250,0.3) 0%, rgba(167,139,250,0.3) 100%);
+      border-color: rgba(96,165,250,0.5);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(96,165,250,0.15);
+    }
 
-    /* ─── SUMMARY TABLE ─── */
+    /* ═══════════════════════════════════════
+       NEWS TICKER — 縦自動スクロール
+       ═══════════════════════════════════════ */
+    .news-ticker-section {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 0;
+    }
+    .news-scroll-wrapper {
+      height: 400px;
+      overflow: hidden;
+      position: relative;
+    }
+    .news-ticker-track {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    /* ホバーでアニメーション一時停止 */
+    .news-ticker-track:hover {
+      animation-play-state: paused !important;
+    }
+    @keyframes ticker-scroll-vertical {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    /* ニュースカード: グリッド1行表示 */
+    .news-card {
+      display: grid;
+      grid-template-columns: 90px 44px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+      text-decoration: none;
+      color: inherit;
+    }
+    .news-card:hover {
+      background: rgba(96,165,250,0.06);
+    }
+    .news-card-date {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+    }
+    .news-category {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+      text-align: center;
+    }
+    .news-category.IR {
+      background: rgba(96,165,250,0.15); color: #93c5fd;
+    }
+    .news-category.PR {
+      background: rgba(167,139,250,0.15); color: #c4b5fd;
+    }
+    .news-card-content {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .news-card-title {
+      font-size: 0.82rem; font-weight: 700; color: #e8eaf0;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .news-card-sep {
+      color: rgba(255,255,255,0.2);
+      margin: 0 8px;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+    .news-card-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .news-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+    }
+
+    /* ═══════════════════════════════════════
+       SUMMARY TABLE
+       ═══════════════════════════════════════ */
     .table-wrap {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
@@ -348,12 +462,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     }
     .data-table td:first-child { text-align: left; }
     .data-table tr:hover td { background: rgba(255,255,255,0.03); }
-    .company-label {
-      display: flex; align-items: center; gap: 8px;
-    }
-    .company-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
+    .company-label { display: flex; align-items: center; gap: 8px; }
+    .company-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .yoy-growth { font-size: 0.75rem; font-weight: 600; }
     .yoy-positive { color: #34d399; }
     .yoy-negative { color: #f87171; }
@@ -365,7 +475,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     .margin-mid  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
     .margin-low  { background: rgba(239,68,68,0.15);   color: #f87171; }
 
-    /* ─── PROJECTS TABLE ─── */
+    /* ═══════════════════════════════════════
+       PROJECTS TABLE
+       ═══════════════════════════════════════ */
     .project-status {
       display: inline-block; font-size: 0.7rem; font-weight: 600;
       padding: 3px 10px; border-radius: 20px;
@@ -375,7 +487,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     .status-complete { background: rgba(148,163,184,0.15); color: #94a3b8; }
     .status-started  { background: rgba(96,165,250,0.15);  color: #93c5fd; }
 
-    /* ─── FOOTER ─── */
+    /* ═══════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════ */
     .footer {
       border-top: 1px solid rgba(255,255,255,0.06);
       padding: 28px 0; margin-top: 40px;
@@ -389,19 +503,34 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     .footer-links a { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
     .footer-links a:hover { color: rgba(255,255,255,0.6); }
 
-    /* ─── RESPONSIVE ─── */
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════ */
     @media (max-width: 768px) {
       .nav { display: none; }
       .hero-title { font-size: 1.4rem; }
       .data-table { font-size: 0.72rem; }
       .data-table th, .data-table td { padding: 8px 8px; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .filter-group { align-self: stretch; }
+      .scroll-arrow { width: 36px; height: 36px; border-radius: 10px; }
+      .scroll-arrow svg { width: 16px; height: 16px; }
+      .scroll-arrow-left { margin-right: 8px; }
+      .scroll-arrow-right { margin-left: 8px; }
+      .news-card {
+        grid-template-columns: 78px 38px 1fr;
+        gap: 8px;
+        padding: 12px 14px;
+      }
+      .news-card-title { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+      .news-card-desc { font-size: 0.7rem; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ─── HEADER ─── -->
+  <!-- ═══ HEADER ═══ -->
   <header class="header">
     <div class="container">
       <div class="header-inner">
@@ -417,7 +546,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     </div>
   </header>
 
-  <!-- ─── HERO ─── -->
+  <!-- ═══ HERO ═══ -->
   <section class="hero">
     <div class="container">
       <p class="hero-eyebrow">Real Estate Developer IR Dashboard</p>
@@ -426,94 +555,111 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     </div>
   </section>
 
-  <!-- ─── SECTION 1: 企業カード (横1行スクロール) ─── -->
+  <!-- ═══ SECTION 1: 企業カード ═══ -->
   <section class="section" id="companies">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">📊 企業カード</h2>
-        <span class="section-count">{companies.length}社</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">📊 企業カード</h2>
+          <span class="section-count">{companies.length}社</span>
+        </div>
       </div>
       <hr class="section-divider" />
 
-      <div class="cards-nav">
-        <button class="nav-btn" id="btn-left">◀</button>
-        <button class="nav-btn" id="btn-right">▶</button>
-      </div>
+      <!-- ★ ボタンとカードを同一行に配置 -->
+      <div class="cards-row">
+        <button class="scroll-arrow scroll-arrow-left" id="btn-left" aria-label="左へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
 
-      <div class="cards-scroll-wrapper" id="cards-scroll">
-        {companies.map((c) => {
-          const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
-          return (
-            <article class="company-card">
-              <div class="card-header">
-                <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
-                <div class="card-header-content">
-                  <div class="card-top-row">
-                    <span class="company-name">{c.name}</span>
-                  </div>
-                  <span class="sec-code">東証 {c.secCode}</span>
-                </div>
-              </div>
-
-              <div class="card-body">
-                <div class="fiscal-badge">{c.period} 決算</div>
-
-                <div class="metrics-mini">
-                  <div class="metric-row">
-                    <span class="metric-label">営業収益</span>
-                    <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
-                  </div>
-                  <div class="metric-row">
-                    <span class="metric-label">営業利益</span>
-                    <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
+        <div class="cards-scroll-wrapper" id="cards-scroll">
+          {companies.map((c) => {
+            const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
+            return (
+              <article class="company-card">
+                <div class="card-header">
+                  <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
+                  <div class="card-header-content">
+                    <div class="card-top-row">
+                      <span class="company-name">{c.name}</span>
+                    </div>
+                    <span class="sec-code">東証 {c.secCode}</span>
                   </div>
                 </div>
-
-                <div class="margin-bar-wrap">
-                  <div class="margin-bar-label">
-                    <span>利益率</span>
-                    <span>{c.profitMargin.toFixed(1)}%</span>
+                <div class="card-body">
+                  <div class="fiscal-badge">{c.period} 決算</div>
+                  <div class="metrics-mini">
+                    <div class="metric-row">
+                      <span class="metric-label">営業収益</span>
+                      <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
+                    </div>
+                    <div class="metric-row">
+                      <span class="metric-label">営業利益</span>
+                      <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
+                    </div>
                   </div>
-                  <div class="margin-bar-track">
-                    <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
+                  <div class="margin-bar-wrap">
+                    <div class="margin-bar-label">
+                      <span>利益率</span>
+                      <span>{c.profitMargin.toFixed(1)}%</span>
+                    </div>
+                    <div class="margin-bar-track">
+                      <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong></span>
+                    <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">IR ↗</a>
                   </div>
                 </div>
+              </article>
+            );
+          })}
+        </div>
 
-                <div class="card-footer">
-                  <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong> (2/28終値)</span>
-                  <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">
-                    IR ↗
-                  </a>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+        <button class="scroll-arrow scroll-arrow-right" id="btn-right" aria-label="右へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- ─── SECTION 2: 最新ニュース横スクロール ─── -->
+  <!-- ═══ SECTION 2: 最新ニュース（JSのみでレンダリング） ═══ -->
   <section class="news-ticker-section" id="news">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
-        <span class="section-count">自動スクロール（ホバーで停止）</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
+          <span class="section-count">自動スクロール（ホバーで停止）</span>
+        </div>
+        <div class="filter-group" id="news-filter">
+          <button class="filter-btn active" data-filter="all">すべて</button>
+          <button class="filter-btn" data-filter="三井不動産">三井</button>
+          <button class="filter-btn" data-filter="三菱地所">三菱</button>
+          <button class="filter-btn" data-filter="住友不動産">住友</button>
+          <button class="filter-btn" data-filter="東京建物">東建</button>
+          <button class="filter-btn" data-filter="野村不動産HD">野村</button>
+          <button class="filter-btn" data-filter="東急不動産HD">東急</button>
+        </div>
       </div>
     </div>
-
-    <div class="news-ticker-track" id="news-ticker-track">
-      <!-- JSでレンダリング -->
+    <div class="container">
+      <div class="news-scroll-wrapper">
+        <div class="news-ticker-track" id="news-ticker-track">
+          <!-- ★ JSの renderNews() で描画。SSRでは空コンテナのみ -->
+        </div>
+      </div>
     </div>
-
   </section>
 
-  <!-- ─── SECTION 3: 最新決算サマリー ─── -->
+  <!-- ═══ SECTION 3: 最新決算サマリー ═══ -->
   <section class="section" id="summary">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">📋 最新決算サマリー</h2>
-        <span class="section-count">単位: 億円</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">📋 最新決算サマリー</h2>
+          <span class="section-count">単位: 億円</span>
+        </div>
       </div>
       <hr class="section-divider" />
 
@@ -535,14 +681,14 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
           </thead>
           <tbody>
             {companies.map((c) => {
-              const col = COMPANY_COLORS[c.name] ?? { bg: "#555" };
+              const col = COMPANY_COLORS[c.name] ?? { bg: "#555", accent: "#555", text: "#eee" };
               const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
               const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
               return (
                 <tr>
                   <td>
                     <div class="company-label">
-                      <div class="company-dot" style={`background:${col.accent ?? col.bg}`} />
+                      <div class="company-dot" style={`background:${col.accent}`} />
                       {c.name}
                     </div>
                   </td>
@@ -564,12 +710,14 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     </div>
   </section>
 
-  <!-- ─── SECTION 4: 再開発プロジェクト ─── -->
+  <!-- ═══ SECTION 4: 再開発プロジェクト ═══ -->
   <section class="section" id="projects">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
-        <span class="section-count">{projects.length} 件</span>
+        <div class="section-title-wrap">
+          <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
+          <span class="section-count">{projects.length} 件</span>
+        </div>
       </div>
       <hr class="section-divider" />
 
@@ -587,18 +735,13 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
           </thead>
           <tbody>
             {projects.map((p) => {
-              const statusMap = {
-                "進行中": "status-active",
-                "着工済": "status-started",
-                "計画中": "status-plan",
-                "完成": "status-complete"
-              };
-              const col = COMPANY_COLORS[p.company] ?? { bg: "#555" };
+              const col = COMPANY_COLORS[p.company] ?? { bg: "#555", accent: "#555", text: "#eee" };
+              const statusClass = projectStatusMap[p.status] ?? "status-plan";
               return (
                 <tr>
                   <td>
                     <div class="company-label">
-                      <div class="company-dot" style={`background:${col.accent ?? col.bg}`} />
+                      <div class="company-dot" style={`background:${col.accent}`} />
                       {p.company}
                     </div>
                   </td>
@@ -607,7 +750,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
                   <td>{p.scale}</td>
                   <td>{p.year}年</td>
                   <td>
-                    <span class={`project-status ${statusMap[p.status] ?? "status-plan"}`}>
+                    <span class={`project-status ${statusClass}`}>
                       {p.status}
                     </span>
                   </td>
@@ -620,11 +763,11 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     </div>
   </section>
 
-  <!-- ─── FOOTER ─── -->
+  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-inner">
-        <p class="footer-text">© 2025 deveryman-ir. データはモック値を含みます。投資判断は自己責任でお願いします。</p>
+        <p class="footer-text">© 2026 deveryman-ir. データはモック値を含みます。投資判断は自己責任でお願いします。</p>
         <div class="footer-links">
           <a href="https://twitter.com/deveryman_inv" target="_blank">X (Twitter)</a>
           <a href="https://disclosure.edinet-fsa.go.jp/" target="_blank">EDINET</a>
@@ -633,14 +776,85 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
     </div>
   </footer>
 
-  <!-- ─── CARD SCROLL JS ─── -->
-  <script>
-    const wrapper = document.getElementById('cards-scroll');
-    const btnLeft = document.getElementById('btn-left');
-    const btnRight = document.getElementById('btn-right');
+  <!-- ═══════════════════════════════════════
+       SCRIPTS — ニュース描画 & カードスクロール
+       ═══════════════════════════════════════ -->
+  <script is:inline define:vars={{ newsItems }}>
+    // ────────────────────────────────────
+    //  renderNews: ニュースをJSのみで描画
+    // ────────────────────────────────────
+    function renderNews(filterValue) {
+      var track = document.getElementById('news-ticker-track');
+      if (!track) return;
+
+      var filtered = filterValue === 'all'
+        ? newsItems
+        : newsItems.filter(function(n) { return n.company === filterValue; });
+
+      if (filtered.length === 0) {
+        track.innerHTML = '<div class="news-empty">現在表示できるニュースはありません</div>';
+        track.style.animation = 'none';
+        return;
+      }
+
+      // 「すべて」→ 2周分(無限ループ用) / フィルター → 1セットのみ
+      var displayNews = filterValue === 'all'
+        ? filtered.concat(filtered)
+        : filtered;
+
+      var html = displayNews.map(function(n) {
+        return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener">'
+          + '<span class="news-card-date">' + n.date + '</span>'
+          + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
+          + '<span class="news-card-content">'
+            + '<span class="news-card-title">' + n.company + ' - ' + n.title + '</span>'
+            + '<span class="news-card-sep">｜</span>'
+            + '<span class="news-card-desc">' + n.desc + '</span>'
+          + '</span>'
+        + '</a>';
+      }).join('');
+
+      track.innerHTML = html;
+
+      // アニメーション制御
+      track.style.animation = 'none';
+      if (filterValue === 'all') {
+        void track.offsetHeight; // reflow 強制
+        track.style.animation = 'ticker-scroll-vertical 50s linear infinite';
+      }
+    }
+
+    // ────────────────────────────────────
+    //  フィルターボタンのイベント
+    // ────────────────────────────────────
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        document.querySelectorAll('.filter-btn').forEach(function(b) {
+          b.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
+        renderNews(e.currentTarget.getAttribute('data-filter'));
+      });
+    });
+
+    // ────────────────────────────────────
+    //  初期描画
+    // ────────────────────────────────────
+    renderNews('all');
+
+    // ────────────────────────────────────
+    //  企業カード横スクロールボタン
+    // ────────────────────────────────────
+    var wrapper = document.getElementById('cards-scroll');
+    var btnLeft = document.getElementById('btn-left');
+    var btnRight = document.getElementById('btn-right');
     if (wrapper && btnLeft && btnRight) {
-      btnLeft.onclick = () => wrapper.scrollBy({ left: -230, behavior: 'smooth' });
-      btnRight.onclick = () => wrapper.scrollBy({ left: 230, behavior: 'smooth' });
+      btnLeft.onclick = function() {
+        wrapper.scrollBy({ left: -230, behavior: 'smooth' });
+      };
+      btnRight.onclick = function() {
+        wrapper.scrollBy({ left: 230, behavior: 'smooth' });
+      };
     }
   </script>
 
