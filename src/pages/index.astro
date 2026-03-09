@@ -1,7 +1,7 @@
 ---
 // deveryman-ir | src/pages/index.astro
 // 大手不動産デベロッパー6社 IRダッシュボード
-// Updated: 2026-03-09
+// Updated: 2026-03-09 — 全UIリニューアル + 広告バナー枠
 
 const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
   "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
@@ -144,6 +144,64 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     }
 
     /* ═══════════════════════════════════════
+       AD BANNER SLOTS
+       ═══════════════════════════════════════ */
+    .ad-banner {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .ad-banner-header {
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      min-height: 90px;
+      padding: 8px 0;
+    }
+    .ad-banner-footer {
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      min-height: 90px;
+      padding: 8px 0;
+    }
+    /* プレースホルダー表示（広告未設定時） */
+    .ad-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 728px;
+      height: 90px;
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.15);
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      user-select: none;
+    }
+    .ad-placeholder-icon {
+      font-size: 1rem;
+      opacity: 0.4;
+    }
+    /* 広告画像が入った場合はプレースホルダーを非表示 */
+    .ad-banner img {
+      max-width: 728px;
+      width: 100%;
+      height: auto;
+      max-height: 90px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .ad-banner a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ═══════════════════════════════════════
        HERO
        ═══════════════════════════════════════ */
     .hero {
@@ -194,7 +252,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       align-items: center;
       gap: 0;
     }
-
     /* スタイリッシュ矢印ボタン */
     .scroll-arrow {
       flex-shrink: 0;
@@ -352,19 +409,39 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       background: rgba(255,255,255,0.02);
       border-top: 1px solid rgba(255,255,255,0.08);
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 20px 0;
+      padding: 24px 0;
     }
     .news-scroll-wrapper {
-      height: 400px;
+      height: 420px;
       overflow: hidden;
       position: relative;
+      background: rgba(15,23,42,0.4);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+    }
+    .news-scroll-wrapper::before,
+    .news-scroll-wrapper::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 40px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .news-scroll-wrapper::before {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(15,23,42,0.9), transparent);
+    }
+    .news-scroll-wrapper::after {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);
     }
     .news-ticker-track {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 8px;
+      padding: 12px;
     }
-    /* ホバーでアニメーション一時停止 */
     .news-ticker-track:hover {
       animation-play-state: paused !important;
     }
@@ -373,32 +450,45 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       100% { transform: translateY(-50%); }
     }
 
-    /* ニュースカード: グリッド1行表示 */
+    /* ニュースカード: リッチカードデザイン */
     .news-card {
-      display: grid;
-      grid-template-columns: 90px 44px 1fr;
-      gap: 12px;
-      align-items: center;
-      padding: 14px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 16px 14px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      border-left: 3px solid var(--accent-color, rgba(96,165,250,0.4));
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.25s ease;
       flex-shrink: 0;
       text-decoration: none;
       color: inherit;
+      position: relative;
     }
     .news-card:hover {
-      background: rgba(96,165,250,0.06);
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.12);
+      border-left-color: var(--accent-color, #60a5fa);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 12px var(--accent-glow, rgba(96,165,250,0.1));
+      transform: translateX(2px);
+    }
+    .news-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .news-card-date {
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.4);
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
       white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     .news-category {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em;
-      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
-      text-align: center;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+      padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+      text-align: center; text-transform: uppercase;
     }
     .news-category.IR {
       background: rgba(96,165,250,0.15); color: #93c5fd;
@@ -406,7 +496,13 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     .news-category.PR {
       background: rgba(167,139,250,0.15); color: #c4b5fd;
     }
-    .news-card-content {
+    .news-card-company {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-color, #93c5fd);
+      white-space: nowrap;
+    }
+    .news-card-body {
       display: flex;
       align-items: baseline;
       gap: 0;
@@ -418,23 +514,23 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       white-space: nowrap; flex-shrink: 0;
     }
     .news-card-sep {
-      color: rgba(255,255,255,0.2);
-      margin: 0 8px;
+      color: rgba(255,255,255,0.15);
+      margin: 0 10px;
       flex-shrink: 0;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
     }
     .news-card-desc {
       font-size: 0.78rem;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.4);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
     }
     .news-empty {
-      padding: 40px 20px;
+      padding: 60px 20px;
       text-align: center;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.3);
       font-size: 0.85rem;
     }
 
@@ -517,13 +613,15 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       .scroll-arrow svg { width: 16px; height: 16px; }
       .scroll-arrow-left { margin-right: 8px; }
       .scroll-arrow-right { margin-left: 8px; }
-      .news-card {
-        grid-template-columns: 78px 38px 1fr;
-        gap: 8px;
-        padding: 12px 14px;
-      }
-      .news-card-title { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+      .news-card { padding: 10px 12px 10px 16px; gap: 5px; }
+      .news-card-meta { gap: 6px; }
+      .news-card-title { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
       .news-card-desc { font-size: 0.7rem; }
+      .news-card-sep { margin: 0 6px; }
+      .news-scroll-wrapper { height: 380px; }
+      .ad-placeholder { max-width: 320px; height: 50px; }
+      .ad-banner-header, .ad-banner-footer { min-height: 50px; }
+      .ad-banner img { max-height: 50px; }
     }
   </style>
 </head>
@@ -546,6 +644,19 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     </div>
   </header>
 
+  <!-- ═══ HEADER AD BANNER ═══ -->
+  <div class="ad-banner ad-banner-header" id="ad-header">
+    <div class="ad-placeholder">
+      <span class="ad-placeholder-icon">📢</span>
+      AD SPACE — HEADER（728×90）
+    </div>
+    <!-- ★ 広告を入れる場合:
+    <a href="https://example.com" target="_blank" rel="noopener sponsored">
+      <img src="https://example.com/banner-728x90.png" alt="広告バナー" width="728" height="90" loading="lazy" />
+    </a>
+    -->
+  </div>
+
   <!-- ═══ HERO ═══ -->
   <section class="hero">
     <div class="container">
@@ -566,7 +677,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       </div>
       <hr class="section-divider" />
 
-      <!-- ★ ボタンとカードを同一行に配置 -->
       <div class="cards-row">
         <button class="scroll-arrow scroll-arrow-left" id="btn-left" aria-label="左へスクロール">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -763,6 +873,19 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     </div>
   </section>
 
+  <!-- ═══ FOOTER AD BANNER ═══ -->
+  <div class="ad-banner ad-banner-footer" id="ad-footer">
+    <div class="ad-placeholder">
+      <span class="ad-placeholder-icon">📢</span>
+      AD SPACE — FOOTER（728×90）
+    </div>
+    <!-- ★ 広告を入れる場合:
+    <a href="https://example.com" target="_blank" rel="noopener sponsored">
+      <img src="https://example.com/banner-728x90.png" alt="広告バナー" width="728" height="90" loading="lazy" />
+    </a>
+    -->
+  </div>
+
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
@@ -777,7 +900,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
   </footer>
 
   <!-- ═══════════════════════════════════════
-       SCRIPTS — ニュース描画 & カードスクロール
+       SCRIPTS
        ═══════════════════════════════════════ -->
   <script is:inline define:vars={{ newsItems }}>
     // ────────────────────────────────────
@@ -797,18 +920,31 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         return;
       }
 
-      // 「すべて」→ 2周分(無限ループ用) / フィルター → 1セットのみ
       var displayNews = filterValue === 'all'
         ? filtered.concat(filtered)
         : filtered;
 
+      var colorMap = {
+        '三井不動産':   '#4a90d9',
+        '三菱地所':     '#e85555',
+        '住友不動産':   '#3aaa5c',
+        '東京建物':     '#d4813a',
+        '野村不動産HD': '#6a6adc',
+        '東急不動産HD': '#28b0b0'
+      };
+
       var html = displayNews.map(function(n) {
-        return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener">'
-          + '<span class="news-card-date">' + n.date + '</span>'
-          + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
-          + '<span class="news-card-content">'
-            + '<span class="news-card-title">' + n.company + ' - ' + n.title + '</span>'
-            + '<span class="news-card-sep">｜</span>'
+        var accent = colorMap[n.company] || '#60a5fa';
+        return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener"'
+          + ' style="--accent-color:' + accent + '; --accent-glow:' + accent + '33;">'
+          + '<span class="news-card-meta">'
+            + '<span class="news-card-date">' + n.date + '</span>'
+            + '<span class="news-category ' + n.category + '">' + n.category + '</span>'
+            + '<span class="news-card-company">' + n.company + '</span>'
+          + '</span>'
+          + '<span class="news-card-body">'
+            + '<span class="news-card-title">' + n.title + '</span>'
+            + '<span class="news-card-sep">\u2014</span>'
             + '<span class="news-card-desc">' + n.desc + '</span>'
           + '</span>'
         + '</a>';
@@ -816,16 +952,15 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
 
       track.innerHTML = html;
 
-      // アニメーション制御
       track.style.animation = 'none';
       if (filterValue === 'all') {
-        void track.offsetHeight; // reflow 強制
+        void track.offsetHeight;
         track.style.animation = 'ticker-scroll-vertical 50s linear infinite';
       }
     }
 
     // ────────────────────────────────────
-    //  フィルターボタンのイベント
+    //  フィルターボタン
     // ────────────────────────────────────
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
@@ -837,9 +972,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       });
     });
 
-    // ────────────────────────────────────
-    //  初期描画
-    // ────────────────────────────────────
+    // 初期描画
     renderNews('all');
 
     // ────────────────────────────────────
