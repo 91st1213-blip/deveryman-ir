@@ -292,7 +292,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
   display: flex;
   flex-direction: column;
   gap: 12px;
-  animation: ticker-scroll-vertical 30s linear infinite;
 }
 .news-ticker-track:hover { animation-play-state: paused; }
 @keyframes ticker-scroll-vertical {
@@ -503,18 +502,10 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { year: "numeric", mont
       </div>
     </div>
 
-    <div class="news-ticker-track">
-      {[...newsItems, ...newsItems].map((n) => (
-        <a class="news-card" href={n.url} target="_blank" rel="noopener">
-          <div class="news-card-top">
-            <span class="news-card-date">{n.date}</span>
-            <span class={`news-category ${n.category}`}>{n.category}</span>
-          </div>
-          <div class="news-card-title">{n.company} - {n.title}</div>
-          <div class="news-card-desc">{n.desc}</div>
-        </a>
-      ))}
+    <div class="news-ticker-track" id="news-ticker-track">
+      <!-- JSでレンダリング -->
     </div>
+
   </section>
 
   <!-- ─── SECTION 3: 最新決算サマリー ─── -->
