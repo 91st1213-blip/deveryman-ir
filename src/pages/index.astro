@@ -611,6 +611,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
+      width: 82px;          /* ← 追加 */
+      min-width: 82px;      /* ← 追加 */
     }
     .news-category {
       font-size: 0.6rem;
@@ -621,6 +623,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       white-space: nowrap;
       text-transform: uppercase;
       flex-shrink: 0;
+      width: 28px;           /* ← 追加 */
+      min-width: 28px;       /* ← 追加 */
+      text-align: center;    /* ← 追加 */
     }
     .news-category.IR {
       background: rgba(96, 165, 250, 0.15);
@@ -636,6 +641,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       color: var(--accent-color, #93c5fd);
       white-space: nowrap;
       flex-shrink: 0;
+      width: 110px;          /* ← 追加 */
+      min-width: 110px;      /* ← 追加 */
     }
     .news-card-sep {
       color: rgba(255, 255, 255, 0.15);
