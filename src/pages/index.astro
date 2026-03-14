@@ -1314,7 +1314,13 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
 　　　　<div class="section-header">
         <div class="section-title-wrap">
           <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
-          <span class="section-count" id="projects-count-display">{projects.length} 件</span> <!-- IDを追加 -->
++         <span class="section-count" id="projects-count-display">{projects.length} 件</span>
+        </div>
++       <!-- プロジェクト用のフィルターボタンを追加 -->
++       <div class="filter-group" id="projects-filter">
++         <button class="filter-btn active" data-filter="all">すべて</button>
++         <button class="filter-btn" data-filter="三井不動産">三井</button>
++         <!-- ...他社ボタン... -->
         </div>
         <!-- プロジェクト用のフィルターボタンを追加 -->
         <div class="filter-group" id="projects-filter">
@@ -1334,12 +1340,12 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <thead>
             <tr>
               <th>企業名</th>
+              <th>状況</th>
               <th style="text-align:left;">プロジェクト名</th>
               <th style="text-align:left;">エリア</th>
               <th style="text-align:left;">主用途・アクセス</th>
               <th style="text-align:left;">規模</th>
               <th>完成予定</th>
-              <th>状況</th>
             </tr>
           </thead>
           <tbody>
@@ -1347,7 +1353,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
               const statusClass = projectStatusMap[p.status] ?? "status-plan";
               return (
 　　　　　　　　　　// data-company={p.company}
-                <tr class="project-row" data-project-id={p.id}>
++               <tr class="project-row" data-project-id={p.id} data-company={p.company}>
                   <td>
                     <div class="company-label">
                       <div class="company-dot" style={`background:${p.color}; box-shadow: 0 0 8px ${p.color};`} />
