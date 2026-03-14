@@ -227,18 +227,11 @@ function getMarginClass(val: number) {
     .map-section { position: relative; height: 420px; background: #0f111a; border-radius: 16px; overflow: hidden; margin-top: 24px; border: 1px solid rgba(255,255,255,0.05); }
     .map-title-overlay { position: absolute; top: 16px; left: 16px; z-index: 20; background: rgba(28, 30, 43, 0.85); padding: 8px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);}
     
-    /* Google Maps Pins */
-    .map-pin { transition: all 0.3s ease; cursor: pointer; z-index: 10; opacity: 1; }
-    .map-pin.is-dimmed { opacity: 0.25; transform: scale(0.85); }
-    .map-pin.is-active { z-index: 30; }
-    .map-pin-circle { position: relative; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(15, 17, 26, 0.9); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-    .map-pin.is-active .map-pin-circle { width: 22px; height: 22px; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15), 0 2px 12px rgba(0, 0, 0, 0.5); }
-    .map-pin-dot { width: 5px; height: 5px; background: #fff; border-radius: 50%; display: none; }
-    .map-pin.is-active .map-pin-dot { display: block; }
-    .map-pin-ping { position: absolute; inset: -6px; border-radius: 50%; opacity: 0; animation: none; }
-    .map-pin.is-active .map-pin-ping { opacity: 0.35; animation: map-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
-    @keyframes map-ping { 0% { transform: scale(1); opacity: 0.35; } 75%, 100% { transform: scale(2.2); opacity: 0; } }
-    .map-pin-tooltip { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: rgba(28, 30, 43, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px 14px; white-space: nowrap; pointer-events: none; z-index: 30; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+    /* Google Maps Pins (PinElement) */
+    .map-pin { transition: all 0.3s ease; cursor: pointer; z-index: 10; opacity: 1; position: relative; }
+    .map-pin.is-dimmed { opacity: 0.3; transform: scale(0.85); }
+    .map-pin.is-active { z-index: 30; transform: scale(1.2); }
+    .map-pin-tooltip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: rgba(28, 30, 43, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px 14px; white-space: nowrap; pointer-events: none; z-index: 30; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
     .map-pin.is-active .map-pin-tooltip { display: block; }
     .map-pin-tooltip-company { font-size: 0.72rem; font-weight: 700; margin-bottom: 2px; }
     .map-pin-tooltip-name { font-size: 0.7rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); }
@@ -419,7 +412,7 @@ function getMarginClass(val: number) {
   <!-- SECTION 3: 決算サマリー -->
   <section class="section" id="summary">
     <div class="container">
-      <h2 class="section-title">📋 決算サマリー & 分譲戸数</h2>
+      <h2 class="section-title">📋 決算サマリー & 分譲戸数(予想)</h2>
       <div class="summary-tables-grid">
         <!-- 業績ハイライト -->
         <div class="table-container">
@@ -508,12 +501,10 @@ function getMarginClass(val: number) {
                         <span class={`margin-pill ${getMarginClass(c.unitMargin)}`}>{c.unitMargin.toFixed(1)}%</span>
                       </td>
                       <td style="text-align:left;">
-                        <div style="font-size:0.65rem; color:rgba(255,255,255,0.35); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">{c.brandName}</div>
-                        {c.deliveries.map((d: string) => (
-                          <div style="font-size:0.78rem; color:#e8eaf0; white-space:nowrap; line-height:1.6;">
-                            <span style="color:rgba(255,255,255,0.3); margin-right:4px;">›</span>{d}
-                          </div>
-                        ))}
+                        <div style="font-size:0.65rem; color:rgba(255,255,255,0.35); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px;">{c.brandName}</div>
+                        <div style="font-size:0.78rem; color:#e8eaf0; white-space:nowrap;">
+                          <span style="color:rgba(255,255,255,0.3); margin-right:4px;">›</span>{c.deliveries[0]}
+                        </div>
                       </td>
                     </tr>
                   )
@@ -723,25 +714,34 @@ function getMarginClass(val: number) {
         zoomControl: true,
       });
 
-      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+      const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
       projects.forEach(p => {
         if (!p.location) return;
 
+        // Google Maps標準ピン（各社カラー）
+        const pin = new PinElement({
+          background: p.color,
+          borderColor: '#ffffff',
+          glyphColor: '#ffffff',
+          scale: 1.1,
+        });
+
+        // ホバー連動用のラッパー
         const pinContainer = document.createElement("div");
         pinContainer.className = "map-pin";
         pinContainer.dataset.projectId = p.id;
         pinContainer.style.position = "relative";
-        pinContainer.innerHTML = `
-          <div class="map-pin-ping" style="background:${p.color};"></div>
-          <div class="map-pin-circle" style="background:${p.color};">
-            <div class="map-pin-dot"></div>
-          </div>
-          <div class="map-pin-tooltip">
-            <div class="map-pin-tooltip-company" style="color:${p.color};">${p.company}</div>
-            <div class="map-pin-tooltip-name">${p.name}</div>
-          </div>
+        pinContainer.appendChild(pin.element);
+
+        // ツールチップ
+        const tooltip = document.createElement("div");
+        tooltip.className = "map-pin-tooltip";
+        tooltip.innerHTML = `
+          <div class="map-pin-tooltip-company" style="color:${p.color};">${p.company}</div>
+          <div class="map-pin-tooltip-name">${p.name}</div>
         `;
+        pinContainer.appendChild(tooltip);
 
         const marker = new AdvancedMarkerElement({
           map,
