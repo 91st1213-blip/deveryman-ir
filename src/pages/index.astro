@@ -1,6 +1,6 @@
 ---
 // deveryman-ir | src/pages/index.astro
-// Updated: 2026-03-09 — Build fix + News card rich UI + Ad banners
+// Updated: Google Maps Advanced Markers & Project Filtering Implementation
 
 const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
   "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
@@ -65,50 +65,44 @@ const projects = [
     id: "p1", company: "三井不動産", color: "#4a90d9",
     name: "日本橋一丁目中地区 再開発", area: "中央区日本橋", access: "日本橋駅 直結",
     usage: "オフィス・ホテル・住宅", scale: "地上52階 (284m)", scaleArea: "38万㎡", completion: "2026年度", status: "着工済",
-    coords: { x: 73, y: 48 },location: { lat: 35.6821, lng: 139.7741 },
+    location: { lat: 35.6821, lng: 139.7741 },
   },
   {
     id: "p2", company: "三菱地所", color: "#e85555",
     name: "Torch Tower (TOKYO TORCH)", area: "千代田区大手町", access: "東京駅 直結",
     usage: "オフィス・ホテル・商業", scale: "地上62階 (390m)", scaleArea: "54万㎡", completion: "2028年度", status: "進行中",
-    coords: { x: 67, y: 50 },location:{ lat: 35.6853, lng: 139.7695 },
+    location: { lat: 35.6853, lng: 139.7695 },
   },
   {
     id: "p3", company: "野村不動産HD", color: "#6a6adc",
     name: "芝浦PJ (BLUE FRONT SHIBAURA)", area: "港区芝浦", access: "浜松町駅 徒歩5分",
     usage: "オフィス・ホテル・住宅", scale: "地上43階 (232m)", scaleArea: "55万㎡", completion: "2030年度", status: "進行中",
-    coords: { x: 65, y: 76 },location: { lat: 35.6455, lng: 139.7571 },
+    location: { lat: 35.6455, lng: 139.7571 },
   },
   {
     id: "p4", company: "東急不動産HD", color: "#28b0b0",
     name: "渋谷アッパー・ウエスト PJ", area: "渋谷区道玄坂", access: "渋谷駅 徒歩5分",
     usage: "商業・ホテル・住宅", scale: "地上36階 (164m)", scaleArea: "11万㎡", completion: "2027年度", status: "計画中",
-    coords: { x: 30, y: 68 },location:{ lat: 35.6601, lng: 139.6975 },
+    location: { lat: 35.6601, lng: 139.6975 },
   },
   {
     id: "p5", company: "東京建物", color: "#d4813a",
     name: "八重洲二丁目中地区 再開発", area: "中央区八重洲", access: "東京駅 直結",
     usage: "オフィス・商業・劇場", scale: "地上43階 (225m)", scaleArea: "38万㎡", completion: "2029年度", status: "計画中",
-    coords: { x: 69, y: 54 },location:{ lat: 35.6795, lng: 139.7681 },
+    location: { lat: 35.6795, lng: 139.7681 },
   },
   {
     id: "p6", company: "三井不動産", color: "#4a90d9",
     name: "築地市場跡地 再開発", area: "中央区築地", access: "築地市場駅 徒歩1分",
     usage: "スタジアム・商業・オフィス", scale: "未定", scaleArea: "約117万㎡", completion: "2030年代", status: "計画中",
-    coords: { x: 78, y: 65 },location:{ lat: 35.6631, lng: 139.7688 },
+    location: { lat: 35.6631, lng: 139.7688 },
   },
   {
     id: "p7", company: "住友不動産", color: "#3aaa5c",
     name: "西新宿三丁目 再開発", area: "新宿区西新宿", access: "新宿駅 徒歩10分",
     usage: "住宅・商業・公益", scale: "地上65階 (約235m)", scaleArea: "約27万㎡", completion: "2029年度", status: "計画中",
-    coords: { x: 24, y: 42 },location:{ lat: 35.6841, lng: 139.6901 },
+    location: { lat: 35.6841, lng: 139.6901 },
   },
-];
-
-const landmarks = [
-  { name: "東京", x: 68, y: 52 }, { name: "新宿", x: 26, y: 44 },
-  { name: "渋谷", x: 31, y: 66 }, { name: "品川", x: 57, y: 80 },
-  { name: "池袋", x: 33, y: 24 }, { name: "上野", x: 68, y: 30 },
 ];
 
 const projectStatusMap: Record<string, string> = {
@@ -203,6 +197,11 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     .nav a:hover {
       color: #fff;
     }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .badge-updated {
       font-size: 0.75rem;
       background: rgba(96, 165, 250, 0.15);
@@ -210,6 +209,24 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       color: #93c5fd;
       padding: 4px 12px;
       border-radius: 20px;
+      white-space: nowrap;
+    }
+    .twitter-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e8eaf0;
+      transition: all 0.2s;
+    }
+    .twitter-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      transform: translateY(-2px);
     }
 
     /* === AD BANNER SLOTS === */
@@ -621,7 +638,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         transform: translateY(-50%);
       }
     }
-    /* === NEWS CARD: ONE-LINE DESIGN === */
+    /* === NEWS CARD === */
     .news-card {
       display: flex;
       align-items: center;
@@ -653,8 +670,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      width: 82px;          /* ← 追加 */
-      min-width: 82px;      /* ← 追加 */
+      width: 82px;
+      min-width: 82px;
     }
     .news-category {
       font-size: 0.6rem;
@@ -665,9 +682,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       white-space: nowrap;
       text-transform: uppercase;
       flex-shrink: 0;
-      width: 28px;           /* ← 追加 */
-      min-width: 28px;       /* ← 追加 */
-      text-align: center;    /* ← 追加 */
+      width: 28px;
+      min-width: 28px;
+      text-align: center;
     }
     .news-category.IR {
       background: rgba(96, 165, 250, 0.15);
@@ -683,8 +700,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       color: var(--accent-color, #93c5fd);
       white-space: nowrap;
       flex-shrink: 0;
-      width: 110px;          /* ← 追加 */
-      min-width: 110px;      /* ← 追加 */
+      width: 110px;
+      min-width: 110px;
     }
     .news-card-sep {
       color: rgba(255, 255, 255, 0.15);
@@ -889,39 +906,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       height: 18px;
       color: #818cf8;
     }
-    .map-grid {
-      position: absolute;
-      inset: 0;
-      opacity: 0.08;
-      background-image:
-        linear-gradient(rgba(42, 48, 65, 1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(42, 48, 65, 1) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-    .map-landmark {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-    }
-    .map-landmark-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(148, 163, 184, 0.5);
-      margin-bottom: 4px;
-    }
-    .map-landmark-name {
-      font-size: 0.6rem;
-      font-weight: 500;
-      color: rgba(148, 163, 184, 0.5);
-      letter-spacing: 0.15em;
-    }
+
+    /* Google Maps用のマーカー要素（クラスはAstroそのまま流用） */
     .map-pin {
-      position: absolute;
-      transform: translate(-50%, -50%);
       transition: all 0.3s ease;
       cursor: pointer;
       z-index: 10;
@@ -929,7 +916,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     }
     .map-pin.is-dimmed {
       opacity: 0.25;
-      transform: translate(-50%, -50%) scale(0.85);
+      transform: scale(0.85);
     }
     .map-pin.is-active {
       z-index: 30;
@@ -1128,7 +1115,12 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <a href="#summary">決算サマリー</a>
           <a href="#projects">再開発PJ</a>
         </nav>
-        <div class="badge-updated">更新: {updatedAt}</div>
+        <div class="header-actions">
+          <div class="badge-updated">更新: {updatedAt}</div>
+          <a href="https://twitter.com/deveryman_inv" target="_blank" rel="noopener" class="twitter-link" aria-label="X (Twitter) - @deveryman_inv">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </header>
@@ -1139,11 +1131,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       <span class="ad-placeholder-icon">📢</span>
       AD SPACE — HEADER（728×90）
     </div>
-    <!-- To use: replace .ad-placeholder with:
-    <a href="https://example.com" target="_blank" rel="noopener sponsored">
-      <img src="https://example.com/banner-728x90.png" alt="Ad" width="728" height="90" loading="lazy" />
-    </a>
-    -->
   </div>
 
   <!-- HERO -->
@@ -1308,21 +1295,14 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     </div>
   </section>
 
-    <!-- SECTION 4: Projects + Map -->
+  <!-- SECTION 4: Projects + Map -->
   <section class="section" id="projects">
     <div class="container">
-　　　　<div class="section-header">
+      <div class="section-header">
         <div class="section-title-wrap">
           <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
-+         <span class="section-count" id="projects-count-display">{projects.length} 件</span>
+          <span class="section-count" id="projects-count-display">{projects.length} 件</span>
         </div>
-+       <!-- プロジェクト用のフィルターボタンを追加 -->
-+       <div class="filter-group" id="projects-filter">
-+         <button class="filter-btn active" data-filter="all">すべて</button>
-+         <button class="filter-btn" data-filter="三井不動産">三井</button>
-+         <!-- ...他社ボタン... -->
-        </div>
-        <!-- プロジェクト用のフィルターボタンを追加 -->
         <div class="filter-group" id="projects-filter">
           <button class="filter-btn active" data-filter="all">すべて</button>
           <button class="filter-btn" data-filter="三井不動産">三井</button>
@@ -1340,20 +1320,19 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <thead>
             <tr>
               <th>企業名</th>
-              <th>状況</th>
               <th style="text-align:left;">プロジェクト名</th>
               <th style="text-align:left;">エリア</th>
               <th style="text-align:left;">主用途・アクセス</th>
               <th style="text-align:left;">規模</th>
               <th>完成予定</th>
+              <th>状況</th>
             </tr>
           </thead>
           <tbody>
             {projects.map((p) => {
               const statusClass = projectStatusMap[p.status] ?? "status-plan";
               return (
-　　　　　　　　　　// data-company={p.company}
-+               <tr class="project-row" data-project-id={p.id} data-company={p.company}>
+                <tr class="project-row" data-project-id={p.id} data-company={p.company}>
                   <td>
                     <div class="company-label">
                       <div class="company-dot" style={`background:${p.color}; box-shadow: 0 0 8px ${p.color};`} />
@@ -1393,47 +1372,18 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
           開発エリア マップ
         </div>
-        <div class="map-grid"></div>
-        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.15;" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M 80,100 L 100,100 L 100,50 Q 85,60 75,80 Q 70,95 80,100 Z" fill="#1e293b" />
-          <path d="M 100,0 L 100,40 Q 90,30 85,15 L 90,0 Z" fill="#1e293b" />
-          <ellipse cx="60" cy="50" rx="4" ry="6" fill="#064e3b" opacity="0.4" />
-          <ellipse cx="50" cy="50" rx="35" ry="40" fill="none" stroke="#475569" stroke-width="0.5" stroke-dasharray="1 2" />
-        </svg>
-
-        {landmarks.map((lm) => (
-          <div class="map-landmark" style={`left:${lm.x}%;top:${lm.y}%;`}>
-            <div class="map-landmark-dot"></div>
-            <span class="map-landmark-name">{lm.name}</span>
-          </div>
-        ))}
-
-        {projects.map((p) => (
-          <div class="map-pin" data-project-id={p.id} style={`left:${p.coords.x}%;top:${p.coords.y}%;`}>
-            <div class="map-pin-ping" style={`background:${p.color};`}></div>
-            <div class="map-pin-circle" style={`background:${p.color};`}>
-              <div class="map-pin-dot"></div>
-            </div>
-            <div class="map-pin-tooltip">
-              <div class="map-pin-tooltip-company" style={`color:${p.color};`}>{p.company}</div>
-              <div class="map-pin-tooltip-name">{p.name}</div>
-            </div>
-          </div>
-        ))}
+        <!-- Google Maps コンテナ -->
+        <div id="google-map" style="position: absolute; inset: 0; width: 100%; height: 100%;"></div>
       </div>
     </div>
   </section>
+
   <!-- FOOTER AD BANNER -->
   <div class="ad-banner ad-banner-footer" id="ad-footer">
     <div class="ad-placeholder">
       <span class="ad-placeholder-icon">📢</span>
       AD SPACE — FOOTER（728×90）
     </div>
-    <!-- To use: replace .ad-placeholder with:
-    <a href="https://example.com" target="_blank" rel="noopener sponsored">
-      <img src="https://example.com/banner-728x90.png" alt="Ad" width="728" height="90" loading="lazy" />
-    </a>
-    -->
   </div>
 
   <!-- FOOTER -->
@@ -1450,7 +1400,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
   </footer>
 
   <!-- SCRIPTS -->
-  <script is:inline define:vars={{ newsItems }}>
+  <script is:inline define:vars={{ newsItems, projects }}>
+    // --- ニュースセクションの描画 ---
     function renderNews(filterValue) {
       var track = document.getElementById('news-ticker-track');
       if (!track) return;
@@ -1501,9 +1452,10 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       }
     }
 
-    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    // ニュース用フィルターボタンのイベント
+    document.querySelectorAll('#news-filter .filter-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
-        document.querySelectorAll('.filter-btn').forEach(function(b) {
+        document.querySelectorAll('#news-filter .filter-btn').forEach(function(b) {
           b.classList.remove('active');
         });
         e.currentTarget.classList.add('active');
@@ -1513,6 +1465,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
 
     renderNews('all');
 
+    // 企業カードの横スクロール
     var wrapper = document.getElementById('cards-scroll');
     var btnLeft = document.getElementById('btn-left');
     var btnRight = document.getElementById('btn-right');
@@ -1525,12 +1478,136 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       };
     }
 
+    // --- Google Maps と プロジェクトフィルタリングの実装 ---
+    let map;
+    const mapMarkers = {}; // IDをキーにしてマーカーのDOM要素（ピンの見た目）を保存
+    const googleMarkers = {}; // IDをキーにしてAdvancedMarkerElement（地図上の機能本体）を保存
+
+    async function initGoogleMap() {
+      // ⚠️ ご注意: 実稼働させるには Google Cloud Console から取得した APIキー と マップID を設定してください。
+      const API_KEY = "YOUR_API_KEY_HERE"; 
+      const MAP_ID = "YOUR_MAP_ID_HERE";
+
+      // Google Maps Scriptの動的ロード
+      await new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=marker&v=beta`;
+        script.async = true;
+        script.onload = resolve;
+        document.head.appendChild(script);
+      });
+
+      // 現在のUIに合わせたダークテーマのマップスタイル
+      const darkMapStyle = [
+        { elementType: "geometry", stylers: [{ color: "#1a1f3a" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#1a1f3a" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#818cf8" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#0a0f1e" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#2a3041" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#1a1f3a" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "transit", stylers: [{ visibility: "simplified" }] },
+      ];
+
+      // 地図の初期化（東京駅周辺を中心に設定）
+      map = new google.maps.Map(document.getElementById("google-map"), {
+        center: { lat: 35.676, lng: 139.755 },
+        zoom: 12.5,
+        mapId: MAP_ID,
+        styles: darkMapStyle,
+        disableDefaultUI: true, // UIを隠してクリーンに見せる
+        zoomControl: true,
+      });
+
+      // AdvancedMarkerElementを使用して、既存のHTMLピンをそのままマップ上に配置
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+      projects.forEach(p => {
+        if (!p.location) return;
+
+        // カスタムマーカー用のHTML要素を構築
+        const pinContainer = document.createElement("div");
+        pinContainer.className = "map-pin";
+        pinContainer.dataset.projectId = p.id;
+        pinContainer.style.position = "relative";
+        pinContainer.innerHTML = `
+          <div class="map-pin-ping" style="background:${p.color};"></div>
+          <div class="map-pin-circle" style="background:${p.color};">
+            <div class="map-pin-dot"></div>
+          </div>
+          <div class="map-pin-tooltip">
+            <div class="map-pin-tooltip-company" style="color:${p.color};">${p.company}</div>
+            <div class="map-pin-tooltip-name">${p.name}</div>
+          </div>
+        `;
+
+        // マーカーを地図に追加
+        const marker = new AdvancedMarkerElement({
+          map,
+          position: p.location,
+          content: pinContainer,
+          title: p.name,
+        });
+
+        // 状態管理とホバー連動のために保存
+        mapMarkers[p.id] = pinContainer;
+        googleMarkers[p.id] = marker; // フィルタリングで表示/非表示を切り替えるために使用
+
+        // マーカー自身のホバーイベント
+        pinContainer.addEventListener('mouseenter', () => window.updateHoverState(p.id));
+        pinContainer.addEventListener('mouseleave', () => window.updateHoverState(null));
+      });
+    }
+
+    // --- プロジェクトセクションのフィルタリング機能 ---
+    function filterProjects(company) {
+      var rows = document.querySelectorAll('.project-row');
+      var visibleCount = 0;
+
+      // テーブル行の表示/非表示を切り替え
+      rows.forEach(function(row) {
+        if (company === 'all' || row.getAttribute('data-company') === company) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // 件数表示の更新
+      var countEl = document.getElementById('projects-count-display');
+      if (countEl) countEl.innerText = visibleCount + ' 件';
+
+      // マップ上のピンの表示/非表示を切り替え
+      projects.forEach(function(p) {
+        var marker = googleMarkers[p.id];
+        if (marker) {
+          if (company === 'all' || p.company === company) {
+            marker.map = map; // 表示
+          } else {
+            marker.map = null; // 隠す
+          }
+        }
+      });
+    }
+
+    // プロジェクト用フィルターボタンのイベント
+    document.querySelectorAll('#projects-filter .filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        document.querySelectorAll('#projects-filter .filter-btn').forEach(function(b) {
+          b.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
+        filterProjects(e.currentTarget.getAttribute('data-filter'));
+      });
+    });
+
     // ---- Project table <-> Map pin hover linkage ----
     function setupProjectHover() {
       var rows = document.querySelectorAll('.project-row');
-      var pins = document.querySelectorAll('.map-pin');
 
-      function updateHover(hoveredId) {
+      window.updateHoverState = function(hoveredId) {
+        // 表の行のハイライト
         rows.forEach(function(row) {
           if (hoveredId && row.dataset.projectId === hoveredId) {
             row.classList.add('is-hovered');
@@ -1538,7 +1615,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
             row.classList.remove('is-hovered');
           }
         });
-        pins.forEach(function(pin) {
+        
+        // マーカーのハイライト（DOM要素に対してクラスを切り替え）
+        Object.values(mapMarkers).forEach(function(pin) {
           if (hoveredId === null) {
             pin.classList.remove('is-dimmed', 'is-active');
           } else if (pin.dataset.projectId === hoveredId) {
@@ -1549,19 +1628,19 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
             pin.classList.add('is-dimmed');
           }
         });
-      }
+      };
 
       rows.forEach(function(row) {
-        row.addEventListener('mouseenter', function() { updateHover(row.dataset.projectId); });
-        row.addEventListener('mouseleave', function() { updateHover(null); });
-      });
-      pins.forEach(function(pin) {
-        pin.addEventListener('mouseenter', function() { updateHover(pin.dataset.projectId); });
-        pin.addEventListener('mouseleave', function() { updateHover(null); });
+        row.addEventListener('mouseenter', function() { window.updateHoverState(row.dataset.projectId); });
+        row.addEventListener('mouseleave', function() { window.updateHoverState(null); });
       });
     }
-    setupProjectHover();
-  </script>
 
+    // 初期化関数呼び出し
+    initGoogleMap();
+    setupProjectHover();
+
+  </script>
 </body>
 </html>
+```
