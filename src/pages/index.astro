@@ -1317,11 +1317,11 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
 
       <div class="table-wrap" style="overflow-x:auto;">
         <table class="data-table">
-          <thead>
+　　　　　　<thead>
             <tr>
               <th>企業名</th>
               <th style="text-align:left;">プロジェクト名</th>
-              <th>状況</th>
+              <th style="text-align:center;">状況</th> <!-- ← プロジェクト名の右、中央寄せに -->
               <th style="text-align:left;">エリア</th>
               <th style="text-align:left;">主用途・アクセス</th>
               <th style="text-align:left;">規模</th>
@@ -1334,31 +1334,38 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
               return (
                 <tr class="project-row" data-project-id={p.id} data-company={p.company}>
                   <td>
+                    <!-- 企業名 -->
                     <div class="company-label">
                       <div class="company-dot" style={`background:${p.color}; box-shadow: 0 0 8px ${p.color};`} />
                       {p.company}
                     </div>
                   </td>
+                  <!-- ①プロジェクト名 -->
                   <td style="text-align:left; font-weight:700; color:#e8eaf0;">{p.name}</td>
+                  <!-- ②状況（中央寄せ） -->
+                  <td style="text-align:center;">
+                    <span class={`project-status ${statusClass}`}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <!-- ③エリア -->
                   <td style="text-align:left;">{p.area}</td>
+                  <!-- ④主用途・アクセス -->
                   <td style="text-align:left;">
                     <div class="proj-usage-access">
                       <span class="proj-usage">{p.usage}</span>
                       <span class="proj-access">{p.access}</span>
                     </div>
                   </td>
+                  <!-- ⑤規模 -->
                   <td style="text-align:left;">
                     <div class="proj-scale-wrap">
                       <span class="proj-scale-main">{p.scale}</span>
                       <span class="proj-scale-area">{p.scaleArea}</span>
                     </div>
                   </td>
+                  <!-- ⑥完成予定 -->
                   <td>{p.completion}</td>
-                  <td>
-                    <span class={`project-status ${statusClass}`}>
-                      {p.status}
-                    </span>
-                  </td>
                 </tr>
               );
             })}
