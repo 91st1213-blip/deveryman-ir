@@ -13,51 +13,39 @@ const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string 
 
 const companies = [
   {
-    name: "三井不動産", secCode: "8801", logoInitial: "三", period: "25/3", badge: "FY2025 MAR 予想",
-    revenue: 28000, revenueYoy: 6.2, operatingProfit: 4200, profitMargin: 15.0,
-    ordinaryProfit: 3800, ordinaryYoy: 5.0, netProfit: 1500, netYoy: 4.2,
-    stockPrice: 2086, marketCap: "4.4", roe: 8.2, pbr: 1.12, divYield: 2.4,
-    condoUnits: 3300, condoYoy: 5.1, condoMargin: 14.5,
+    name: "三井不動産", secCode: "8801", period: "2025/3",
+    revenue: 28000, operatingProfit: 4200, ordinaryProfit: 3800, netProfit: 1500,
+    profitMargin: 15.0, stockPrice: 2086, yoyGrowth: 6.2, roe: 8.2,
     irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/"
   },
   {
-    name: "三菱地所", secCode: "8802", logoInitial: "地", period: "25/3", badge: "FY2025 MAR 予想",
-    revenue: 32000, revenueYoy: 4.8, operatingProfit: 5500, profitMargin: 17.2,
-    ordinaryProfit: 5200, ordinaryYoy: 4.0, netProfit: 2800, netYoy: 3.5,
-    stockPrice: 2315, marketCap: "3.2", roe: 9.1, pbr: 1.45, divYield: 2.8,
-    condoUnits: 2800, condoYoy: -2.5, condoMargin: 13.2,
+    name: "三菱地所", secCode: "8802", period: "2025/3",
+    revenue: 32000, operatingProfit: 5500, ordinaryProfit: 5200, netProfit: 2800,
+    profitMargin: 17.2, stockPrice: 2315, yoyGrowth: 4.8, roe: 9.1,
     irLink: "https://www.mec.co.jp/j/investor/"
   },
   {
-    name: "住友不動産", secCode: "8830", logoInitial: "住", period: "25/3", badge: "FY2025 MAR 予想",
-    revenue: 11000, revenueYoy: 3.1, operatingProfit: 2200, profitMargin: 20.0,
-    ordinaryProfit: 2000, ordinaryYoy: 6.5, netProfit: 1200, netYoy: 8.1,
-    stockPrice: 4210, marketCap: "2.0", roe: 12.3, pbr: 1.50, divYield: 2.1,
-    condoUnits: 3000, condoYoy: 1.2, condoMargin: 24.5,
+    name: "住友不動産", secCode: "8830", period: "2025/3",
+    revenue: 11000, operatingProfit: 2200, ordinaryProfit: 2000, netProfit: 1200,
+    profitMargin: 20.0, stockPrice: 4210, yoyGrowth: 3.1, roe: 12.3,
     irLink: "https://www.sumitomo-rd.co.jp/ir/"
   },
   {
-    name: "東京建物", secCode: "8804", logoInitial: "建", period: "24/12", badge: "FY2024 DEC 実績",
-    revenue: 5800, revenueYoy: -1.2, operatingProfit: 900, profitMargin: 15.5,
-    ordinaryProfit: 850, ordinaryYoy: -1.5, netProfit: 500, netYoy: -2.0,
-    stockPrice: 1982, marketCap: "4,500", roe: 7.8, pbr: 0.85, divYield: 3.5,
-    condoUnits: 1250, condoYoy: 15.0, condoMargin: 18.2,
+    name: "東京建物", secCode: "8804", period: "2024/12",
+    revenue: 5800, operatingProfit: 900, ordinaryProfit: 850, netProfit: 500,
+    profitMargin: 15.5, stockPrice: 1982, yoyGrowth: -1.2, roe: 7.8,
     irLink: "https://www.tatemono.com/ir/"
   },
   {
-    name: "野村不動産HD", secCode: "3231", logoInitial: "野", period: "25/3", badge: "FY2025 MAR 予想",
-    revenue: 7200, revenueYoy: 8.5, operatingProfit: 1100, profitMargin: 15.3,
-    ordinaryProfit: 1050, ordinaryYoy: 7.0, netProfit: 600, netYoy: 5.4,
-    stockPrice: 3620, marketCap: "6,500", roe: 10.2, pbr: 1.05, divYield: 3.2,
-    condoUnits: 4200, condoYoy: 8.5, condoMargin: 12.8,
+    name: "野村不動産HD", secCode: "3231", period: "2025/3",
+    revenue: 7200, operatingProfit: 1100, ordinaryProfit: 1050, netProfit: 600,
+    profitMargin: 15.3, stockPrice: 3620, yoyGrowth: 8.5, roe: 10.2,
     irLink: "https://www.nomura-re-hd.co.jp/ir/"
   },
   {
-    name: "東急不動産HD", secCode: "3289", logoInitial: "急", period: "25/3", badge: "FY2025 MAR 予想",
-    revenue: 10500, revenueYoy: 5.7, operatingProfit: 1800, profitMargin: 17.1,
-    ordinaryProfit: 1700, ordinaryYoy: 5.8, netProfit: 950, netYoy: 6.0,
-    stockPrice: 888, marketCap: "6,000", roe: 8.9, pbr: 0.95, divYield: 3.0,
-    condoUnits: 1600, condoYoy: -4.0, condoMargin: 11.5,
+    name: "東急不動産HD", secCode: "3289", period: "2025/3",
+    revenue: 10500, operatingProfit: 1800, ordinaryProfit: 1700, netProfit: 950,
+    profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
     irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
   },
 ];
@@ -125,16 +113,6 @@ const projectStatusMap: Record<string, string> = {
 };
 
 const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
-
-// ヘルパー関数を function 宣言にして確実に認識させる
-function formatYoy(val: number) {
-  return `(${val > 0 ? '+' : ''}${val.toFixed(1)}%)`;
-}
-function getYoyClass(val: number) {
-  return val >= 0 ? "yoy-positive" : "yoy-negative";
-}
-function getMarginClass(val: number) {
-  return val >= 20 ? "margin-high" : val >= 15 ? "margin-mid" : "margin-low";
 ---
 
 <html lang="ja">
@@ -1260,74 +1238,59 @@ function getMarginClass(val: number) {
   </section>
 
   <!-- SECTION 3: Financial Summary -->
- <!-- SECTION 3: 決算サマリー & 分譲戸数 -->
   <section class="section" id="summary">
     <div class="container">
-      <h2 class="section-title">📋 決算サマリー & 分譲戸数</h2>
-      <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin-bottom:20px;" />
-
-      <div class="summary-tables-grid">
-        <!-- 業績ハイライト -->
-        <div class="table-container">
-          <div class="table-meta">業績ハイライト<span>単位: 億円</span></div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>企業名</th>
-                  <th style="text-align:center;">期</th>
-                  <th>売上高 <span>(前期比)</span></th>
-                  <th>営業利益 <span>(利益率)</span></th>
-                  <th>経常利益 <span>(前期比)</span></th>
-                  <th>純利益 <span>(前期比)</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                {companies.map(c => {
-                  const col = COMPANY_COLORS[c.name];
-                  return (
-                    <tr>
-                      <td><div class="company-label"><div class="company-dot" style={`background:${col.accent}`} />{c.name}</div></td>
-                      <td style="text-align:center">{c.period}</td>
-                      <td>{c.revenue.toLocaleString()} <span class={`yoy-growth ${getYoyClass(c.revenueYoy)}`}>{formatYoy(c.revenueYoy)}</span></td>
-                      <td>{c.operatingProfit.toLocaleString()} <span class={`margin-pill ${getMarginClass(c.profitMargin)}`} style="margin-left:4px">{c.profitMargin.toFixed(1)}%</span></td>
-                      <td>{c.ordinaryProfit.toLocaleString()} <span class={`yoy-growth ${getYoyClass(c.ordinaryYoy)}`}>{formatYoy(c.ordinaryYoy)}</span></td>
-                      <td>{c.netProfit.toLocaleString()} <span class={`yoy-growth ${getYoyClass(c.netYoy)}`}>{formatYoy(c.netYoy)}</span></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">📋 最新決算サマリー</h2>
+          <span class="section-count">単位: 億円</span>
         </div>
+      </div>
+      <hr class="section-divider" />
 
-        <!-- 分譲マンション -->
-        <div class="table-container">
-          <div class="table-meta">分譲マンション計上戸数 (予想)<span>単位: 戸</span></div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
+      <div class="table-wrap" style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>企業名</th>
+              <th>決算期</th>
+              <th>営業収益</th>
+              <th>前期比</th>
+              <th>営業利益</th>
+              <th>利益率</th>
+              <th>経常利益</th>
+              <th>純利益</th>
+              <th>ROE</th>
+              <th>株価</th>
+            </tr>
+          </thead>
+          <tbody>
+            {companies.map((c) => {
+              const col = COMPANY_COLORS[c.name] ?? { bg: "#555", accent: "#555", text: "#eee" };
+              const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
+              const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
+              return (
                 <tr>
-                  <th>企業名</th>
-                  <th>計上戸数 <span>(前期比)</span></th>
-                  <th>営業利益率</th>
+                  <td>
+                    <div class="company-label">
+                      <div class="company-dot" style={`background:${col.accent}`} />
+                      {c.name}
+                    </div>
+                  </td>
+                  <td>{c.period}</td>
+                  <td>{c.revenue.toLocaleString()}</td>
+                  <td><span class={`yoy-growth ${yoyClass}`}>{c.yoyGrowth > 0 ? '+' : ''}{c.yoyGrowth.toFixed(1)}%</span></td>
+                  <td>{c.operatingProfit.toLocaleString()}</td>
+                  <td><span class={`margin-pill ${mClass}`}>{c.profitMargin.toFixed(1)}%</span></td>
+                  <td>{c.ordinaryProfit.toLocaleString()}</td>
+                  <td>{c.netProfit.toLocaleString()}</td>
+                  <td>{c.roe.toFixed(1)}%</td>
+                  <td>¥{c.stockPrice.toLocaleString()}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {companies.map(c => {
-                  const col = COMPANY_COLORS[c.name];
-                  return (
-                    <tr>
-                      <td><div class="company-label"><div class="company-dot" style={`background:${col.accent}`} />{c.name}</div></td>
-                      <td>{c.condoUnits.toLocaleString()} <span class={`yoy-growth ${getYoyClass(c.condoYoy)}`}>{formatYoy(c.condoYoy)}</span></td>
-                      <td><span class={`margin-pill ${getMarginClass(c.condoMargin)}`}>{c.condoMargin.toFixed(1)}%</span></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
