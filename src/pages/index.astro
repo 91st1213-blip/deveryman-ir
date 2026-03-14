@@ -1321,11 +1321,11 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
             <tr>
               <th>企業名</th>
               <th style="text-align:left;">プロジェクト名</th>
+              <th>状況</th>
               <th style="text-align:left;">エリア</th>
               <th style="text-align:left;">主用途・アクセス</th>
               <th style="text-align:left;">規模</th>
               <th>完成予定</th>
-              <th>状況</th>
             </tr>
           </thead>
           <tbody>
@@ -1485,8 +1485,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
 
     async function initGoogleMap() {
       // ⚠️ ご注意: 実稼働させるには Google Cloud Console から取得した APIキー と マップID を設定してください。
-      const API_KEY = "YOUR_API_KEY_HERE"; 
-      const MAP_ID = "YOUR_MAP_ID_HERE";
+      const API_KEY = "AIzaSyAGRPnbJ8ePZnUcf8VVuBU1KDfkz5Z7W4k"; 
+      const MAP_ID = "cf42d31342c76186d63584b1";
 
       // Google Maps Scriptの動的ロード
       await new Promise((resolve) => {
