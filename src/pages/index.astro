@@ -65,43 +65,43 @@ const projects = [
     id: "p1", company: "三井不動産", color: "#4a90d9",
     name: "日本橋一丁目中地区 再開発", area: "中央区日本橋", access: "日本橋駅 直結",
     usage: "オフィス・ホテル・住宅", scale: "地上52階 (284m)", scaleArea: "38万㎡", completion: "2026年度", status: "着工済",
-    coords: { x: 73, y: 48 },
+    coords: { x: 73, y: 48 },location: { lat: 35.6821, lng: 139.7741 },
   },
   {
     id: "p2", company: "三菱地所", color: "#e85555",
     name: "Torch Tower (TOKYO TORCH)", area: "千代田区大手町", access: "東京駅 直結",
     usage: "オフィス・ホテル・商業", scale: "地上62階 (390m)", scaleArea: "54万㎡", completion: "2028年度", status: "進行中",
-    coords: { x: 67, y: 50 },
+    coords: { x: 67, y: 50 },location:{ lat: 35.6853, lng: 139.7695 },
   },
   {
     id: "p3", company: "野村不動産HD", color: "#6a6adc",
     name: "芝浦PJ (BLUE FRONT SHIBAURA)", area: "港区芝浦", access: "浜松町駅 徒歩5分",
     usage: "オフィス・ホテル・住宅", scale: "地上43階 (232m)", scaleArea: "55万㎡", completion: "2030年度", status: "進行中",
-    coords: { x: 65, y: 76 },
+    coords: { x: 65, y: 76 },location: { lat: 35.6455, lng: 139.7571 },
   },
   {
     id: "p4", company: "東急不動産HD", color: "#28b0b0",
     name: "渋谷アッパー・ウエスト PJ", area: "渋谷区道玄坂", access: "渋谷駅 徒歩5分",
     usage: "商業・ホテル・住宅", scale: "地上36階 (164m)", scaleArea: "11万㎡", completion: "2027年度", status: "計画中",
-    coords: { x: 30, y: 68 },
+    coords: { x: 30, y: 68 },location:{ lat: 35.6601, lng: 139.6975 },
   },
   {
     id: "p5", company: "東京建物", color: "#d4813a",
     name: "八重洲二丁目中地区 再開発", area: "中央区八重洲", access: "東京駅 直結",
     usage: "オフィス・商業・劇場", scale: "地上43階 (225m)", scaleArea: "38万㎡", completion: "2029年度", status: "計画中",
-    coords: { x: 69, y: 54 },
+    coords: { x: 69, y: 54 },location:{ lat: 35.6795, lng: 139.7681 },
   },
   {
     id: "p6", company: "三井不動産", color: "#4a90d9",
     name: "築地市場跡地 再開発", area: "中央区築地", access: "築地市場駅 徒歩1分",
     usage: "スタジアム・商業・オフィス", scale: "未定", scaleArea: "約117万㎡", completion: "2030年代", status: "計画中",
-    coords: { x: 78, y: 65 },
+    coords: { x: 78, y: 65 },location:{ lat: 35.6631, lng: 139.7688 },
   },
   {
     id: "p7", company: "住友不動産", color: "#3aaa5c",
     name: "西新宿三丁目 再開発", area: "新宿区西新宿", access: "新宿駅 徒歩10分",
     usage: "住宅・商業・公益", scale: "地上65階 (約235m)", scaleArea: "約27万㎡", completion: "2029年度", status: "計画中",
-    coords: { x: 24, y: 42 },
+    coords: { x: 24, y: 42 },location:{ lat: 35.6841, lng: 139.6901 },
   },
 ];
 
@@ -1311,10 +1311,20 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     <!-- SECTION 4: Projects + Map -->
   <section class="section" id="projects">
     <div class="container">
-      <div class="section-header">
+　　　　<div class="section-header">
         <div class="section-title-wrap">
           <h2 class="section-title">🏗️ 再開発プロジェクト</h2>
-          <span class="section-count">{projects.length} 件</span>
+          <span class="section-count" id="projects-count-display">{projects.length} 件</span> <!-- IDを追加 -->
+        </div>
+        <!-- プロジェクト用のフィルターボタンを追加 -->
+        <div class="filter-group" id="projects-filter">
+          <button class="filter-btn active" data-filter="all">すべて</button>
+          <button class="filter-btn" data-filter="三井不動産">三井</button>
+          <button class="filter-btn" data-filter="三菱地所">三菱</button>
+          <button class="filter-btn" data-filter="住友不動産">住友</button>
+          <button class="filter-btn" data-filter="東京建物">東建</button>
+          <button class="filter-btn" data-filter="野村不動産HD">野村</button>
+          <button class="filter-btn" data-filter="東急不動産HD">東急</button>
         </div>
       </div>
       <hr class="section-divider" />
@@ -1336,6 +1346,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
             {projects.map((p) => {
               const statusClass = projectStatusMap[p.status] ?? "status-plan";
               return (
+　　　　　　　　　　// data-company={p.company}
                 <tr class="project-row" data-project-id={p.id}>
                   <td>
                     <div class="company-label">
