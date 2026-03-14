@@ -1,53 +1,23 @@
 ---
 // deveryman-ir | src/pages/index.astro
-// Updated: Google Maps Advanced Markers & Project Filtering Implementation
+// Updated: Compact Cards, 2-Column Summary, Projects Table Refactor
 
-const COMPANY_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
-  "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9", text: "#e8f0fb" },
-  "三菱地所":     { bg: "#c41e3a", accent: "#e85555", text: "#fbeaea" },
-  "住友不動産":   { bg: "#1a5e2a", accent: "#3aaa5c", text: "#e8f5ec" },
-  "東京建物":     { bg: "#8b4513", accent: "#d4813a", text: "#fdf0e0" },
-  "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc", text: "#eaeaf8" },
-  "東急不動産HD": { bg: "#006060", accent: "#28b0b0", text: "#e0f5f5" },
+const COMPANY_COLORS: Record<string, { bg: string; accent: string }> = {
+  "三井不動産":   { bg: "#1a3a6b", accent: "#4a90d9" },
+  "三菱地所":     { bg: "#8b0000", accent: "#c41e3a" },
+  "住友不動産":   { bg: "#1a5e2a", accent: "#3aaa5c" },
+  "東京建物":     { bg: "#8b4513", accent: "#d4813a" },
+  "野村不動産HD": { bg: "#2c2c6e", accent: "#6a6adc" },
+  "東急不動産HD": { bg: "#006060", accent: "#28b0b0" },
 };
 
 const companies = [
-  {
-    name: "三井不動産", secCode: "8801", period: "2025/3",
-    revenue: 28000, operatingProfit: 4200, ordinaryProfit: 3800, netProfit: 1500,
-    profitMargin: 15.0, stockPrice: 2086, yoyGrowth: 6.2, roe: 8.2,
-    irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/"
-  },
-  {
-    name: "三菱地所", secCode: "8802", period: "2025/3",
-    revenue: 32000, operatingProfit: 5500, ordinaryProfit: 5200, netProfit: 2800,
-    profitMargin: 17.2, stockPrice: 2315, yoyGrowth: 4.8, roe: 9.1,
-    irLink: "https://www.mec.co.jp/j/investor/"
-  },
-  {
-    name: "住友不動産", secCode: "8830", period: "2025/3",
-    revenue: 11000, operatingProfit: 2200, ordinaryProfit: 2000, netProfit: 1200,
-    profitMargin: 20.0, stockPrice: 4210, yoyGrowth: 3.1, roe: 12.3,
-    irLink: "https://www.sumitomo-rd.co.jp/ir/"
-  },
-  {
-    name: "東京建物", secCode: "8804", period: "2024/12",
-    revenue: 5800, operatingProfit: 900, ordinaryProfit: 850, netProfit: 500,
-    profitMargin: 15.5, stockPrice: 1982, yoyGrowth: -1.2, roe: 7.8,
-    irLink: "https://www.tatemono.com/ir/"
-  },
-  {
-    name: "野村不動産HD", secCode: "3231", period: "2025/3",
-    revenue: 7200, operatingProfit: 1100, ordinaryProfit: 1050, netProfit: 600,
-    profitMargin: 15.3, stockPrice: 3620, yoyGrowth: 8.5, roe: 10.2,
-    irLink: "https://www.nomura-re-hd.co.jp/ir/"
-  },
-  {
-    name: "東急不動産HD", secCode: "3289", period: "2025/3",
-    revenue: 10500, operatingProfit: 1800, ordinaryProfit: 1700, netProfit: 950,
-    profitMargin: 17.1, stockPrice: 888, yoyGrowth: 5.7, roe: 8.9,
-    irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/"
-  },
+  { name: "三井不動産", code: "8801", initial: "三", period: "25/3", badge: "FY2025 MAR 予想", revenue: 28000, revenueStr: "2.80", revYoy: 6.2, op: 4200, margin: 15.0, ord: 3800, ordYoy: 5.0, net: 1500, netYoy: 4.2, stock: 2086, mCap: "4.4", roe: 8.2, pbr: 1.12, yield: 2.4, units: 3300, unitYoy: 5.1, unitMargin: 14.5, irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
+  { name: "三菱地所", code: "8802", initial: "地", period: "25/3", badge: "FY2025 MAR 予想", revenue: 32000, revenueStr: "3.20", revYoy: 4.8, op: 5500, margin: 17.2, ord: 5200, ordYoy: 4.0, net: 2800, netYoy: 3.5, stock: 2315, mCap: "3.2", roe: 9.1, pbr: 1.45, yield: 2.8, units: 2800, unitYoy: -2.5, unitMargin: 13.2, irLink: "https://www.mec.co.jp/j/investor/" },
+  { name: "住友不動産", code: "8830", initial: "住", period: "25/3", badge: "FY2025 MAR 予想", revenue: 11000, revenueStr: "1.10", revYoy: 3.1, op: 2200, margin: 20.0, ord: 2000, ordYoy: 6.5, net: 1200, netYoy: 8.1, stock: 4210, mCap: "2.0", roe: 12.3, pbr: 1.50, yield: 2.1, units: 3000, unitYoy: 1.2, unitMargin: 24.5, irLink: "https://www.sumitomo-rd.co.jp/ir/" },
+  { name: "東京建物", code: "8804", initial: "建", period: "24/12", badge: "FY2024 DEC 実績", revenue: 5800, revenueStr: "5,800", revYoy: -1.2, op: 900, margin: 15.5, ord: 850, ordYoy: -1.5, net: 500, netYoy: -2.0, stock: 1982, mCap: "4,500", roe: 7.8, pbr: 0.85, yield: 3.5, units: 1250, unitYoy: 15.0, unitMargin: 18.2, irLink: "https://www.tatemono.com/ir/" },
+  { name: "野村不動産HD", code: "3231", initial: "野", period: "25/3", badge: "FY2025 MAR 予想", revenue: 7200, revenueStr: "7,200", revYoy: 8.5, op: 1100, margin: 15.3, ord: 1050, ordYoy: 7.0, net: 600, netYoy: 5.4, stock: 3620, mCap: "6,500", roe: 10.2, pbr: 1.05, yield: 3.2, units: 4200, unitYoy: 8.5, unitMargin: 12.8, irLink: "https://www.nomura-re-hd.co.jp/ir/" },
+  { name: "東急不動産HD", code: "3289", initial: "急", period: "25/3", badge: "FY2025 MAR 予想", revenue: 10500, revenueStr: "1.05", revYoy: 5.7, op: 1800, margin: 17.1, ord: 1700, ordYoy: 5.8, net: 950, netYoy: 6.0, stock: 888, mCap: "6,000", roe: 8.9, pbr: 0.95, yield: 3.0, units: 1600, unitYoy: -4.0, unitMargin: 11.5, irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
 ];
 
 const newsItems = [
@@ -60,49 +30,15 @@ const newsItems = [
   { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
 ];
 
+// ※Google Mapにピンを立てるため、location情報を復元しています
 const projects = [
-  {
-    id: "p1", company: "三井不動産", color: "#4a90d9",
-    name: "日本橋一丁目中地区 再開発", area: "中央区日本橋", access: "日本橋駅 直結",
-    usage: "オフィス・ホテル・住宅", scale: "地上52階 (284m)", scaleArea: "38万㎡", completion: "2026年度", status: "着工済",
-    location: { lat: 35.6821, lng: 139.7741 },
-  },
-  {
-    id: "p2", company: "三菱地所", color: "#e85555",
-    name: "Torch Tower (TOKYO TORCH)", area: "千代田区大手町", access: "東京駅 直結",
-    usage: "オフィス・ホテル・商業", scale: "地上62階 (390m)", scaleArea: "54万㎡", completion: "2028年度", status: "進行中",
-    location: { lat: 35.6853, lng: 139.7695 },
-  },
-  {
-    id: "p3", company: "野村不動産HD", color: "#6a6adc",
-    name: "芝浦PJ (BLUE FRONT SHIBAURA)", area: "港区芝浦", access: "浜松町駅 徒歩5分",
-    usage: "オフィス・ホテル・住宅", scale: "地上43階 (232m)", scaleArea: "55万㎡", completion: "2030年度", status: "進行中",
-    location: { lat: 35.6455, lng: 139.7571 },
-  },
-  {
-    id: "p4", company: "東急不動産HD", color: "#28b0b0",
-    name: "渋谷アッパー・ウエスト PJ", area: "渋谷区道玄坂", access: "渋谷駅 徒歩5分",
-    usage: "商業・ホテル・住宅", scale: "地上36階 (164m)", scaleArea: "11万㎡", completion: "2027年度", status: "計画中",
-    location: { lat: 35.6601, lng: 139.6975 },
-  },
-  {
-    id: "p5", company: "東京建物", color: "#d4813a",
-    name: "八重洲二丁目中地区 再開発", area: "中央区八重洲", access: "東京駅 直結",
-    usage: "オフィス・商業・劇場", scale: "地上43階 (225m)", scaleArea: "38万㎡", completion: "2029年度", status: "計画中",
-    location: { lat: 35.6795, lng: 139.7681 },
-  },
-  {
-    id: "p6", company: "三井不動産", color: "#4a90d9",
-    name: "築地市場跡地 再開発", area: "中央区築地", access: "築地市場駅 徒歩1分",
-    usage: "スタジアム・商業・オフィス", scale: "未定", scaleArea: "約117万㎡", completion: "2030年代", status: "計画中",
-    location: { lat: 35.6631, lng: 139.7688 },
-  },
-  {
-    id: "p7", company: "住友不動産", color: "#3aaa5c",
-    name: "西新宿三丁目 再開発", area: "新宿区西新宿", access: "新宿駅 徒歩10分",
-    usage: "住宅・商業・公益", scale: "地上65階 (約235m)", scaleArea: "約27万㎡", completion: "2029年度", status: "計画中",
-    location: { lat: 35.6841, lng: 139.6901 },
-  },
+  { id: "p1", company: "三井不動産", color: "#4a90d9", status: "着工済", name: "日本橋一丁目中地区 再開発", area: "中央区日本橋", scale: "地上52階 (284m)", completion: "26年度", location: { lat: 35.6821, lng: 139.7741 } },
+  { id: "p2", company: "三菱地所", color: "#e85555", status: "進行中", name: "Torch Tower (TOKYO TORCH)", area: "千代田区大手町", scale: "地上62階 (390m)", completion: "28年度", location: { lat: 35.6853, lng: 139.7695 } },
+  { id: "p3", company: "野村不動産HD", color: "#6a6adc", status: "進行中", name: "芝浦PJ (BLUE FRONT SHIBAURA)", area: "港区芝浦", scale: "地上43階 (232m)", completion: "30年度", location: { lat: 35.6455, lng: 139.7571 } },
+  { id: "p4", company: "東急不動産HD", color: "#28b0b0", status: "計画中", name: "渋谷アッパー・ウエスト PJ", area: "渋谷区道玄坂", scale: "地上36階 (164m)", completion: "27年度", location: { lat: 35.6601, lng: 139.6975 } },
+  { id: "p5", company: "東京建物", color: "#d4813a", status: "計画中", name: "八重洲二丁目中地区 再開発", area: "中央区八重洲", scale: "地上43階 (225m)", completion: "29年度", location: { lat: 35.6795, lng: 139.7681 } },
+  { id: "p6", company: "三井不動産", color: "#4a90d9", status: "計画中", name: "築地市場跡地 再開発", area: "中央区築地", scale: "未定", completion: "30年代", location: { lat: 35.6631, lng: 139.7688 } },
+  { id: "p7", company: "住友不動産", color: "#3aaa5c", status: "計画中", name: "西新宿三丁目 再開発", area: "新宿区西新宿", scale: "地上65階 (約235m)", completion: "29年度", location: { lat: 35.6841, lng: 139.6901 } },
 ];
 
 const projectStatusMap: Record<string, string> = {
@@ -113,6 +49,11 @@ const projectStatusMap: Record<string, string> = {
 };
 
 const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
+
+// Helper functions for Astro template
+function getMarginClass(val: number) { 
+  return val >= 20 ? 'margin-high' : val >= 15 ? 'margin-mid' : 'margin-low'; 
+}
 ---
 
 <html lang="ja">
@@ -123,981 +64,213 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
   <meta name="description" content="三井不動産・三菱地所などの最新決算・再開発情報をまとめて確認" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 
   <style is:global>
     /* === RESET & BASE === */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Noto Sans JP', -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 100%);
+      font-family: 'Noto Sans JP', sans-serif;
+      background: #0a0f1e;
       color: #e8eaf0;
       min-height: 100vh;
       line-height: 1.6;
     }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
     /* === LAYOUT === */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
     /* === HEADER === */
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(10, 15, 30, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 16px 0;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10, 15, 30, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 16px 0;
     }
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo {
-      font-size: 1.25rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #60a5fa, #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .logo span {
-      font-weight: 400;
-      opacity: 0.7;
-    }
-    .nav {
-      display: flex;
-      gap: 24px;
-    }
-    .nav a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.6);
-      transition: color 0.2s;
-    }
-    .nav a:hover {
-      color: #fff;
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .badge-updated {
-      font-size: 0.75rem;
-      background: rgba(96, 165, 250, 0.15);
-      border: 1px solid rgba(96, 165, 250, 0.3);
-      color: #93c5fd;
-      padding: 4px 12px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-    .twitter-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #e8eaf0;
-      transition: all 0.2s;
-    }
-    .twitter-link:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      transform: translateY(-2px);
-    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 1.25rem; font-weight: 900; background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.02em; }
+    .logo span { font-weight: 400; opacity: 0.7; }
+    
+    .nav { display: flex; gap: 24px; }
+    .nav a { font-size: 0.85rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); transition: color 0.2s; }
+    .nav a:hover { color: #fff; }
+    
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .badge-updated { font-size: 0.75rem; background: rgba(96, 165, 250, 0.15); border: 1px solid rgba(96, 165, 250, 0.3); color: #93c5fd; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+    .twitter-link { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #e8eaf0; transition: all 0.2s; }
+    .twitter-link:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: translateY(-2px); }
 
     /* === AD BANNER SLOTS === */
-    .ad-banner {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .ad-banner-header {
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      min-height: 90px;
-      padding: 8px 0;
-    }
-    .ad-banner-footer {
-      background: rgba(255, 255, 255, 0.03);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      min-height: 90px;
-      padding: 8px 0;
-    }
-    .ad-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      max-width: 728px;
-      height: 90px;
-      border: 1px dashed rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: rgba(255, 255, 255, 0.15);
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
-      user-select: none;
-    }
-    .ad-placeholder-icon {
-      font-size: 1rem;
-      opacity: 0.4;
-    }
-    .ad-banner img {
-      max-width: 728px;
-      width: 100%;
-      height: auto;
-      max-height: 90px;
-      object-fit: contain;
-      border-radius: 6px;
-    }
-    .ad-banner a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .ad-banner { width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .ad-banner-header { background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.06); min-height: 90px; padding: 8px 0; }
+    .ad-banner-footer { background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.06); border-bottom: 1px solid rgba(255, 255, 255, 0.06); min-height: 90px; padding: 8px 0; }
+    .ad-placeholder { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 728px; height: 90px; border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 8px; color: rgba(255, 255, 255, 0.15); font-size: 0.72rem; letter-spacing: 0.05em; user-select: none; }
+    .ad-placeholder-icon { font-size: 1rem; opacity: 0.4; }
 
     /* === HERO === */
-    .hero {
-      padding: 40px 0 24px;
-      background: radial-gradient(ellipse at 50% -20%, rgba(96, 165, 250, 0.12) 0%, transparent 70%);
-      text-align: center;
-    }
-    .hero-eyebrow {
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #60a5fa;
-      margin-bottom: 12px;
-    }
-    .hero-title {
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-    .hero-title em {
-      font-style: normal;
-      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero-sub {
-      font-size: 0.88rem;
-      color: rgba(255, 255, 255, 0.5);
-      max-width: 480px;
-      margin: 0 auto;
-    }
+    .hero { padding: 40px 0 24px; text-align: center; background: radial-gradient(ellipse at 50% -20%, rgba(96, 165, 250, 0.12) 0%, transparent 70%); }
+    .hero-eyebrow { font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: #60a5fa; margin-bottom: 12px; }
+    .hero-title { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 900; margin-bottom: 12px; line-height: 1.2; }
+    .hero-title em { font-style: normal; background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { font-size: 0.88rem; color: rgba(255, 255, 255, 0.5); max-width: 480px; margin: 0 auto; }
 
     /* === SECTION COMMON === */
-    .section {
-      padding: 32px 0;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-    .section-title-wrap {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-    .section-count {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.4);
-    }
-    .section-divider {
-      border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      margin-bottom: 20px;
-    }
-
-    /* === COMPANY CARDS ROW === */
-    .cards-row {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-    .scroll-arrow {
-      flex-shrink: 0;
-      width: 44px;
-      height: 44px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      position: relative;
-      overflow: hidden;
-      z-index: 2;
-    }
-    .scroll-arrow::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(96, 165, 250, 0.25) 0%, rgba(167, 139, 250, 0.25) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: 12px;
-    }
-    .scroll-arrow:hover {
-      border-color: rgba(96, 165, 250, 0.5);
-      color: #fff;
-      transform: scale(1.1);
-      box-shadow: 0 0 24px rgba(96, 165, 250, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3);
-    }
-    .scroll-arrow:hover::before {
-      opacity: 1;
-    }
-    .scroll-arrow:active {
-      transform: scale(0.95);
-      box-shadow: 0 0 8px rgba(96, 165, 250, 0.15);
-    }
-    .scroll-arrow svg {
-      width: 20px;
-      height: 20px;
-      position: relative;
-      z-index: 1;
-      transition: transform 0.2s ease;
-    }
-    .scroll-arrow:hover svg {
-      transform: scale(1.15);
-    }
-    .scroll-arrow-left {
-      margin-right: 14px;
-    }
-    .scroll-arrow-right {
-      margin-left: 14px;
-    }
-    .cards-scroll-wrapper {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      padding: 4px 0 8px;
-      flex: 1;
-      min-width: 0;
-    }
-    .cards-scroll-wrapper::-webkit-scrollbar {
-      display: none;
-    }
-    .company-card {
-      min-width: 200px;
-      max-width: 210px;
-      flex-shrink: 0;
-      border-radius: 12px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-      cursor: pointer;
-    }
-    .company-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-    .card-header {
-      padding: 10px 12px 8px;
-      position: relative;
-    }
-    .card-header-bg {
-      position: absolute;
-      inset: 0;
-      opacity: 0.9;
-    }
-    .card-header-content {
-      position: relative;
-      z-index: 1;
-    }
-    .card-top-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-    .company-name {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .sec-code {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-    .card-body {
-      padding: 10px 12px 12px;
-    }
-    .fiscal-badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      background: rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.8);
-      padding: 2px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-      width: fit-content;
-      margin-bottom: 8px;
-    }
-    .metrics-mini {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-    .metric-label {
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.45);
-    }
-    .metric-value {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #e8eaf0;
-    }
-    .margin-bar-wrap {
-      margin-bottom: 10px;
-    }
-    .margin-bar-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.65rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-bottom: 4px;
-    }
-    .margin-bar-track {
-      height: 3px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .margin-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, #34d399, #10b981);
-      transition: width 0.8s ease;
-    }
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-    }
-    .stock-info {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.5);
-    }
-    .stock-info strong {
-      color: #e8eaf0;
-      font-weight: 600;
-    }
-    .ir-link {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: #93c5fd;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      background: rgba(96, 165, 250, 0.1);
-      padding: 3px 8px;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-    .ir-link:hover {
-      background: rgba(96, 165, 250, 0.2);
-    }
+    .section { padding: 32px 0; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+    .section-title-wrap { display: flex; align-items: baseline; gap: 12px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .section-count { font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); }
 
     /* === FILTER BUTTONS === */
-    .filter-group {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 2px;
-    }
-    .filter-group::-webkit-scrollbar {
-      display: none;
-    }
-    .filter-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.6);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.25s ease;
-    }
-    .filter-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-    .filter-btn.active {
-      background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, rgba(167, 139, 250, 0.3) 100%);
-      border-color: rgba(96, 165, 250, 0.5);
-      color: #fff;
-      box-shadow: 0 0 12px rgba(96, 165, 250, 0.15);
-    }
+    .filter-group { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .filter-group::-webkit-scrollbar { display: none; }
+    .filter-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.6); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.25s ease; }
+    .filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .filter-btn.active { background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, rgba(167, 139, 250, 0.3) 100%); border-color: rgba(96, 165, 250, 0.5); color: #fff; box-shadow: 0 0 12px rgba(96, 165, 250, 0.15); }
+
+    /* === COMPANY CARDS (COMPACT) === */
+    .cards-row { display: flex; align-items: center; gap: 0; }
+    .scroll-arrow { flex-shrink: 0; width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.7); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 2;}
+    .scroll-arrow:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(96, 165, 250, 0.5); }
+    .scroll-arrow svg { width: 20px; height: 20px; }
+
+    .cards-scroll-wrapper { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0 30px; scrollbar-width: none; flex: 1; scroll-behavior: smooth; }
+    .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
+
+    .company-card { min-width: 240px; flex-shrink: 0; background: #161b30; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .company-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 16px 32px rgba(0,0,0,0.5); }
+    
+    .card-top-identity { padding: 12px 16px; color: #fff; }
+    .company-header-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .logo-box { width: 28px; height: 28px; background: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-fallback { font-weight: 900; font-size: 0.85rem; }
+    .company-name { font-size: 1.15rem; font-weight: 900; line-height: 1; }
+    .sec-code { font-size: 0.65rem; color: rgba(255, 255, 255, 0.6); font-family: 'Inter', sans-serif; font-weight: 600; margin-left: auto; }
+
+    .hero-stats-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; }
+    .stat-label-colored { font-size: 0.6rem; color: rgba(255, 255, 255, 0.5); font-weight: 700; display: block; margin-bottom: 2px; }
+    .stat-value-large { font-size: 1.25rem; font-weight: 800; font-family: 'Inter', sans-serif; }
+    .unit-hero { font-size: 0.75rem; margin-left: 2px; color: rgba(255, 255, 255, 0.5); font-weight: 500; }
+
+    .card-body { padding: 12px 16px; }
+    .fiscal-badge { font-size: 0.6rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: inline-block; background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 4px; }
+    .metrics-grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px 6px; }
+    .metric-group { display: flex; flex-direction: column; }
+    .metric-title { font-size: 0.6rem; color: #94a3b8; margin-bottom: 2px; font-weight: 700; }
+    .metric-title.valuation { color: #38bdf8; opacity: 0.8; }
+    .metric-data { font-size: 0.95rem; font-weight: 800; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    .unit-small { font-size: 0.65rem; color: #475569; margin-left: 2px; }
+
+    .card-footer { display: flex; justify-content: flex-end; align-items: center; padding-top: 12px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .ir-link-btn { font-size: 0.6rem; font-weight: 700; color: #94a3b8; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08); transition: 0.2s; }
+    .ir-link-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2); }
 
     /* === NEWS TICKER === */
-    .news-ticker-section {
-      background: rgba(255, 255, 255, 0.02);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 24px 0;
-    }
-    .news-scroll-wrapper {
-      height: 440px;
-      overflow: hidden;
-      position: relative;
-      background: rgba(15, 23, 42, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-    }
-    .news-scroll-wrapper::before,
-    .news-scroll-wrapper::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 48px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .news-scroll-wrapper::before {
-      top: 0;
-      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), transparent);
-    }
-    .news-scroll-wrapper::after {
-      bottom: 0;
-      background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
-    }
-    .news-ticker-track {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      padding: 16px;
-    }
-    .news-ticker-track:hover {
-      animation-play-state: paused !important;
-    }
-    @keyframes ticker-scroll-vertical {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(-50%);
-      }
-    }
-    /* === NEWS CARD === */
-    .news-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-      text-decoration: none;
-      color: inherit;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-    .news-card:first-child {
-      border-radius: 12px 12px 0 0;
-    }
-    .news-card:last-child {
-      border-radius: 0 0 12px 12px;
-      border-bottom: none;
-    }
-    .news-card:hover {
-      background: rgba(255, 255, 255, 0.06);
-    }
-    .news-card-date {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.35);
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
-      flex-shrink: 0;
-      width: 82px;
-      min-width: 82px;
-    }
-    .news-category {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      padding: 2px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      text-transform: uppercase;
-      flex-shrink: 0;
-      width: 28px;
-      min-width: 28px;
-      text-align: center;
-    }
-    .news-category.IR {
-      background: rgba(96, 165, 250, 0.15);
-      color: #93c5fd;
-    }
-    .news-category.PR {
-      background: rgba(167, 139, 250, 0.15);
-      color: #c4b5fd;
-    }
-    .news-card-company {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--accent-color, #93c5fd);
-      white-space: nowrap;
-      flex-shrink: 0;
-      width: 110px;
-      min-width: 110px;
-    }
-    .news-card-sep {
-      color: rgba(255, 255, 255, 0.15);
-      flex-shrink: 0;
-      font-size: 0.75rem;
-    }
-    .news-card-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #e8eaf0;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .news-card-desc {
-      font-size: 0.78rem;
-      color: rgba(255, 255, 255, 0.38);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-    }
-    .news-empty {
-      padding: 60px 20px;
-      text-align: center;
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.85rem;
-    }
+    .news-ticker-section { background: rgba(255, 255, 255, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 24px 0; }
+    .news-scroll-wrapper { height: 440px; overflow: hidden; position: relative; background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; }
+    .news-scroll-wrapper::before, .news-scroll-wrapper::after { content: ''; position: absolute; left: 0; right: 0; height: 48px; z-index: 2; pointer-events: none; }
+    .news-scroll-wrapper::before { top: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), transparent); }
+    .news-scroll-wrapper::after { bottom: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); }
+    .news-ticker-track { display: flex; flex-direction: column; gap: 0; padding: 16px; }
+    .news-ticker-track:hover { animation-play-state: paused !important; }
+    @keyframes ticker-scroll-vertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+    .news-card { display: flex; align-items: center; gap: 10px; padding: 12px 20px; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; text-decoration: none; color: inherit; white-space: nowrap; overflow: hidden; }
+    .news-card:first-child { border-radius: 12px 12px 0 0; }
+    .news-card:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+    .news-card:hover { background: rgba(255, 255, 255, 0.06); }
+    .news-card-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); white-space: nowrap; font-variant-numeric: tabular-nums; flex-shrink: 0; width: 82px; min-width: 82px; }
+    .news-category { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 4px; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; width: 28px; min-width: 28px; text-align: center; }
+    .news-category.IR { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
+    .news-category.PR { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; }
+    .news-card-company { font-size: 0.82rem; font-weight: 700; color: var(--accent-color, #93c5fd); white-space: nowrap; flex-shrink: 0; width: 110px; min-width: 110px; }
+    .news-card-sep { color: rgba(255, 255, 255, 0.15); flex-shrink: 0; font-size: 0.75rem; }
+    .news-card-title { font-size: 0.82rem; font-weight: 700; color: #e8eaf0; white-space: nowrap; flex-shrink: 0; }
+    .news-card-desc { font-size: 0.78rem; color: rgba(255, 255, 255, 0.38); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .news-empty { padding: 60px 20px; text-align: center; color: rgba(255, 255, 255, 0.3); font-size: 0.85rem; }
 
-    /* === SUMMARY TABLE === */
-    .table-wrap {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .data-table th {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 10px 14px;
-      text-align: right;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.45);
-      letter-spacing: 0.05em;
-      white-space: nowrap;
-    }
-    .data-table th:first-child {
-      text-align: left;
-    }
-    .data-table td {
-      padding: 12px 14px;
-      text-align: right;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #e8eaf0;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      white-space: nowrap;
-    }
-    .data-table td:first-child {
-      text-align: left;
-    }
-    .data-table tr:hover td {
-      background: rgba(255, 255, 255, 0.03);
-    }
-    .company-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .company-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .yoy-growth {
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .yoy-positive {
-      color: #34d399;
-    }
-    .yoy-negative {
-      color: #f87171;
-    }
-    .margin-pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 600;
-    }
-    .margin-high {
-      background: rgba(52, 211, 153, 0.15);
-      color: #34d399;
-    }
-    .margin-mid {
-      background: rgba(251, 191, 36, 0.15);
-      color: #fbbf24;
-    }
-    .margin-low {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-    }
+    /* === SUMMARY TABLES (TIGHT/COLD LAYOUT) === */
+    .summary-tables-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 20px; overflow-x: auto; padding-bottom: 10px; }
+    @media (min-width: 1024px) { .summary-tables-grid { grid-template-columns: 1.4fr 1fr; align-items: start; overflow-x: visible; } }
+    .table-meta { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #93c5fd; display: flex; align-items: baseline; }
+    .table-meta span { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-left: 8px; font-weight: 400; }
 
-     /* === PROJECTS TABLE === */
-    .project-status {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .status-active {
-      background: rgba(52, 211, 153, 0.15);
-      color: #34d399;
-    }
-    .status-plan {
-      background: rgba(251, 191, 36, 0.15);
-      color: #fbbf24;
-    }
-    .status-complete {
-      background: rgba(148, 163, 184, 0.15);
-      color: #94a3b8;
-    }
-    .status-started {
-      background: rgba(96, 165, 250, 0.15);
-      color: #93c5fd;
-    }
-    .project-row {
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .project-row:hover {
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .project-row.is-hovered {
-      background: rgba(99, 102, 241, 0.08);
-      box-shadow: inset 3px 0 0 #6366f1;
-    }
-    .proj-usage-access {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .proj-usage {
-      font-size: 0.82rem;
-      color: #e8eaf0;
-    }
-    .proj-access {
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.4);
-    }
-    .proj-scale-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .proj-scale-main {
-      font-size: 0.82rem;
-      color: #e8eaf0;
-    }
-    .proj-scale-area {
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 500;
-    }
+    .table-wrap { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden; width: fit-content; }
+    .data-table { border-collapse: collapse; width: auto; }
+    .data-table th { background: rgba(255, 255, 255, 0.05); padding: 10px 14px; text-align: right; font-size: 0.7rem; color: rgba(255, 255, 255, 0.45); white-space: nowrap; }
+    .data-table th:first-child { text-align: left; }
+    .data-table td { padding: 12px 14px; text-align: right; font-size: 0.82rem; border-top: 1px solid rgba(255, 255, 255, 0.05); white-space: nowrap; }
+    .data-table td:first-child { text-align: left; min-width: 110px; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.03); }
 
-    /* === MAP SECTION === */
-    .map-section {
-      position: relative;
-      height: 420px;
-      background: rgba(15, 17, 26, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-top: 24px;
-    }
-    .map-title-overlay {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(28, 30, 43, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .map-title-overlay svg {
-      width: 18px;
-      height: 18px;
-      color: #818cf8;
-    }
+    .company-label { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .company-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .yoy-growth { font-size: 0.75rem; font-weight: 600; margin-left: 4px; font-family: 'Inter', sans-serif;}
+    .yoy-positive { color: #34d399; }
+    .yoy-negative { color: #f87171; }
+    .margin-pill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; font-family: 'Inter', sans-serif;}
+    .margin-high { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+    .margin-mid { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+    .margin-low { background: rgba(239, 68, 68, 0.15); color: #f87171; }
 
-    /* Google Maps用のマーカー要素（クラスはAstroそのまま流用） */
-    .map-pin {
-      transition: all 0.3s ease;
-      cursor: pointer;
-      z-index: 10;
-      opacity: 1;
-    }
-    .map-pin.is-dimmed {
-      opacity: 0.25;
-      transform: scale(0.85);
-    }
-    .map-pin.is-active {
-      z-index: 30;
-    }
-    .map-pin-circle {
-      position: relative;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid rgba(15, 17, 26, 0.9);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-    .map-pin.is-active .map-pin-circle {
-      width: 22px;
-      height: 22px;
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15), 0 2px 12px rgba(0, 0, 0, 0.5);
-    }
-    .map-pin-dot {
-      width: 5px;
-      height: 5px;
-      background: #fff;
-      border-radius: 50%;
-      display: none;
-    }
-    .map-pin.is-active .map-pin-dot {
-      display: block;
-    }
-    .map-pin-ping {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      opacity: 0;
-      animation: none;
-    }
-    .map-pin.is-active .map-pin-ping {
-      opacity: 0.35;
-      animation: map-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-    }
-    @keyframes map-ping {
-      0% {
-        transform: scale(1);
-        opacity: 0.35;
-      }
-      75%, 100% {
-        transform: scale(2.2);
-        opacity: 0;
-      }
-    }
-    .map-pin-tooltip {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(28, 30, 43, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 10px 14px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 30;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    }
-    .map-pin.is-active .map-pin-tooltip {
-      display: block;
-    }
-    .map-pin-tooltip-company {
-      font-size: 0.72rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .map-pin-tooltip-name {
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.7);
-    }
+    /* === PROJECT STATUS === */
+    .project-status { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .status-active { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+    .status-plan { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+    .status-started { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
+    .status-complete { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+    .project-row { cursor: pointer; transition: 0.2s; }
+    .project-row:hover { background: rgba(255,255,255,0.04); }
+    .project-row.is-hovered { background: rgba(99, 102, 241, 0.08); box-shadow: inset 3px 0 0 #6366f1; }
+
+    /* === MAP === */
+    .map-section { position: relative; height: 420px; background: #0f111a; border-radius: 16px; overflow: hidden; margin-top: 24px; border: 1px solid rgba(255,255,255,0.05); }
+    .map-title-overlay { position: absolute; top: 16px; left: 16px; z-index: 20; background: rgba(28, 30, 43, 0.85); padding: 8px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);}
+    
+    /* Google Maps Pins */
+    .map-pin { transition: all 0.3s ease; cursor: pointer; z-index: 10; opacity: 1; }
+    .map-pin.is-dimmed { opacity: 0.25; transform: scale(0.85); }
+    .map-pin.is-active { z-index: 30; }
+    .map-pin-circle { position: relative; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(15, 17, 26, 0.9); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+    .map-pin.is-active .map-pin-circle { width: 22px; height: 22px; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15), 0 2px 12px rgba(0, 0, 0, 0.5); }
+    .map-pin-dot { width: 5px; height: 5px; background: #fff; border-radius: 50%; display: none; }
+    .map-pin.is-active .map-pin-dot { display: block; }
+    .map-pin-ping { position: absolute; inset: -6px; border-radius: 50%; opacity: 0; animation: none; }
+    .map-pin.is-active .map-pin-ping { opacity: 0.35; animation: map-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    @keyframes map-ping { 0% { transform: scale(1); opacity: 0.35; } 75%, 100% { transform: scale(2.2); opacity: 0; } }
+    .map-pin-tooltip { display: none; position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: rgba(28, 30, 43, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px 14px; white-space: nowrap; pointer-events: none; z-index: 30; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+    .map-pin.is-active .map-pin-tooltip { display: block; }
+    .map-pin-tooltip-company { font-size: 0.72rem; font-weight: 700; margin-bottom: 2px; }
+    .map-pin-tooltip-name { font-size: 0.7rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); }
 
     /* === FOOTER === */
-    .footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 28px 0;
-      margin-top: 40px;
-    }
-    .footer-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .footer-text {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.3);
-    }
-    .footer-links {
-      display: flex;
-      gap: 20px;
-    }
-    .footer-links a {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.3);
-    }
-    .footer-links a:hover {
-      color: rgba(255, 255, 255, 0.6);
-    }
+    .footer { border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 28px 0; margin-top: 40px; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-text { font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); }
+    .footer-links a:hover { color: rgba(255, 255, 255, 0.6); }
 
-    /* === RESPONSIVE === */
     @media (max-width: 768px) {
-      .nav {
-        display: none;
-      }
-      .hero-title {
-        font-size: 1.4rem;
-      }
-      .data-table {
-        font-size: 0.72rem;
-      }
-      .data-table th,
-      .data-table td {
-        padding: 8px 8px;
-      }
-      .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      .filter-group {
-        align-self: stretch;
-      }
-      .scroll-arrow {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-      }
-      .scroll-arrow svg {
-        width: 16px;
-        height: 16px;
-      }
-      .scroll-arrow-left {
-        margin-right: 8px;
-      }
-      .scroll-arrow-right {
-        margin-left: 8px;
-      }
-      .news-card {
-        padding: 10px 14px;
-        gap: 6px;
-      }
-      .news-card-company {
-        font-size: 0.75rem;
-      }
-      .news-card-title {
-        font-size: 0.75rem;
-      }
-      .news-card-desc {
-        font-size: 0.7rem;
-      }
-      .news-scroll-wrapper {
-        height: 380px;
-      }
-      .ad-placeholder {
-        max-width: 320px;
-        height: 50px;
-      }
-      .ad-banner-header,
-      .ad-banner-footer {
-        min-height: 50px;
-      }
-      .ad-banner img {
-        max-height: 50px;
-      }
-      .map-section {
-        height: 300px;
-      }
-      .map-pin-tooltip {
-        display: none !important;
-      }
+      .nav { display: none; }
+      .hero-title { font-size: 1.6rem; }
+      .company-card { min-width: 220px; }
+      .data-table { font-size: 0.7rem; }
+      .summary-tables-grid { gap: 16px; }
+      .table-wrap { width: 100%; }
+      .data-table { width: 100%; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .filter-group { align-self: stretch; }
+      .news-card { padding: 10px 14px; gap: 6px; }
+      .news-card-company { font-size: 0.75rem; }
+      .news-card-title { font-size: 0.75rem; }
+      .news-card-desc { font-size: 0.7rem; }
+      .news-scroll-wrapper { height: 380px; }
+      .ad-placeholder { max-width: 320px; height: 50px; }
+      .ad-banner-header, .ad-banner-footer { min-height: 50px; }
+      .ad-banner img { max-height: 50px; }
+      .map-section { height: 300px; }
+      .map-pin-tooltip { display: none !important; }
     }
   </style>
 </head>
@@ -1116,7 +289,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <a href="#projects">再開発PJ</a>
         </nav>
         <div class="header-actions">
-          <div class="badge-updated">更新: {updatedAt}</div>
+          <div class="badge-updated" id="header-updated-at">更新: {updatedAt}</div>
           <a href="https://twitter.com/deveryman_inv" target="_blank" rel="noopener" class="twitter-link" aria-label="X (Twitter) - @deveryman_inv">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
@@ -1142,80 +315,86 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     </div>
   </section>
 
-  <!-- SECTION 1: Company Cards -->
+  <!-- SECTION 1: 企業カード -->
   <section class="section" id="companies">
     <div class="container">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h2 class="section-title">📊 企業カード</h2>
-        </div>
-      </div>
-      <hr class="section-divider" />
-
+      <h2 class="section-title">📊 企業カード</h2>
       <div class="cards-row">
-        <button class="scroll-arrow scroll-arrow-left" id="btn-left" aria-label="左へスクロール">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <button class="scroll-arrow scroll-arrow-left" style="margin-right:12px;" id="btn-left" aria-label="左へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
-
         <div class="cards-scroll-wrapper" id="cards-scroll">
-          {companies.map((c) => {
-            const col = COMPANY_COLORS[c.name] ?? { bg: "#222", accent: "#888", text: "#eee" };
+          {companies.map(c => {
+            const col = COMPANY_COLORS[c.name] || { bg: "#222", accent: "#888" };
+            const unit = (c.name.includes("不動産") && !c.name.includes("野村") && !c.name.includes("東急")) || c.name === "三菱地所" ? "兆円" : "億円";
             return (
               <article class="company-card">
-                <div class="card-header">
-                  <div class="card-header-bg" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent}55 100%);`} />
-                  <div class="card-header-content">
-                    <div class="card-top-row">
-                      <span class="company-name">{c.name}</span>
+                <div class="card-top-identity" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent} 100%);`}>
+                  <div class="company-header-row">
+                    <div class="logo-box"><span class="logo-fallback" style={`color:${col.bg}`}>{c.initial}</span></div>
+                    <div class="company-name">{c.name}</div>
+                    <div class="sec-code">TSE {c.code}</div>
+                  </div>
+                  <div class="hero-stats-grid">
+                    <div class="stat-item">
+                      <span class="stat-label-colored">株価 ({c.period})</span>
+                      <div class="stat-value-large">{c.stock.toLocaleString()}<span class="unit-hero">円</span></div>
                     </div>
-                    <span class="sec-code">東証 {c.secCode}</span>
+                    <div class="stat-item">
+                      <span class="stat-label-colored">時価総額</span>
+                      <div class="stat-value-large">{c.mCap}<span class="unit-hero">{unit}</span></div>
+                    </div>
                   </div>
                 </div>
                 <div class="card-body">
-                  <div class="fiscal-badge">{c.period} 決算</div>
-                  <div class="metrics-mini">
-                    <div class="metric-row">
-                      <span class="metric-label">営業収益</span>
-                      <span class="metric-value">{(c.revenue / 10000).toFixed(1)}兆円</span>
+                  <div class="fiscal-badge">{c.badge}</div>
+                  <div class="metrics-grid-container">
+                    <div class="metric-group">
+                      <span class="metric-title">売上高</span>
+                      <div class="metric-data">{c.revenueStr}<span class="unit-small">{c.revenue >= 10000 ? '兆' : '億'}</span></div>
                     </div>
-                    <div class="metric-row">
-                      <span class="metric-label">営業利益</span>
-                      <span class="metric-value">{c.operatingProfit.toLocaleString()}億円</span>
+                    <div class="metric-group">
+                      <span class="metric-title">営業利益</span>
+                      <div class="metric-data">{c.op.toLocaleString()}<span class="unit-small">億</span></div>
                     </div>
-                  </div>
-                  <div class="margin-bar-wrap">
-                    <div class="margin-bar-label">
-                      <span>利益率</span>
-                      <span>{c.profitMargin.toFixed(1)}%</span>
+                    <div class="metric-group">
+                      <span class="metric-title">純利益</span>
+                      <div class="metric-data">{c.net.toLocaleString()}<span class="unit-small">億</span></div>
                     </div>
-                    <div class="margin-bar-track">
-                      <div class="margin-bar-fill" style={`width: ${Math.min(c.profitMargin * 2, 100)}%`} />
+                    <div class="metric-group">
+                      <span class="metric-title valuation">ROE</span>
+                      <div class="metric-data">{c.roe.toFixed(1)}<span class="unit-small">%</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title valuation">PBR</span>
+                      <div class="metric-data">{c.pbr.toFixed(2)}<span class="unit-small">x</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title valuation">利回り</span>
+                      <div class="metric-data">{c.yield.toFixed(1)}<span class="unit-small">%</span></div>
                     </div>
                   </div>
                   <div class="card-footer">
-                    <span class="stock-info">¥<strong>{c.stockPrice.toLocaleString()}</strong></span>
-                    <a class="ir-link" href={c.irLink} target="_blank" rel="noopener">IR ↗</a>
+                    <a href={c.irLink} target="_blank" rel="noopener" class="ir-link-btn">IRサイト ↗</a>
                   </div>
                 </div>
               </article>
-            );
+            )
           })}
         </div>
-
-        <button class="scroll-arrow scroll-arrow-right" id="btn-right" aria-label="右へスクロール">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <button class="scroll-arrow scroll-arrow-right" style="margin-left:12px;" id="btn-right" aria-label="右へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 2: News (JS-rendered only) -->
+  <!-- SECTION 2: ニュース (JSで動的描画) -->
   <section class="news-ticker-section" id="news">
     <div class="container">
       <div class="section-header">
         <div class="section-title-wrap">
           <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
-          <span class="section-count"></span>
         </div>
         <div class="filter-group" id="news-filter">
           <button class="filter-btn active" data-filter="all">すべて</button>
@@ -1231,71 +410,106 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     <div class="container">
       <div class="news-scroll-wrapper">
         <div class="news-ticker-track" id="news-ticker-track">
-          <!-- renderNews() populates this via JS -->
+          <!-- JS Rendered -->
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 3: Financial Summary -->
+  <!-- SECTION 3: 決算サマリー -->
   <section class="section" id="summary">
     <div class="container">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h2 class="section-title">📋 最新決算サマリー</h2>
-          <span class="section-count">単位: 億円</span>
-        </div>
-      </div>
-      <hr class="section-divider" />
-
-      <div class="table-wrap" style="overflow-x:auto;">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>企業名</th>
-              <th>決算期</th>
-              <th>営業収益</th>
-              <th>前期比</th>
-              <th>営業利益</th>
-              <th>利益率</th>
-              <th>経常利益</th>
-              <th>純利益</th>
-              <th>ROE</th>
-              <th>株価</th>
-            </tr>
-          </thead>
-          <tbody>
-            {companies.map((c) => {
-              const col = COMPANY_COLORS[c.name] ?? { bg: "#555", accent: "#555", text: "#eee" };
-              const mClass = c.profitMargin >= 20 ? "margin-high" : c.profitMargin >= 15 ? "margin-mid" : "margin-low";
-              const yoyClass = c.yoyGrowth >= 0 ? "yoy-positive" : "yoy-negative";
-              return (
+      <h2 class="section-title">📋 決算サマリー & 分譲戸数</h2>
+      <div class="summary-tables-grid">
+        <!-- 業績ハイライト -->
+        <div class="table-container">
+          <div class="table-meta">業績ハイライト<span>単位: 億円</span></div>
+          <div class="table-wrap">
+            <table class="data-table" id="table-highlights">
+              <thead>
                 <tr>
-                  <td>
-                    <div class="company-label">
-                      <div class="company-dot" style={`background:${col.accent}`} />
-                      {c.name}
-                    </div>
-                  </td>
-                  <td>{c.period}</td>
-                  <td>{c.revenue.toLocaleString()}</td>
-                  <td><span class={`yoy-growth ${yoyClass}`}>{c.yoyGrowth > 0 ? '+' : ''}{c.yoyGrowth.toFixed(1)}%</span></td>
-                  <td>{c.operatingProfit.toLocaleString()}</td>
-                  <td><span class={`margin-pill ${mClass}`}>{c.profitMargin.toFixed(1)}%</span></td>
-                  <td>{c.ordinaryProfit.toLocaleString()}</td>
-                  <td>{c.netProfit.toLocaleString()}</td>
-                  <td>{c.roe.toFixed(1)}%</td>
-                  <td>¥{c.stockPrice.toLocaleString()}</td>
+                  <th>企業名</th>
+                  <th style="text-align:center;">期</th>
+                  <th>売上高 <span>(前期比)</span></th>
+                  <th>営業利益 <span>(率)</span></th>
+                  <th>経常利益</th>
+                  <th>純利益</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody>
+                {companies.map(c => {
+                  const col = COMPANY_COLORS[c.name] || { bg: "#555", accent: "#555" };
+                  const yoyClass = c.revYoy >= 0 ? 'yoy-positive' : 'yoy-negative';
+                  return (
+                    <tr>
+                      <td>
+                        <div class="company-label">
+                          <div class="company-dot" style={`background:${col.accent}`}></div>
+                          {c.name}
+                        </div>
+                      </td>
+                      <td style="text-align:center">{c.period}</td>
+                      <td>
+                        {c.revenue.toLocaleString()}
+                        <span class={`yoy-growth ${yoyClass}`}>({c.revYoy > 0 ? '+' : ''}{c.revYoy.toFixed(1)}%)</span>
+                      </td>
+                      <td>
+                        {c.op.toLocaleString()}
+                        <span class={`margin-pill ${getMarginClass(c.margin)}`}>{c.margin.toFixed(1)}%</span>
+                      </td>
+                      <td>{c.ord.toLocaleString()}</td>
+                      <td>{c.net.toLocaleString()}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- 分譲マンション戸数 -->
+        <div class="table-container">
+          <div class="table-meta">分譲マンション戸数 (予想)<span>単位: 戸</span></div>
+          <div class="table-wrap">
+            <table class="data-table" id="table-condo">
+              <thead>
+                <tr>
+                  <th>企業名</th>
+                  <th>計上戸数 <span>(前期比)</span></th>
+                  <th>営業利益率</th>
+                </tr>
+              </thead>
+              <tbody>
+                {companies.map(c => {
+                  const col = COMPANY_COLORS[c.name] || { bg: "#555", accent: "#555" };
+                  const unitYoyClass = c.unitYoy >= 0 ? 'yoy-positive' : 'yoy-negative';
+                  return (
+                    <tr>
+                      <td>
+                        <div class="company-label">
+                          <div class="company-dot" style={`background:${col.accent}`}></div>
+                          {c.name}
+                        </div>
+                      </td>
+                      <td>
+                        {c.units.toLocaleString()}
+                        <span class={`yoy-growth ${unitYoyClass}`}>({c.unitYoy > 0 ? '+' : ''}{c.unitYoy.toFixed(1)}%)</span>
+                      </td>
+                      <td>
+                        <span class={`margin-pill ${getMarginClass(c.unitMargin)}`}>{c.unitMargin.toFixed(1)}%</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 4: Projects + Map -->
+  <!-- SECTION 4: プロジェクト -->
   <section class="section" id="projects">
     <div class="container">
       <div class="section-header">
@@ -1313,61 +527,39 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           <button class="filter-btn" data-filter="東急不動産HD">東急</button>
         </div>
       </div>
-      <hr class="section-divider" />
-
-      <div class="table-wrap" style="overflow-x:auto;">
-        <table class="data-table">
-　　　　　　<thead>
+      
+      <div class="table-wrap" style="width: 100%;">
+        <table class="data-table" id="table-projects" style="width: 100%;">
+          <thead>
             <tr>
               <th>企業名</th>
+              <th style="text-align:center;">状況</th>
               <th style="text-align:left;">プロジェクト名</th>
-              <th style="text-align:center;">状況</th> <!-- ← プロジェクト名の右、中央寄せに -->
               <th style="text-align:left;">エリア</th>
-              <th style="text-align:left;">主用途・アクセス</th>
               <th style="text-align:left;">規模</th>
               <th>完成予定</th>
             </tr>
           </thead>
-          <tbody>
-            {projects.map((p) => {
-              const statusClass = projectStatusMap[p.status] ?? "status-plan";
+          <tbody id="projects-tbody">
+            {projects.map(p => {
+              const statusClass = projectStatusMap[p.status] || "status-plan";
               return (
                 <tr class="project-row" data-project-id={p.id} data-company={p.company}>
                   <td>
-                    <!-- 企業名 -->
                     <div class="company-label">
-                      <div class="company-dot" style={`background:${p.color}; box-shadow: 0 0 8px ${p.color};`} />
+                      <div class="company-dot" style={`background:${p.color}; box-shadow: 0 0 8px ${p.color};`}></div>
                       {p.company}
                     </div>
                   </td>
-                  <!-- ①プロジェクト名 -->
-                  <td style="text-align:left; font-weight:700; color:#e8eaf0;">{p.name}</td>
-                  <!-- ②状況（中央寄せ） -->
                   <td style="text-align:center;">
-                    <span class={`project-status ${statusClass}`}>
-                      {p.status}
-                    </span>
+                    <span class={`project-status ${statusClass}`}>{p.status}</span>
                   </td>
-                  <!-- ③エリア -->
+                  <td style="text-align:left; font-weight:700; color:#e8eaf0;">{p.name}</td>
                   <td style="text-align:left;">{p.area}</td>
-                  <!-- ④主用途・アクセス -->
-                  <td style="text-align:left;">
-                    <div class="proj-usage-access">
-                      <span class="proj-usage">{p.usage}</span>
-                      <span class="proj-access">{p.access}</span>
-                    </div>
-                  </td>
-                  <!-- ⑤規模 -->
-                  <td style="text-align:left;">
-                    <div class="proj-scale-wrap">
-                      <span class="proj-scale-main">{p.scale}</span>
-                      <span class="proj-scale-area">{p.scaleArea}</span>
-                    </div>
-                  </td>
-                  <!-- ⑥完成予定 -->
-                  <td>{p.completion}</td>
+                  <td style="text-align:left;">{p.scale}</td>
+                  <td style="text-align:right;">{p.completion}</td>
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
@@ -1376,7 +568,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       <!-- MAP -->
       <div class="map-section">
         <div class="map-title-overlay">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
           開発エリア マップ
         </div>
         <!-- Google Maps コンテナ -->
@@ -1407,7 +599,7 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
   </footer>
 
   <!-- SCRIPTS -->
-  <script is:inline define:vars={{ newsItems, projects }}>
+  <script is:inline define:vars={{ newsItems, projects, COMPANY_COLORS }}>
     // --- ニュースセクションの描画 ---
     function renderNews(filterValue) {
       var track = document.getElementById('news-ticker-track');
@@ -1427,17 +619,8 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         ? filtered.concat(filtered)
         : filtered;
 
-      var colorMap = {
-        '三井不動産':   '#4a90d9',
-        '三菱地所':     '#e85555',
-        '住友不動産':   '#3aaa5c',
-        '東京建物':     '#d4813a',
-        '野村不動産HD': '#6a6adc',
-        '東急不動産HD': '#28b0b0'
-      };
-
       var html = displayNews.map(function(n) {
-        var accent = colorMap[n.company] || '#60a5fa';
+        var accent = COMPANY_COLORS[n.company] ? COMPANY_COLORS[n.company].accent : '#60a5fa';
         return '<a class="news-card" href="' + n.url + '" target="_blank" rel="noopener"'
           + ' style="--accent-color:' + accent + ';">'
           + '<span class="news-card-date">' + n.date + '</span>'
@@ -1478,25 +661,24 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
     var btnRight = document.getElementById('btn-right');
     if (wrapper && btnLeft && btnRight) {
       btnLeft.onclick = function() {
-        wrapper.scrollBy({ left: -230, behavior: 'smooth' });
+        wrapper.scrollBy({ left: -256, behavior: 'smooth' });
       };
       btnRight.onclick = function() {
-        wrapper.scrollBy({ left: 230, behavior: 'smooth' });
+        wrapper.scrollBy({ left: 256, behavior: 'smooth' });
       };
     }
 
     // --- Google Maps と プロジェクトフィルタリングの実装 ---
     let map;
-    const mapMarkers = {}; // IDをキーにしてマーカーのDOM要素（ピンの見た目）を保存
-    const googleMarkers = {}; // IDをキーにしてAdvancedMarkerElement（地図上の機能本体）を保存
+    const mapMarkers = {};
+    const googleMarkers = {};
 
     async function initGoogleMap() {
-      // ⚠️ ご注意: 実稼働させるには Google Cloud Console から取得した APIキー と マップID を設定してください。
       const API_KEY = "AIzaSyAGRPnbJ8ePZnUcf8VVuBU1KDfkz5Z7W4k"; 
       const MAP_ID = "cf42d31342c76186d63584b1";
 
-      // Google Maps Scriptの動的ロード
       await new Promise((resolve) => {
+        if(window.google && window.google.maps) { resolve(); return; }
         const script = document.createElement("script");
         script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=marker&v=beta`;
         script.async = true;
@@ -1504,7 +686,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         document.head.appendChild(script);
       });
 
-      // 現在のUIに合わせたダークテーマのマップスタイル
       const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#1a1f3a" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#1a1f3a" }] },
@@ -1516,23 +697,20 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         { featureType: "transit", stylers: [{ visibility: "simplified" }] },
       ];
 
-      // 地図の初期化（東京駅周辺を中心に設定）
       map = new google.maps.Map(document.getElementById("google-map"), {
         center: { lat: 35.676, lng: 139.755 },
         zoom: 12.5,
         mapId: MAP_ID,
         styles: darkMapStyle,
-        disableDefaultUI: true, // UIを隠してクリーンに見せる
+        disableDefaultUI: true,
         zoomControl: true,
       });
 
-      // AdvancedMarkerElementを使用して、既存のHTMLピンをそのままマップ上に配置
       const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
       projects.forEach(p => {
         if (!p.location) return;
 
-        // カスタムマーカー用のHTML要素を構築
         const pinContainer = document.createElement("div");
         pinContainer.className = "map-pin";
         pinContainer.dataset.projectId = p.id;
@@ -1548,7 +726,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           </div>
         `;
 
-        // マーカーを地図に追加
         const marker = new AdvancedMarkerElement({
           map,
           position: p.location,
@@ -1556,11 +733,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           title: p.name,
         });
 
-        // 状態管理とホバー連動のために保存
         mapMarkers[p.id] = pinContainer;
-        googleMarkers[p.id] = marker; // フィルタリングで表示/非表示を切り替えるために使用
+        googleMarkers[p.id] = marker;
 
-        // マーカー自身のホバーイベント
         pinContainer.addEventListener('mouseenter', () => window.updateHoverState(p.id));
         pinContainer.addEventListener('mouseleave', () => window.updateHoverState(null));
       });
@@ -1571,7 +746,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       var rows = document.querySelectorAll('.project-row');
       var visibleCount = 0;
 
-      // テーブル行の表示/非表示を切り替え
       rows.forEach(function(row) {
         if (company === 'all' || row.getAttribute('data-company') === company) {
           row.style.display = '';
@@ -1581,24 +755,21 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
         }
       });
 
-      // 件数表示の更新
       var countEl = document.getElementById('projects-count-display');
       if (countEl) countEl.innerText = visibleCount + ' 件';
 
-      // マップ上のピンの表示/非表示を切り替え
       projects.forEach(function(p) {
         var marker = googleMarkers[p.id];
         if (marker) {
           if (company === 'all' || p.company === company) {
-            marker.map = map; // 表示
+            marker.map = map;
           } else {
-            marker.map = null; // 隠す
+            marker.map = null;
           }
         }
       });
     }
 
-    // プロジェクト用フィルターボタンのイベント
     document.querySelectorAll('#projects-filter .filter-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         document.querySelectorAll('#projects-filter .filter-btn').forEach(function(b) {
@@ -1614,7 +785,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       var rows = document.querySelectorAll('.project-row');
 
       window.updateHoverState = function(hoveredId) {
-        // 表の行のハイライト
         rows.forEach(function(row) {
           if (hoveredId && row.dataset.projectId === hoveredId) {
             row.classList.add('is-hovered');
@@ -1623,7 +793,6 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
           }
         });
         
-        // マーカーのハイライト（DOM要素に対してクラスを切り替え）
         Object.values(mapMarkers).forEach(function(pin) {
           if (hoveredId === null) {
             pin.classList.remove('is-dimmed', 'is-active');
@@ -1643,11 +812,9 @@ const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo
       });
     }
 
-    // 初期化関数呼び出し
-    initGoogleMap();
+    initGoogleMap().catch(e => console.error("Google Maps failed to load", e));
     setupProjectHover();
 
   </script>
 </body>
 </html>
-```
