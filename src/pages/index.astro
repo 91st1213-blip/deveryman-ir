@@ -125,6 +125,16 @@ const projectStatusMap: Record<string, string> = {
 };
 
 const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
+
+// ヘルパー関数を function 宣言にして確実に認識させる
+function formatYoy(val: number) {
+  return `(${val > 0 ? '+' : ''}${val.toFixed(1)}%)`;
+}
+function getYoyClass(val: number) {
+  return val >= 0 ? "yoy-positive" : "yoy-negative";
+}
+function getMarginClass(val: number) {
+  return val >= 20 ? "margin-high" : val >= 15 ? "margin-mid" : "margin-low";
 ---
 
 <html lang="ja">
