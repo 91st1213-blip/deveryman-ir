@@ -1,6 +1,8 @@
 ---
-import CompanyCards from '../components/CompanyCards.astro';
 // deveryman-ir | src/pages/index.astro
+import { fetchCompanies } from '../lib/companies';
+const liveData = await fetchCompanies();
+const liveMap = Object.fromEntries(liveData.map(c => [c.code, c]));
 // Updated: Compact Cards, 2-Column Summary, Projects Table Refactor
 
 const COMPANY_COLORS: Record<string, { bg: string; accent: string }> = {
@@ -316,7 +318,91 @@ function getMarginClass(val: number) {
   <!-- SECTION 1: 企業カード -->
   <section class="section" id="companies">
     <div class="container">
-      <CompanyCards />
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title">📊 企業カード</h2>
+        </div>
+      </div>
+      <div class="cards-row">
+        <button class="scroll-arrow scroll-arrow-left" style="margin-right:12px;" id="btn-left" aria-label="左へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="cards-scroll-wrapper" id="cards-scroll">
+          {companies.map(c => {
+            const col = COMPANY_COLORS[c.name] || { bg: "#222", accent: "#888", text: "#eee" };
+            const live = liveMap[c.code];
+            const stockPrice = live?.stock ?? c.stock;
+            const mCapVal = live?.mCap;
+            const unit = (c.name.includes("不動産") && !c.name.includes("野村") && !c.name.includes("東急")) || c.name === "三菱地所" ? "兆円" : "億円";
+            const mCapStr = mCapVal ? (mCapVal >= 10000 ? `${(mCapVal/10000).toFixed(2)}` : `${Math.round(mCapVal).toLocaleString()}`) : c.mCap;
+            const mCapUnit = mCapVal ? (mCapVal >= 10000 ? "兆円" : "億円") : unit;
+            const roe = live?.roe ?? c.roe;
+            const pbr = live?.pbr ?? c.pbr;
+            const divYield = live?.divYield ?? c.yield;
+            const change = live?.change;
+            const changeStr = change !== null && change !== undefined ? `${change >= 0 ? "+" : ""}${change.toFixed(2)}%` : null;
+            return (
+              <article class="company-card">
+                <div class="card-top-identity" style={`background: linear-gradient(135deg, ${col.bg} 0%, ${col.accent} 100%);`}>
+                  <div class="company-header-row">
+                    <div class="logo-box"><span class="logo-fallback" style={`color:${col.bg}`}>{c.initial}</span></div>
+                    <div class="company-name">{c.name}</div>
+                    <div class="sec-code">TSE {c.code}</div>
+                  </div>
+                  <div class="hero-stats-grid">
+                    <div class="stat-item">
+                      <span class="stat-label-colored">株価</span>
+                      <div class="stat-value-large">
+                        {stockPrice ? stockPrice.toLocaleString() : "---"}<span class="unit-hero">円</span>
+                        {changeStr && <span style={`font-size:.7rem; margin-left:4px; color:${change >= 0 ? "#2ecc8a" : "#e8504a"}`}>{changeStr}</span>}
+                      </div>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-label-colored">時価総額</span>
+                      <div class="stat-value-large">{mCapStr}<span class="unit-hero">{mCapUnit}</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="fiscal-badge">{c.badge}</div>
+                  <div class="metrics-grid-container">
+                    <div class="metric-group">
+                      <span class="metric-title">売上高</span>
+                      <div class="metric-data">{c.revenueStr}<span class="unit-small">{c.revenue >= 10000 ? "兆" : "億"}</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title">営業利益</span>
+                      <div class="metric-data">{c.op.toLocaleString()}<span class="unit-small">億</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title">純利益</span>
+                      <div class="metric-data">{c.net.toLocaleString()}<span class="unit-small">億</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title valuation">ROE</span>
+                      <div class="metric-data">{roe ? roe.toFixed(1) : "---"}<span class="unit-small">%</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title valuation">PBR</span>
+                      <div class="metric-data">{pbr ? pbr.toFixed(2) : "---"}<span class="unit-small">x</span></div>
+                    </div>
+                    <div class="metric-group">
+                      <span class="metric-title valuation">利回り</span>
+                      <div class="metric-data">{divYield ? divYield.toFixed(1) : "---"}<span class="unit-small">%</span></div>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <a href={c.irLink} target="_blank" rel="noopener" class="ir-link-btn">IRサイト ↗</a>
+                  </div>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+        <button class="scroll-arrow scroll-arrow-right" style="margin-left:12px;" id="btn-right" aria-label="右へスクロール">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
     </div>
   </section>
 
