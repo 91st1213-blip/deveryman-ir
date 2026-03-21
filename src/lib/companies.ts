@@ -11,6 +11,11 @@ export interface Company {
   prevClose: number | null;
   change:    number | null;
   updatedAt: string | null;
+  period:    string | null;
+  badge:     string | null;
+  revenue:   number | null;
+  op:        number | null;
+  net:       number | null;
 }
 
 const SHEET_ID  = "1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI";
@@ -48,16 +53,16 @@ function parseRow(row: string[]): Company | null {
   const id = row[0]?.trim(), name = row[1]?.trim(), code = row[2]?.trim();
   if (!id || !name || !code || id === "id") return null;
   const n = (v?: string) => { if (!v?.trim()) return null; const x = parseFloat(v.replace(/,/g,"")); return isNaN(x) ? null : x; };
-  return { id, name, code, stock: n(row[14]), mCap: n(row[15]), roe: n(row[16]), pbr: n(row[17]), divYield: n(row[18]), shares: n(row[19]), prevClose: n(row[20]), change: n(row[21]), updatedAt: row[22]?.trim()||null };
+  return { id, name, code, stock: n(row[14]), mCap: n(row[15]), roe: n(row[16]), pbr: n(row[17]), divYield: n(row[18]), shares: n(row[19]), prevClose: n(row[20]), change: n(row[21]), updatedAt: row[22]?.trim()||null, period: row[3]?.trim()||null, badge: row[4]?.trim()||null, revenue: n(row[5]), op: n(row[8]), net: n(row[12]) };
 }
 
 export const FALLBACK_COMPANIES: Company[] = [
-  { id:"mitsui",     name:"三井不動産",   code:"8801", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:2782189711, prevClose:null, change:null, updatedAt:null },
-  { id:"mitsubishi", name:"三菱地所",     code:"8802", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:1217233706, prevClose:null, change:null, updatedAt:null },
-  { id:"sumitomo",   name:"住友不動産",   code:"8830", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:936000000,  prevClose:null, change:null, updatedAt:null },
-  { id:"tokyo",      name:"東京建物",     code:"8804", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:207978574,  prevClose:null, change:null, updatedAt:null },
-  { id:"nomura",     name:"野村不動産HD", code:"3231", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:917895685,  prevClose:null, change:null, updatedAt:null },
-  { id:"tokyu",      name:"東急不動産HD", code:"3289", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:719830974,  prevClose:null, change:null, updatedAt:null },
+  { id:"mitsui",     name:"三井不動産",   code:"8801", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:2782189711, prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"mitsubishi", name:"三菱地所",     code:"8802", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:1217233706, prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"sumitomo",   name:"住友不動産",   code:"8830", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:936000000,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"tokyo",      name:"東京建物",     code:"8804", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:207978574,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"nomura",     name:"野村不動産HD", code:"3231", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:917895685,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"tokyu",      name:"東急不動産HD", code:"3289", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:719830974,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
 ];
 
 export const changeClass   = (v: number|null) => v===null?"flat":v>0?"up":v<0?"down":"flat";

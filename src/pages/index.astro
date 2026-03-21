@@ -364,19 +364,19 @@ function getMarginClass(val: number) {
                   </div>
                 </div>
                 <div class="card-body">
-                  <div class="fiscal-badge">{c.badge}</div>
+                  <div class="fiscal-badge">{live?.period ? `${live.period} ${live.badge ?? ""}` : c.badge}</div>
                   <div class="metrics-grid-container">
                     <div class="metric-group">
                       <span class="metric-title">売上高</span>
-                      <div class="metric-data">{c.revenueStr}<span class="unit-small">{c.revenue >= 10000 ? "兆" : "億"}</span></div>
+                      <div class="metric-data">{live?.revenue ? (live.revenue >= 10000 ? `${(live.revenue/10000).toFixed(2)}` : live.revenue.toLocaleString()) : c.revenueStr}<span class="unit-small">{(live?.revenue ?? c.revenue) >= 10000 ? "兆" : "億"}</span></div>
                     </div>
                     <div class="metric-group">
                       <span class="metric-title">営業利益</span>
-                      <div class="metric-data">{c.op.toLocaleString()}<span class="unit-small">億</span></div>
+                      <div class="metric-data">{(live?.op ?? c.op).toLocaleString()}<span class="unit-small">億</span></div>
                     </div>
                     <div class="metric-group">
                       <span class="metric-title">純利益</span>
-                      <div class="metric-data">{c.net.toLocaleString()}<span class="unit-small">億</span></div>
+                      <div class="metric-data">{(live?.net ?? c.net).toLocaleString()}<span class="unit-small">億</span></div>
                     </div>
                     <div class="metric-group">
                       <span class="metric-title valuation">ROE</span>
