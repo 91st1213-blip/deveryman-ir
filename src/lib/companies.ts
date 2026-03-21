@@ -21,7 +21,7 @@ export async function fetchCompanies(): Promise<Company[]> {
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`GViz fetch error: ${res.status}`);
-    const rows = parseCSV(await res.text()).slice(2);
+    const rows = parseCSV(await res.text()).slice(1);
     return rows.map(parseRow).filter((c): c is Company => c !== null);
   } catch (e) {
     console.error("[companies] GViz fetch failed:", e);
