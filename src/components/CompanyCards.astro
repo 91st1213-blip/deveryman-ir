@@ -1,0 +1,96 @@
+---
+import { fetchCompanies, changeClass, formatPrice, formatMCap, formatChange, formatPct, formatMultiple, type Company } from "../lib/companies";
+const companies: Company[] = await fetchCompanies();
+const lastUpdated = companies.find(c => c.updatedAt)?.updatedAt ?? null;
+---
+<section class="cc-section" id="companies">
+  <header class="cc-header">
+    <div>
+      <p class="cc-label">MARKET DATA</p>
+      <h2 class="cc-title">主要6社 株式情報</h2>
+    </div>
+    <div class="cc-meta">
+      {lastUpdated && (
+        <p class="cc-updated"><span class="cc-dot"></span>終値更新 {lastUpdated}</p>
+      )}
+      <p class="cc-note">東証プライム市場｜単位: 円・億円</p>
+    </div>
+  </header>
+  <div class="cc-grid">
+    {companies.map((c, i) => {
+      const cls = changeClass(c.change);
+      const arrow = cls === "up" ? "▲" : cls === "down" ? "▼" : "―";
+      return (
+        <article class={`cc-card cc-card--${cls}`} style={`--i:${i}`}>
+          <div class="cc-card__top">
+            <div>
+              <p class="cc-card__ticker">{c.code}.T</p>
+              <h3 class="cc-card__name">{c.name}</h3>
+            </div>
+            <span class={`cc-badge cc-badge--${cls}`}>{arrow} {formatChange(c.change)}</span>
+          </div>
+          <div class="cc-card__price-wrap">
+            <p class="cc-card__price-label">株価</p>
+            <p class={`cc-card__price cc-card__price--${cls}`}>{formatPrice(c.stock)}</p>
+            <p class="cc-card__prev">前日 {formatPrice(c.prevClose)}</p>
+          </div>
+          <div class="cc-divider" />
+          <div class="cc-card__mcap">
+            <span class="cc-card__mcap-label">時価総額</span>
+            <span class="cc-card__mcap-val">{formatMCap(c.mCap)}</span>
+          </div>
+          <dl class="cc-stats">
+            <div class="cc-stat"><dt>ROE <span class="cc-tag">予</span></dt><dd>{formatPct(c.roe)}</dd></div>
+            <div class="cc-stat"><dt>PBR</dt><dd>{formatMultiple(c.pbr)}</dd></div>
+            <div class="cc-stat cc-stat--wide"><dt>配当利回り <span class="cc-tag">予</span></dt><dd>{formatPct(c.divYield, 2)}</dd></div>
+          </dl>
+          <a class="cc-link" href={`https://finance.yahoo.co.jp/quote/${c.code}.T`} target="_blank" rel="noopener noreferrer">詳細 →</a>
+        </article>
+      );
+    })}
+  </div>
+</section>
+<style>
+:root{--cc-surface:#13161f;--cc-border:rgba(255,255,255,.06);--cc-bhi:rgba(255,255,255,.12);--cc-text:#dde1ec;--cc-sub:#8b92ab;--cc-muted:#4a5068;--cc-accent:#3d6bff;--cc-up:#2ecc8a;--cc-up-dim:rgba(46,204,138,.08);--cc-up-bd:rgba(46,204,138,.22);--cc-dn:#e8504a;--cc-dn-dim:rgba(232,80,74,.08);--cc-dn-bd:rgba(232,80,74,.22);--cc-flat:#8b92ab;--r:14px;--mono:"IBM Plex Mono",monospace;--ui:"Noto Sans JP",sans-serif}
+.cc-section{padding:2rem 0 3rem;font-family:var(--ui)}
+.cc-header{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.cc-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.2em;color:var(--cc-accent);margin:0 0 .3rem}
+.cc-title{font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:700;color:var(--cc-text);margin:0}
+.cc-meta{text-align:right}
+.cc-updated{display:flex;align-items:center;gap:.4rem;justify-content:flex-end;font-family:var(--mono);font-size:.72rem;color:var(--cc-sub);margin:0 0 .2rem}
+.cc-dot{width:6px;height:6px;border-radius:50%;background:var(--cc-up);box-shadow:0 0 7px var(--cc-up);animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.cc-note{font-size:.68rem;color:var(--cc-muted);margin:0}
+.cc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+@media(max-width:1024px){.cc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.cc-grid{grid-template-columns:1fr}}
+.cc-card{background:var(--cc-surface);border:1px solid var(--cc-border);border-radius:var(--r);padding:1.4rem 1.4rem 1.1rem;display:flex;flex-direction:column;gap:.9rem;position:relative;overflow:hidden;transition:border-color .2s,transform .25s,box-shadow .25s;animation:cardIn .4s ease both;animation-delay:calc(var(--i) * 70ms)}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.cc-card--up{border-color:var(--cc-up-bd);background:linear-gradient(155deg,var(--cc-surface) 60%,var(--cc-up-dim))}
+.cc-card--down{border-color:var(--cc-dn-bd);background:linear-gradient(155deg,var(--cc-surface) 60%,var(--cc-dn-dim))}
+.cc-card:hover{transform:translateY(-4px);box-shadow:0 10px 36px rgba(0,0,0,.45);border-color:var(--cc-bhi)}
+.cc-card--up:hover{border-color:var(--cc-up)}.cc-card--down:hover{border-color:var(--cc-dn)}
+.cc-card__top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.cc-card__ticker{font-family:var(--mono);font-size:.65rem;color:var(--cc-accent);letter-spacing:.06em;margin:0 0 .2rem}
+.cc-card__name{font-size:.95rem;font-weight:700;color:var(--cc-text);margin:0;line-height:1.3}
+.cc-badge{font-family:var(--mono);font-size:.72rem;font-weight:500;padding:.22rem .6rem;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.cc-badge--up{color:var(--cc-up);background:var(--cc-up-dim);border:1px solid var(--cc-up-bd)}
+.cc-badge--down{color:var(--cc-dn);background:var(--cc-dn-dim);border:1px solid var(--cc-dn-bd)}
+.cc-badge--flat{color:var(--cc-flat);background:rgba(139,146,171,.08);border:1px solid rgba(139,146,171,.18)}
+.cc-card__price-wrap{display:flex;flex-direction:column;gap:.1rem}
+.cc-card__price-label{font-size:.64rem;color:var(--cc-muted);letter-spacing:.05em}
+.cc-card__price{font-family:var(--mono);font-size:clamp(1.5rem,2.8vw,1.9rem);font-weight:500;letter-spacing:-.02em;margin:0;line-height:1}
+.cc-card__price--up{color:var(--cc-up)}.cc-card__price--down{color:var(--cc-dn)}.cc-card__price--flat{color:var(--cc-text)}
+.cc-card__prev{font-family:var(--mono);font-size:.68rem;color:var(--cc-muted);margin:.2rem 0 0}
+.cc-divider{height:1px;background:var(--cc-border)}
+.cc-card__mcap{display:flex;justify-content:space-between;align-items:baseline}
+.cc-card__mcap-label{font-size:.65rem;color:var(--cc-muted)}
+.cc-card__mcap-val{font-family:var(--mono);font-size:.9rem;color:var(--cc-sub);font-weight:500}
+.cc-stats{display:grid;grid-template-columns:1fr 1fr;gap:.6rem .5rem;margin:0}
+.cc-stat--wide{grid-column:1 / -1}
+.cc-stat dt{font-size:.62rem;color:var(--cc-muted);letter-spacing:.04em;margin-bottom:.18rem;display:flex;align-items:center;gap:.25rem}
+.cc-tag{font-size:.55rem;background:rgba(61,107,255,.15);color:var(--cc-accent);border:1px solid rgba(61,107,255,.28);border-radius:3px;padding:0 .25rem;line-height:1.4}
+.cc-stat dd{font-family:var(--mono);font-size:.85rem;color:var(--cc-sub);margin:0;font-weight:500}
+.cc-link{font-size:.68rem;color:var(--cc-accent);text-decoration:none;margin-top:auto;align-self:flex-start;transition:opacity .15s}
+.cc-link:hover{opacity:.65;text-decoration:underline}
+</style>
