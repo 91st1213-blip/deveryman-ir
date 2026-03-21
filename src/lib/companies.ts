@@ -48,7 +48,7 @@ function parseRow(row: string[]): Company | null {
   const id = row[0]?.trim(), name = row[1]?.trim(), code = row[2]?.trim();
   if (!id || !name || !code || id === "id") return null;
   const n = (v?: string) => { if (!v?.trim()) return null; const x = parseFloat(v.replace(/,/g,"")); return isNaN(x) ? null : x; };
-  return { id, name, code, stock: n(row[14]), mCap: n(row[15]), roe: n(row[16]), pbr: n(row[17]), divYield: n(row[18]), shares: n(row[19]), prevClose: n(row[20]), change: n(row[22]), updatedAt: row[22]?.trim()||null };
+  return { id, name, code, stock: n(row[14]), mCap: n(row[15]), roe: n(row[16]), pbr: n(row[17]), divYield: n(row[18]), shares: n(row[19]), prevClose: n(row[20]), change: n(row[21]), updatedAt: row[22]?.trim()||null };
 }
 
 export const FALLBACK_COMPANIES: Company[] = [
