@@ -1,5 +1,0 @@
-# ローカルPCで
-cd ~/Documents/deveryman-ir
-# DEPLOY_CODE.astro の内容をコピーして
-pbpaste > src/pages/index.astro  # Mac
-git add . && git commit -m "feat: map + table" && git push
