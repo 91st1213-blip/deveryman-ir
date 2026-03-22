@@ -1,6 +1,8 @@
 ---
 // deveryman-ir | src/pages/index.astro
 import { fetchCompanies } from '../lib/companies';
+import { fetchProjects } from '../lib/projects';
+const projects = await fetchProjects();
 const liveData = await fetchCompanies();
 const liveMap = Object.fromEntries(liveData.map(c => [c.code, c]));
 // Updated: Compact Cards, 2-Column Summary, Projects Table Refactor
@@ -33,22 +35,11 @@ const newsItems = [
   { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
 ];
 
-// ※Google Mapにピンを立てるため、location情報を復元しています
-const projects = [
-  { id: "p1", company: "三井不動産", color: "#4a90d9", status: "着工済", name: "日本橋一丁目中地区 再開発", area: "中央区日本橋", scale: "地上52階 (284m)", usage: "オフィス・ホテル・住宅", completion: "26年度", irLink: "https://www.mitsuifudosan.co.jp/corporate/news/", location: { lat: 35.6821, lng: 139.7741 } },
-  { id: "p2", company: "三菱地所", color: "#e85555", status: "進行中", name: "Torch Tower (TOKYO TORCH)", area: "千代田区大手町", scale: "地上62階 (390m)", usage: "オフィス・ホテル・商業", completion: "28年度", irLink: "https://www.mec.co.jp/j/news/", location: { lat: 35.6853, lng: 139.7695 } },
-  { id: "p3", company: "野村不動産HD", color: "#6a6adc", status: "進行中", name: "芝浦PJ (BLUE FRONT SHIBAURA)", area: "港区芝浦", scale: "地上43階 (232m)", usage: "オフィス・ホテル・住宅", completion: "30年度", irLink: "https://www.nomura-re-hd.co.jp/news/", location: { lat: 35.6455, lng: 139.7571 } },
-  { id: "p4", company: "東急不動産HD", color: "#28b0b0", status: "計画中", name: "渋谷アッパー・ウエスト PJ", area: "渋谷区道玄坂", scale: "地上36階 (164m)", usage: "商業・ホテル・住宅", completion: "27年度", irLink: "https://www.tokyu-fudosan-hd.co.jp/news/", location: { lat: 35.6601, lng: 139.6975 } },
-  { id: "p5", company: "東京建物", color: "#d4813a", status: "計画中", name: "八重洲二丁目中地区 再開発", area: "中央区八重洲", scale: "地上43階 (225m)", usage: "オフィス・商業・劇場", completion: "29年度", irLink: "https://www.tatemono.com/news/", location: { lat: 35.6795, lng: 139.7681 } },
-  { id: "p6", company: "三井不動産", color: "#4a90d9", status: "計画中", name: "築地市場跡地 再開発", area: "中央区築地", scale: "未定", usage: "スタジアム・商業・オフィス", completion: "30年代", irLink: "https://www.mitsuifudosan.co.jp/corporate/news/", location: { lat: 35.6631, lng: 139.7688 } },
-  { id: "p7", company: "住友不動産", color: "#3aaa5c", status: "計画中", name: "西新宿三丁目 再開発", area: "新宿区西新宿", scale: "地上65階 (約235m)", usage: "住宅・商業・公益", completion: "29年度", irLink: "https://www.sumitomo-rd.co.jp/news/", location: { lat: 35.6841, lng: 139.6901 } },
-];
-
 const projectStatusMap: Record<string, string> = {
+  "完成": "status-complete",
   "進行中": "status-active",
   "着工済": "status-started",
   "計画中": "status-plan",
-  "完成": "status-complete"
 };
 
 const updatedAt = new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
@@ -557,6 +548,7 @@ function getMarginClass(val: number) {
           <button class="filter-btn" data-filter="東京建物">東建</button>
           <button class="filter-btn" data-filter="野村不動産HD">野村</button>
           <button class="filter-btn" data-filter="東急不動産HD">東急</button>
+　　　　　　<button class="filter-btn" data-filter="その他">その他</button>
         </div>
       </div>
       
