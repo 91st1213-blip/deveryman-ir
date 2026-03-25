@@ -127,7 +127,7 @@ async function main() {
     const d = new Date(item.date);
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - 3);
-    const excludeKeywords = ["フェア", "支店", "受賞", "イベント", "CO2", "開催", "ポップアップ", "キャンペーン", "セミナー", "展示", "説明会", "募集", "採用", "インターン", "表彰", "店舗移転", "ボンド", "調達", "優良法人", "女性活躍", "５つ星", "期間限定", "ネイチャー", "推進企業", "防災"];
+    const excludeKeywords = ["フェア", "支店", "受賞", "イベント", "CO2", "開催", "ポップアップ", "キャンペーン", "セミナー", "展示", "説明会", "募集", "採用", "インターン", "表彰", "店舗移転", "ボンド", "調達", "優良法人", "女性活躍", "５つ星", "期間限定", "ネイチャー", "推進企業", "防災", "認証", "放送", "アニメ", "記念", "周年", "マルシェ", "ワークショップ", "実証実験", "WebCM", "人事異動", "組織改正", "役員", "取締役", "配当", "自己株式", "消却", "信託", "フォーブス", "スター", "彫刻", "アート", "eco"];
     const isExcluded = excludeKeywords.some(kw => item.title.includes(kw));
     return item.title && item.url && d >= cutoff && !isExcluded;
   })
