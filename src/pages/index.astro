@@ -156,9 +156,9 @@ function getMarginClass(val: number) {
     /* === NEWS TICKER === */
     .news-ticker-section { background: rgba(255, 255, 255, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 24px 0; }
     .news-scroll-wrapper { height: 220px; overflow: hidden; overflow-y: hidden; position: relative; background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; } .news-scroll-wrapper::-webkit-scrollbar { width: 4px; } .news-scroll-wrapper::-webkit-scrollbar-track { background: transparent; } .news-scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-    .news-scroll-wrapper::before, .news-scroll-wrapper::after { content: ''; position: absolute; left: 0; right: 0; height: 48px; z-index: 2; pointer-events: none; }
-    .news-scroll-wrapper::before { top: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), transparent); }
-    .news-scroll-wrapper::after { bottom: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); }
+    
+    
+    
     .news-ticker-track { display: flex; flex-direction: column; gap: 0; padding: 16px; }
     .news-ticker-track:hover { animation-play-state: paused !important; }
     @keyframes ticker-scroll-vertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
@@ -663,7 +663,7 @@ function getMarginClass(val: number) {
       if (filterValue === 'all') {
         wrapper.style.overflowY = 'hidden';
         void track.offsetHeight;
-        track.style.animation = 'ticker-scroll-vertical 150s linear infinite';
+        track.style.animation = 'ticker-scroll-vertical 180s linear infinite';
       } else {
         wrapper.style.overflowY = 'auto';
       }
