@@ -22,9 +22,10 @@ const CATEGORY_KEYWORDS = {
   開業: ["開業", "オープン", "グランドオープン", "開館", "開店", "開設"],
   資金調達: ["資金調達", "増資", "社債", "借入", "融資", "ファイナンス"],
   提携: ["提携", "協定", "合意", "アライアンス", "パートナー", "連携"],
+  海外: ["海外", "フィリピン", "インド", "アメリカ", "米国", "中国", "シンガポール", "タイ", "ベトナム", "欧州", "アジア", "グローバル", "テキサス", "カリフォルニア", "ニューヨーク", "ロンドン", "パリ", "上海", "北京", "バンコク", "ジャカルタ", "クアラルンプール", "ホーチミン", "ハノイ", "マニラ", "ムンバイ", "デリー"],
 };
 
-const BADGE_MAP = { 決算: "red", 着工: "yellow", 竣工: "green", 開業: "blue", 資金調達: "purple", 提携: "teal", その他: "gray" };
+const BADGE_MAP = { 決算: "red", 着工: "yellow", 竣工: "green", 開業: "blue", 資金調達: "purple", 提携: "teal", 海外: "orange", その他: "gray" };
 
 function detectCategory(title) {
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
