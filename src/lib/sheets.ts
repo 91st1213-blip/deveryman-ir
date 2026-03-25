@@ -5,7 +5,19 @@ const JSON_KEY_PATH = '/Users/takumisugimoto/Desktop/deveryman-ir-657d407324c4.j
 
 let auth;
 
-if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+  console.log('[Sheets] Loading credentials from GOOGLE_SERVICE_ACCOUNT_JSON (CI)');
+  let credentials;
+  try {
+    credentials = JSON.parse(Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_JSON, 'base64').toString('utf-8'));
+  } catch {
+    credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+  }
+  auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+  });
+} else if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
   console.log('[Sheets] Loading credentials from environment variables (Production)');
   auth = new google.auth.GoogleAuth({
     credentials: {

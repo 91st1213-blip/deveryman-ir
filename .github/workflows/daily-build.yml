@@ -28,6 +28,8 @@ jobs:
         run: node fetch-news.mjs
 
       - name: Build
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: npm run build
 
       - name: Deploy to Cloudflare Pages
