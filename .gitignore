@@ -143,3 +143,4 @@ vite.config.ts.timestamp-*
 .env.local
 .env.production
 *-key.json
+service-account.json

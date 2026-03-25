@@ -2,6 +2,7 @@
 // deveryman-ir | src/pages/index.astro
 import { fetchCompanies } from '../lib/companies';
 import { fetchProjects } from '../lib/projects';
+import { fetchNews } from '../lib/sheets';
 const projects = await fetchProjects();
 const liveData = await fetchCompanies();
 const liveMap = Object.fromEntries(liveData.map(c => [c.code, c]));
@@ -25,15 +26,7 @@ const companies = [
   { name: "東急不動産HD", code: "3289", initial: "急", period: "25/3", badge: "FY2025 MAR 予想", revenue: 10500, revenueStr: "1.05", revYoy: 5.7, op: 1800, margin: 17.1, ord: 1700, ordYoy: 5.8, net: 950, netYoy: 6.0, stock: 888, mCap: "6,000", roe: 8.9, pbr: 0.95, yield: 3.0, units: 1600, unitYoy: -4.0, unitMargin: 11.5, brandName: "ブランズ / ソルフィエスタ", deliveries: ["ブランズタワー豊洲", "ブランズ目黒洗足"], irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
 ];
 
-const newsItems = [
-  { date: "2025-02-14", company: "東京建物", category: "IR", title: "2024年12月期 通期決算発表", desc: "売上高前期比+8%、営業利益は過去最高を更新。分譲住宅の好調が寄与。", url: "https://www.tatemono.com/ir/" },
-  { date: "2025-02-10", company: "三菱地所", category: "PR", title: "丸の内エリア新棟着工", desc: "丸の内2-1-1地区の複合ビル（延床12万㎡）が着工。2028年竣工予定。", url: "https://www.mec.co.jp/j/news/" },
-  { date: "2025-02-07", company: "三井不動産", category: "PR", title: "日本橋再開発第3期着工", desc: "COREDO室町エリア隣接地に複合施設を着工。商業・オフィス・レジデンスの複合開発。", url: "https://www.mitsuifudosan.co.jp/corporate/news/" },
-  { date: "2025-01-30", company: "住友不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益8,200億円（前年同期比+5%）。分譲マンション引渡し好調。", url: "https://www.sumitomo-rd.co.jp/ir/" },
-  { date: "2025-01-28", company: "野村不動産HD", category: "PR", title: "渋谷道玄坂再開発発表", desc: "延床約8万㎡のオフィス・ホテル複合施設。2027年竣工に向け計画が進む。", url: "https://www.nomura-re-hd.co.jp/news/" },
-  { date: "2025-01-25", company: "東急不動産HD", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計売上9,200億円。渋谷・港区エリアの開発案件が順調に進捗。", url: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
-  { date: "2025-01-20", company: "三井不動産", category: "IR", title: "2025年3月期 第3四半期決算", desc: "累計営業収益2.1兆円（前年同期比+6%）。物流施設・商業施設が好調。", url: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
-];
+const newsItems = await fetchNews();
 
 const projectStatusMap: Record<string, string> = {
   "完成": "status-complete",
@@ -162,7 +155,7 @@ function getMarginClass(val: number) {
 
     /* === NEWS TICKER === */
     .news-ticker-section { background: rgba(255, 255, 255, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 24px 0; }
-    .news-scroll-wrapper { height: 220px; overflow: hidden; position: relative; background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; }
+    .news-scroll-wrapper { height: 220px; overflow: hidden; overflow-y: hidden; position: relative; background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; } .news-scroll-wrapper::-webkit-scrollbar { width: 4px; } .news-scroll-wrapper::-webkit-scrollbar-track { background: transparent; } .news-scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
     .news-scroll-wrapper::before, .news-scroll-wrapper::after { content: ''; position: absolute; left: 0; right: 0; height: 48px; z-index: 2; pointer-events: none; }
     .news-scroll-wrapper::before { top: 0; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), transparent); }
     .news-scroll-wrapper::after { bottom: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); }
@@ -174,7 +167,7 @@ function getMarginClass(val: number) {
     .news-card:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
     .news-card:hover { background: rgba(255, 255, 255, 0.06); }
     .news-card-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); white-space: nowrap; font-variant-numeric: tabular-nums; flex-shrink: 0; width: 82px; min-width: 82px; }
-    .news-category { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 4px; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; width: 28px; min-width: 28px; text-align: center; }
+    .news-category { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; width: 52px; min-width: 52px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
     .news-category.IR { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
     .news-category.PR { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; }
     .news-card-company { font-size: 0.82rem; font-weight: 700; color: var(--accent-color, #93c5fd); white-space: nowrap; flex-shrink: 0; width: 110px; min-width: 110px; }
@@ -402,7 +395,7 @@ function getMarginClass(val: number) {
     <div class="container">
       <div class="section-header">
         <div class="section-title-wrap">
-          <h2 class="section-title">📰 最新ニュース & IRリリース</h2>
+          <h2 class="section-title">📰 最新ニュース & IRリリース<span style="font-size:0.65rem; font-weight:400; color:rgba(255,255,255,0.4); margin-left:10px;">直近3ヶ月 · 主要ニュースのみ</span></h2>
         </div>
         <div class="filter-group" id="news-filter">
           <button class="filter-btn active" data-filter="all">すべて</button>
@@ -633,6 +626,7 @@ function getMarginClass(val: number) {
     // --- ニュースセクションの描画 ---
     function renderNews(filterValue) {
       var track = document.getElementById('news-ticker-track');
+      var wrapper = document.querySelector('.news-scroll-wrapper');
       if (!track) return;
 
       var filtered = filterValue === 'all'
@@ -658,17 +652,20 @@ function getMarginClass(val: number) {
           + '<span class="news-card-company">' + n.company + '</span>'
           + '<span class="news-card-sep">\u2014</span>'
           + '<span class="news-card-title">' + n.title + '</span>'
-          + '<span class="news-card-sep">\uff5c</span>'
-          + '<span class="news-card-desc">' + n.desc + '</span>'
+          
         + '</a>';
       }).join('');
 
       track.innerHTML = html;
 
+      var wrapper = document.querySelector('.news-scroll-wrapper');
       track.style.animation = 'none';
       if (filterValue === 'all') {
+        wrapper.style.overflowY = 'hidden';
         void track.offsetHeight;
-        track.style.animation = 'ticker-scroll-vertical 50s linear infinite';
+        track.style.animation = 'ticker-scroll-vertical 150s linear infinite';
+      } else {
+        wrapper.style.overflowY = 'auto';
       }
     }
 

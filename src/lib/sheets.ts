@@ -79,3 +79,38 @@ export async function getLatestEarnings(): Promise<EarningsData[]> {
     return [];
   }
 }
+
+export interface NewsItem {
+  date: string;
+  company: string;
+  companyId: string;
+  category: string;
+  badge: string;
+  title: string;
+  url: string;
+}
+
+export async function fetchNews(): Promise<NewsItem[]> {
+  const SPREADSHEET_ID = '1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=news`;
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const text = await res.text();
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean).slice(1);
+    return lines.map(line => {
+      const cols = line.match(/(".*?"|[^,]+)(?=,|$)/g)?.map(c => c.replace(/^"|"$/g, '').trim()) ?? [];
+      return {
+        date:      cols[0] ?? '',
+        company:   cols[1] ?? '',
+        companyId: cols[2] ?? '',
+        category:  cols[3] ?? '',
+        badge:     cols[4] ?? '',
+        title:     cols[5] ?? '',
+        url:       cols[6] ?? '',
+      };
+    }).filter(item => item.title && item.url);
+  } catch {
+    return [];
+  }
+}
