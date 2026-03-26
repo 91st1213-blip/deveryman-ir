@@ -9,10 +9,10 @@ const MAX_ITEMS_PER_COMPANY = 5;
 const SOURCES = [
   { id: "mitsui", name: "三井不動産", type: "rss2", url: "https://www.mitsuifudosan.co.jp/corporate/ir/rss/irnews_rss.xml" }, { id: "mitsui", name: "三井不動産", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=51782" },
   { id: "mitsubishi", name: "三菱地所", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=16002" },
-  { id: "sumitomo", name: "住友不動産", type: "rss2", url: "https://www.sumitomo-rd.co.jp/news/feed/" },
-  { id: "tokyo", name: "東京建物", type: "irpocket", url: "https://xml.irpocket.com/8804/XML/release-allrenw-latest-10.rdf", fallback: { type: "rss2", companyId: "22762" } },
+  { id: "sumitomo", name: "住友不動産", type: "rss2", url: "https://www.sumitomo-rd.co.jp/news/feed/" }, { id: "sumitomo", name: "住友不動産", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=46698" },
+  { id: "tokyo", name: "東京建物", type: "irpocket", url: "https://xml.irpocket.com/8804/XML/release-allrenw-latest-10.rdf" }, { id: "tokyo", name: "東京建物", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=52843" },
   { id: "nomura", name: "野村不動産HD", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=25694" },
-  { id: "tokyu", name: "東急不動産HD", type: "irpocket", url: "https://xml.irpocket.com/3289/XML/release-all-latest-12m.rdf" },
+  { id: "tokyu", name: "東急不動産HD", type: "irpocket", url: "https://xml.irpocket.com/3289/XML/release-all-latest-12m.rdf" }, { id: "tokyu", name: "東急不動産HD", type: "prtimes", url: "https://prtimes.jp/companyrdf.php?company_id=6953" },
 ];
 
 const CATEGORY_KEYWORDS = {
@@ -128,7 +128,7 @@ async function main() {
     const d = new Date(item.date);
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - 3);
-    const excludeKeywords = ["フェア", "支店", "受賞", "イベント", "CO2", "開催", "ポップアップ", "キャンペーン", "セミナー", "展示", "説明会", "募集", "採用", "インターン", "表彰", "店舗移転", "ボンド", "調達", "優良法人", "女性活躍", "５つ星", "期間限定", "ネイチャー", "推進企業", "防災", "認証", "放送", "アニメ", "記念", "周年", "マルシェ", "ワークショップ", "実証実験", "WebCM", "人事異動", "組織改正", "役員", "取締役", "配当", "自己株式", "消却", "信託", "フォーブス", "スター", "彫刻", "アート", "eco"];
+    const excludeKeywords = ["フェア", "支店", "受賞", "イベント", "CO2", "開催", "ポップアップ", "キャンペーン", "セミナー", "展示", "説明会", "募集", "採用", "インターン", "表彰", "店舗移転", "ボンド", "調達", "優良法人", "女性活躍", "５つ星", "期間限定", "ネイチャー", "推進企業", "防災", "認証", "放送", "アニメ", "記念", "周年", "マルシェ", "ワークショップ", "実証実験", "WebCM", "人事異動", "組織改正", "役員", "取締役", "配当", "自己株式", "消却", "信託", "フォーブス", "スター", "彫刻", "アート", "eco", "出展", "提供", "デジタル活用", "交流", "省エネ"];
     const isExcluded = excludeKeywords.some(kw => item.title.includes(kw));
     return item.title && item.url && d >= cutoff && !isExcluded;
   })

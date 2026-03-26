@@ -162,17 +162,17 @@ function getMarginClass(val: number) {
     .news-ticker-track { display: flex; flex-direction: column; gap: 0; padding: 16px; }
     .news-ticker-track:hover { animation-play-state: paused !important; }
     @keyframes ticker-scroll-vertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-    .news-card { display: flex; align-items: center; gap: 10px; padding: 12px 20px; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; text-decoration: none; color: inherit; white-space: nowrap; overflow: hidden; }
+    .news-card { display: flex; align-items: center; gap: 6px; padding: 12px 20px; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; text-decoration: none; color: inherit; white-space: nowrap; overflow: hidden; }
     .news-card:first-child { border-radius: 12px 12px 0 0; }
     .news-card:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
     .news-card:hover { background: rgba(255, 255, 255, 0.06); }
-    .news-card-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); white-space: nowrap; font-variant-numeric: tabular-nums; flex-shrink: 0; width: 82px; min-width: 82px; }
+    .news-card-date { font-size: 0.75rem; color: rgba(255, 255, 255, 0.35); white-space: nowrap; font-variant-numeric: tabular-nums; flex-shrink: 0; width: 72px; min-width: 72px; }
     .news-category { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; width: 52px; min-width: 52px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
     .news-category.IR { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
     .news-category.PR { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; }
     .news-card-company { font-size: 0.82rem; font-weight: 700; color: var(--accent-color, #93c5fd); white-space: nowrap; flex-shrink: 0; width: 110px; min-width: 110px; }
-    .news-card-sep { color: rgba(255, 255, 255, 0.15); flex-shrink: 0; font-size: 0.75rem; }
-    .news-card-title { font-size: 0.82rem; font-weight: 700; color: #e8eaf0; white-space: nowrap; flex-shrink: 0; }
+    .news-card-sep { display: none; }
+    .news-card-title { font-size: 0.72rem; font-weight: 600; color: #e8eaf0; white-space: nowrap; flex-shrink: 0; margin-left: 0; }
     .news-card-desc { font-size: 0.78rem; color: rgba(255, 255, 255, 0.38); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
     .news-empty { padding: 60px 20px; text-align: center; color: rgba(255, 255, 255, 0.3); font-size: 0.85rem; }
 
@@ -186,9 +186,9 @@ function getMarginClass(val: number) {
     .table-meta { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #93c5fd; display: flex; align-items: baseline; }
     .table-meta span { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-left: 8px; font-weight: 400; }
 
-    .table-wrap { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden; width: 100%; }
+    .table-wrap { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden; width: 100%; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
     .data-table { border-collapse: collapse; width: 100%; }
-    .data-table th { background: rgba(255, 255, 255, 0.05); padding: 10px 14px; text-align: right; font-size: 0.7rem; color: rgba(255, 255, 255, 0.45); white-space: nowrap; }
+    .data-table th { background: rgba(22, 27, 48, 0.98); padding: 10px 14px; text-align: right; font-size: 0.7rem; color: rgba(255, 255, 255, 0.45); white-space: nowrap; position: sticky; top: 0; z-index: 1; }
     .data-table th:first-child { text-align: left; }
     .data-table td { padding: 12px 14px; text-align: right; font-size: 0.82rem; border-top: 1px solid rgba(255, 255, 255, 0.05); white-space: nowrap; }
     .data-table td:first-child { text-align: left; min-width: 110px; }
@@ -211,6 +211,9 @@ function getMarginClass(val: number) {
     .status-started { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
     .status-complete { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
     .project-row { cursor: pointer; transition: 0.2s; }
+    .table-wrap::-webkit-scrollbar { width: 4px; }
+    .table-wrap::-webkit-scrollbar-track { background: transparent; }
+    .table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
     .project-row:hover { background: rgba(255,255,255,0.04); }
     .project-row.is-hovered { background: rgba(99, 102, 241, 0.08); box-shadow: inset 3px 0 0 #6366f1; }
 
@@ -554,7 +557,7 @@ function getMarginClass(val: number) {
         <!-- Google Maps コンテナ -->
         <div id="google-map" style="position: absolute; inset: 0; width: 100%; height: 100%;"></div>
       </div>
-      <div class="table-wrap" style="width: 100%;">
+      <div class="table-wrap" style="width: 100%; max-height: 440px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;">
         <table class="data-table" id="table-projects" style="width: 100%;">
           <thead>
             <tr>
