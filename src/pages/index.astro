@@ -18,15 +18,17 @@ const COMPANY_COLORS: Record<string, { bg: string; accent: string }> = {
 };
 
 const companies = [
-  { name: "三井不動産", code: "8801", initial: "三", period: "25/3", badge: "FY2025 MAR 予想", revenue: 28000, revenueStr: "2.80", revYoy: 6.2, op: 4200, margin: 15.0, ord: 3800, ordYoy: 5.0, net: 1500, netYoy: 4.2, stock: 2086, mCap: "4.4", roe: 8.2, pbr: 1.12, yield: 2.4, units: 3300, unitYoy: 5.1, unitMargin: 14.5, brandName: "パークホームズ / パークコート", deliveries: ["パークコート麻布十番ザ タワー", "パークホームズ豊洲ザ レジデンス"], irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
-  { name: "三菱地所", code: "8802", initial: "地", period: "25/3", badge: "FY2025 MAR 予想", revenue: 32000, revenueStr: "3.20", revYoy: 4.8, op: 5500, margin: 17.2, ord: 5200, ordYoy: 4.0, net: 2800, netYoy: 3.5, stock: 2315, mCap: "3.2", roe: 9.1, pbr: 1.45, yield: 2.8, units: 2800, unitYoy: -2.5, unitMargin: 13.2, brandName: "ザ・パークハウス", deliveries: ["ザ・パークハウス西新宿タワー60", "ザ・パークハウス目黒碑文谷"], irLink: "https://www.mec.co.jp/j/investor/" },
-  { name: "住友不動産", code: "8830", initial: "住", period: "25/3", badge: "FY2025 MAR 予想", revenue: 11000, revenueStr: "1.10", revYoy: 3.1, op: 2200, margin: 20.0, ord: 2000, ordYoy: 6.5, net: 1200, netYoy: 8.1, stock: 4210, mCap: "2.0", roe: 12.3, pbr: 1.50, yield: 2.1, units: 3000, unitYoy: 1.2, unitMargin: 24.5, brandName: "シティタワー / シティハウス", deliveries: ["シティタワー品川", "シティハウス東京八重洲通り"], irLink: "https://www.sumitomo-rd.co.jp/ir/" },
-  { name: "東京建物", code: "8804", initial: "建", period: "24/12", badge: "FY2024 DEC 実績", revenue: 5800, revenueStr: "5,800", revYoy: -1.2, op: 900, margin: 15.5, ord: 850, ordYoy: -1.5, net: 500, netYoy: -2.0, stock: 1982, mCap: "4,500", roe: 7.8, pbr: 0.85, yield: 3.5, units: 1250, unitYoy: 15.0, unitMargin: 18.2, brandName: "Brillia (ブリリア)", deliveries: ["Brillia Tower 上野池之端", "Brillia 有明 Sky Tower"], irLink: "https://www.tatemono.com/ir/" },
-  { name: "野村不動産HD", code: "3231", initial: "野", period: "25/3", badge: "FY2025 MAR 予想", revenue: 7200, revenueStr: "7,200", revYoy: 8.5, op: 1100, margin: 15.3, ord: 1050, ordYoy: 7.0, net: 600, netYoy: 5.4, stock: 3620, mCap: "6,500", roe: 10.2, pbr: 1.05, yield: 3.2, units: 4200, unitYoy: 8.5, unitMargin: 12.8, brandName: "プラウド / オハナ", deliveries: ["プラウドタワー小石川", "プラウド南青山"], irLink: "https://www.nomura-re-hd.co.jp/ir/" },
-  { name: "東急不動産HD", code: "3289", initial: "急", period: "25/3", badge: "FY2025 MAR 予想", revenue: 10500, revenueStr: "1.05", revYoy: 5.7, op: 1800, margin: 17.1, ord: 1700, ordYoy: 5.8, net: 950, netYoy: 6.0, stock: 888, mCap: "6,000", roe: 8.9, pbr: 0.95, yield: 3.0, units: 1600, unitYoy: -4.0, unitMargin: 11.5, brandName: "ブランズ / ソルフィエスタ", deliveries: ["ブランズタワー豊洲", "ブランズ目黒洗足"], irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
+  { name: "三井不動産", code: "8801", initial: "三", period: "25/3", announcedAt: "2025-02-14", badge: "FY2025 MAR 予想", revenue: 28000, revenueStr: "2.80", revYoy: 6.2, op: 4200, margin: 15.0, ord: 3800, ordYoy: 5.0, net: 1500, netYoy: 4.2, stock: 2086, mCap: "4.4", roe: 8.2, pbr: 1.12, yield: 2.4, units: 3300, unitYoy: 5.1, unitMargin: 14.5, brandName: "パークホームズ / パークコート", deliveries: ["パークコート麻布十番ザ タワー", "パークホームズ豊洲ザ レジデンス"], irLink: "https://www.mitsuifudosan.co.jp/corporate/ir/" },
+  { name: "三菱地所", code: "8802", initial: "地", period: "25/3", announcedAt: "2025-02-13", badge: "FY2025 MAR 予想", revenue: 32000, revenueStr: "3.20", revYoy: 4.8, op: 5500, margin: 17.2, ord: 5200, ordYoy: 4.0, net: 2800, netYoy: 3.5, stock: 2315, mCap: "3.2", roe: 9.1, pbr: 1.45, yield: 2.8, units: 2800, unitYoy: -2.5, unitMargin: 13.2, brandName: "ザ・パークハウス", deliveries: ["ザ・パークハウス西新宿タワー60", "ザ・パークハウス目黒碑文谷"], irLink: "https://www.mec.co.jp/j/investor/" },
+  { name: "住友不動産", code: "8830", initial: "住", period: "25/3", announcedAt: "2025-02-05", badge: "FY2025 MAR 予想", revenue: 11000, revenueStr: "1.10", revYoy: 3.1, op: 2200, margin: 20.0, ord: 2000, ordYoy: 6.5, net: 1200, netYoy: 8.1, stock: 4210, mCap: "2.0", roe: 12.3, pbr: 1.50, yield: 2.1, units: 3000, unitYoy: 1.2, unitMargin: 24.5, brandName: "シティタワー / シティハウス", deliveries: ["シティタワー品川", "シティハウス東京八重洲通り"], irLink: "https://www.sumitomo-rd.co.jp/ir/" },
+  { name: "東京建物", code: "8804", initial: "建", period: "24/12", announcedAt: "2025-02-14", badge: "FY2024 DEC 実績", revenue: 5800, revenueStr: "5,800", revYoy: -1.2, op: 900, margin: 15.5, ord: 850, ordYoy: -1.5, net: 500, netYoy: -2.0, stock: 1982, mCap: "4,500", roe: 7.8, pbr: 0.85, yield: 3.5, units: 1250, unitYoy: 15.0, unitMargin: 18.2, brandName: "Brillia (ブリリア)", deliveries: ["Brillia Tower 上野池之端", "Brillia 有明 Sky Tower"], irLink: "https://www.tatemono.com/ir/" },
+  { name: "野村不動産HD", code: "3231", initial: "野", period: "25/3", announcedAt: "2025-02-12", badge: "FY2025 MAR 予想", revenue: 7200, revenueStr: "7,200", revYoy: 8.5, op: 1100, margin: 15.3, ord: 1050, ordYoy: 7.0, net: 600, netYoy: 5.4, stock: 3620, mCap: "6,500", roe: 10.2, pbr: 1.05, yield: 3.2, units: 4200, unitYoy: 8.5, unitMargin: 12.8, brandName: "プラウド / オハナ", deliveries: ["プラウドタワー小石川", "プラウド南青山"], irLink: "https://www.nomura-re-hd.co.jp/ir/" },
+  { name: "東急不動産HD", code: "3289", initial: "急", period: "25/3", announcedAt: "2025-02-14", badge: "FY2025 MAR 予想", revenue: 10500, revenueStr: "1.05", revYoy: 5.7, op: 1800, margin: 17.1, ord: 1700, ordYoy: 5.8, net: 950, netYoy: 6.0, stock: 888, mCap: "6,000", roe: 8.9, pbr: 0.95, yield: 3.0, units: 1600, unitYoy: -4.0, unitMargin: 11.5, brandName: "ブランズ / ソルフィエスタ", deliveries: ["ブランズタワー豊洲", "ブランズ目黒洗足"], irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
 ];
 
 const newsItems = await fetchNews();
+
+const sortedProjects = [...projects].sort((a, b) => { const toNum = (s) => { const m = s.match(/([0-9]{4})/); return m ? parseInt(m[1]) : 9999; }; return toNum(a.completion) - toNum(b.completion); });
 
 const projectStatusMap: Record<string, string> = {
   "完成": "status-complete",
@@ -441,7 +443,7 @@ function getMarginClass(val: number) {
               <thead>
                 <tr>
                   <th>企業名</th>
-                  <th style="text-align:center;">期</th>
+                  <th style="text-align:center;">期</th><th style="text-align:center;">公表日</th>
                   <th>売上高 <span>(前期比)</span></th>
                   <th>営業利益 <span>(率)</span></th>
                   <th>経常利益 <span>(前期比)</span></th>
@@ -462,7 +464,7 @@ function getMarginClass(val: number) {
                           {c.name}
                         </div>
                       </td>
-                      <td style="text-align:center">{c.period}</td>
+                      <td style="text-align:center">{c.period}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td>
                       <td>
                         {c.revenue.toLocaleString()}
                         <span class={`yoy-growth ${yoyClass}`}>({c.revYoy > 0 ? '+' : ''}{c.revYoy.toFixed(1)}%)</span>
@@ -580,7 +582,7 @@ function getMarginClass(val: number) {
             </tr>
           </thead>
           <tbody id="projects-tbody">
-            {projects.map(p => {
+            {sortedProjects.map(p => {
               const statusClass = projectStatusMap[p.status] || "status-plan";
               return (
                 <tr class="project-row" data-project-id={p.id} data-company={p.company}>
