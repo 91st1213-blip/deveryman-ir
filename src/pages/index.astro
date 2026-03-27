@@ -30,6 +30,8 @@ const newsItems = await fetchNews();
 
 const sortedProjects = [...projects].sort((a, b) => { const toNum = (s) => { const m = s.match(/([0-9]{4})/); return m ? parseInt(m[1]) : 9999; }; return toNum(a.completion) - toNum(b.completion); });
 
+const sortedProjects = [...projects].sort((a, b) => { const toNum = (s) => { const m = s.match(/([0-9]{4})/); return m ? parseInt(m[1]) : 9999; }; return toNum(a.completion) - toNum(b.completion); });
+
 const projectStatusMap: Record<string, string> = {
   "完成": "status-complete",
   "進行中": "status-active",
@@ -443,7 +445,7 @@ function getMarginClass(val: number) {
               <thead>
                 <tr>
                   <th>企業名</th>
-                  <th style="text-align:center;">期</th><th style="text-align:center;">公表日</th>
+                  <th style="text-align:center;">期</th><th style="text-align:center;">公表日</th><th style="text-align:center;">公表日</th>
                   <th>売上高 <span>(前期比)</span></th>
                   <th>営業利益 <span>(率)</span></th>
                   <th>経常利益 <span>(前期比)</span></th>
@@ -464,7 +466,7 @@ function getMarginClass(val: number) {
                           {c.name}
                         </div>
                       </td>
-                      <td style="text-align:center">{c.period}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td>
+                      <td style="text-align:center">{c.period}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td>
                       <td>
                         {c.revenue.toLocaleString()}
                         <span class={`yoy-growth ${yoyClass}`}>({c.revYoy > 0 ? '+' : ''}{c.revYoy.toFixed(1)}%)</span>
