@@ -283,7 +283,8 @@ function getMarginClass(val: number) {
           <a href="#news">ニュース</a>
           <a href="#summary">業績ハイライト</a>
           <a href="#projects">再開発PJ</a>
-          <a href="/market">マーケット<span class="badge-coming-soon">公開予定</span></a>
+          <a href="/market">住宅マーケット<span class="badge-coming-soon">公開予定</span></a>
+          <a href="/map">販売中・予定の住宅MAP<span class="badge-coming-soon">公開予定</span></a>
         </nav>
         <div class="header-actions">
           <div class="badge-updated" id="header-updated-at">更新: {updatedAt}</div>
@@ -351,7 +352,7 @@ function getMarginClass(val: number) {
                       <span class="stat-label-colored">株価</span>
                       <div class="stat-value-large">
                         {stockPrice ? stockPrice.toLocaleString() : "---"}<span class="unit-hero">円</span>
-                        {changeStr && <span style={`font-size:.55rem; margin-left:4px; color:${change >= 0 ? "#2ecc8a" : "#e8504a"}`}>{changeStr}</span>}
+                        {changeStr {changeStr && <span style={`font-size:.55rem; margin-left:4px; color:${change >= 0 ? "#2ecc8a" : "#e8504a"}`}>{changeStr}</span>}{changeStr && <span style={`font-size:.55rem; margin-left:4px; color:${change >= 0 ? "#2ecc8a" : "#e8504a"}`}>{changeStr}</span>} <span style="display:block; margin-top:2px;"><span style="font-size:.60rem; color:rgba(255,255,255,0.4);">前日比 </span><span style={`font-size:.60rem; color:${change >= 0 ? "#2ecc8a" : "#e8504a"};`}>{changeStr}</span></span>}
                       </div>
                     </div>
                     <div class="stat-item">
@@ -440,7 +441,7 @@ function getMarginClass(val: number) {
               <thead>
                 <tr>
                   <th>企業名</th>
-                  <th style="text-align:center;">期</th><th style="text-align:center;">公表日</th><th style="text-align:center;">公表日</th>
+                  <th style="text-align:center;">期</th><th style="text-align:center;">公表日</th>
                   <th>売上高 <span>(前期比)</span></th>
                   <th>営業利益 <span>(率)</span></th>
                   <th>経常利益 <span>(前期比)</span></th>
