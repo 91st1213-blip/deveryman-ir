@@ -30,7 +30,6 @@ const newsItems = await fetchNews();
 
 const sortedProjects = [...projects].sort((a, b) => { const toNum = (s) => { const m = s.match(/([0-9]{4})/); return m ? parseInt(m[1]) : 9999; }; return toNum(a.completion) - toNum(b.completion); });
 
-const sortedProjects = [...projects].sort((a, b) => { const toNum = (s) => { const m = s.match(/([0-9]{4})/); return m ? parseInt(m[1]) : 9999; }; return toNum(a.completion) - toNum(b.completion); });
 
 const projectStatusMap: Record<string, string> = {
   "完成": "status-complete",
