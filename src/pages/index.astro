@@ -125,7 +125,7 @@ function getMarginClass(val: number) {
     .cards-scroll-wrapper { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0 30px; scrollbar-width: none; flex: 1; scroll-behavior: smooth; }
     .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
 
-    .company-card { min-width: 240px; flex-shrink: 0; background: #161b30; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .company-card { width: 240px; min-width: 240px; max-width: 240px; flex-shrink: 0; background: #161b30; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .company-card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 16px 32px rgba(0,0,0,0.5); }
     
     .card-top-identity { padding: 12px 16px; color: #fff; }
@@ -230,6 +230,12 @@ function getMarginClass(val: number) {
     .map-pin-tooltip-company { font-size: 0.72rem; font-weight: 700; margin-bottom: 2px; }
     .map-pin-tooltip-name { font-size: 0.7rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); }
 
+    /* === COMING SOON BADGE === */
+    .badge-coming-soon { font-size: 0.6rem; font-weight: 700; background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 20px; white-space: nowrap; margin-left: 8px; vertical-align: middle; }
+
+    /* === COMING SOON BADGE === */
+    .badge-coming-soon { font-size: 0.6rem; font-weight: 700; background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 20px; white-space: nowrap; margin-left: 8px; vertical-align: middle; }
+
     /* === FOOTER === */
     .footer { border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 28px 0; margin-top: 40px; }
     .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
@@ -270,10 +276,12 @@ function getMarginClass(val: number) {
       <div class="header-inner">
         <div class="logo">deveryman<span>-ir</span></div>
         <nav class="nav">
-          <a href="#companies">企業カード</a>
+          <a href="#companies">株式・市場データ</a>
           <a href="#news">ニュース</a>
-          <a href="#summary">決算サマリー</a>
+          <a href="#summary">業績ハイライト</a>
           <a href="#projects">再開発PJ</a>
+          <a href="/market">マーケット<span class="badge-coming-soon">公開予定</span></a>
+          <a href="/market">マーケット<span class="badge-coming-soon">公開予定</span></a>
         </nav>
         <div class="header-actions">
           <div class="badge-updated" id="header-updated-at">更新: {updatedAt}</div>
@@ -307,7 +315,7 @@ function getMarginClass(val: number) {
     <div class="container">
       <div class="section-header">
         <div class="section-title-wrap">
-          <h2 class="section-title">📊 企業カード</h2>
+          <h2 class="section-title">📊 株式・市場データ</h2>
         </div>
       </div>
       <div class="cards-row">
@@ -423,7 +431,7 @@ function getMarginClass(val: number) {
   <!-- SECTION 3: 決算サマリー -->
   <section class="section" id="summary">
     <div class="container">
-      <h2 class="section-title">📋 決算サマリー & 分譲戸数(予想)</h2>
+      <h2 class="section-title">📋 業績ハイライト & 分譲戸数(予想)</h2>
       <div class="summary-tables-grid">
         <!-- 業績ハイライト -->
         <div class="table-container">
