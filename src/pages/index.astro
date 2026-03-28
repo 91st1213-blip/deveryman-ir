@@ -345,7 +345,7 @@ function getMarginClass(val: number) {
       #table-projects tbody td:nth-child(7) { display: none; }
 
       /* --- Filter overflow fix --- */
-      .filter-group { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+      .filter-group { flex-wrap: wrap; overflow-x: visible; padding-bottom: 4px; gap: 6px; }
       .filter-btn { padding: 5px 10px; font-size: 0.68rem; flex-shrink: 0; }
 
       /* --- Projects Table horizontal scroll --- */
@@ -371,7 +371,7 @@ function getMarginClass(val: number) {
       .container { padding: 0 12px; }
       .company-card { min-width: 240px; width: 240px; max-width: 240px; }
       .hero-title { font-size: 1.2rem; }
-      .news-card-date { display: none; }
+      .news-card-date { display: inline; font-size: 0.63rem; width: 56px; min-width: 56px; }
       .news-card-company { font-size: 0.68rem; }
       .news-card-title { font-size: 0.65rem; }
       .table-container .table-wrap { min-width: 480px; }
@@ -630,7 +630,7 @@ function getMarginClass(val: number) {
                       </td>
                       <td style="text-align:left;">
                         <div style="font-size:0.65rem; color:rgba(255,255,255,0.35); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px;">{c.brandName}</div>
-                        <div style="font-size:0.78rem; color:#e8eaf0; white-space:nowrap;">
+                        <div style="font-size:0.82rem; color:#e8eaf0; white-space:nowrap;">
                           <span style="color:rgba(255,255,255,0.3); margin-right:4px;">›</span>{c.deliveries[0]}
                         </div>
                       </td>
