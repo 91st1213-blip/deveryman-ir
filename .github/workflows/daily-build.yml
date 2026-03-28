@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +26,15 @@ jobs:
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: node fetch-news.mjs
+
+      - name: Scrape MEC & Nomura News (Friday only)
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.schedule, '45 8 * * 5')
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          pip install playwright google-api-python-client google-auth
+          playwright install chromium
+          python3 scrape-news.py
 
       - name: Build
         env:
