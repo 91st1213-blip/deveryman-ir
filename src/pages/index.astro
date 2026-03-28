@@ -269,26 +269,103 @@ function getMarginClass(val: number) {
     .footer-links a { font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); }
     .footer-links a:hover { color: rgba(255, 255, 255, 0.6); }
 
+    /* ==============================
+       MOBILE (max-width: 768px)
+       ============================== */
     @media (max-width: 768px) {
-      .nav { display: none; }
-      .hero-title { font-size: 1.6rem; }
-      .company-card { min-width: 220px; }
-      .data-table { font-size: 0.7rem; }
-      .summary-tables-grid { gap: 16px; }
-      .table-wrap { width: 100%; }
-      .data-table { width: 100%; }
-      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+      /* --- Layout & Spacing --- */
+      .container { padding: 0 16px; }
+      .section { padding: 24px 0; }
+      .hero { padding: 28px 0 16px; }
+      .hero-title { font-size: 1.4rem; }
+      .hero-sub { font-size: 0.8rem; }
+      .hero-eyebrow { font-size: 0.7rem; margin-bottom: 8px; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .section-title { font-size: 1.05rem; }
       .filter-group { align-self: stretch; }
-      .news-card { padding: 10px 14px; gap: 6px; }
-      .news-card-company { font-size: 0.75rem; }
-      .news-card-title { font-size: 0.75rem; }
-      .news-card-desc { font-size: 0.7rem; }
-      .news-scroll-wrapper { height: 190px; }
+
+      /* --- Header --- */
+      .nav { display: none; }
+      .header-inner { gap: 8px; }
+      .logo { font-size: 1.05rem; }
+      .badge-updated { font-size: 0.65rem; padding: 3px 8px; }
+
+      /* --- Ad Banner --- */
       .ad-placeholder { max-width: 320px; height: 50px; }
       .ad-banner-header, .ad-banner-footer { min-height: 50px; }
       .ad-banner img { max-height: 50px; }
+
+      /* --- Company Cards --- */
+      .scroll-arrow { display: none; }
+      .cards-scroll-wrapper { padding: 8px 0 20px; gap: 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+      .company-card { min-width: 260px; width: 260px; max-width: 260px; scroll-snap-align: start; }
+      .card-top-identity { min-height: 100px; padding: 10px 14px; }
+      .company-name { font-size: 1rem; }
+      .stat-value-large { font-size: 1.1rem; }
+      .card-body { padding: 10px 14px; }
+      .metrics-grid-container { gap: 10px 4px; }
+      .metric-data { font-size: 0.85rem; }
+
+      /* --- News (横溢れ修正) --- */
+      .news-ticker-section { padding: 16px 0; }
+      .news-scroll-wrapper { height: 220px; border-radius: 12px; }
+      .news-card { padding: 10px 12px; gap: 6px; white-space: normal; flex-wrap: wrap; }
+      .news-card-date { font-size: 0.68rem; width: 62px; min-width: 62px; }
+      .news-category { font-size: 0.65rem; width: 44px; min-width: 44px; padding: 1px 4px; }
+      .news-card-company { font-size: 0.72rem; width: auto; min-width: auto; }
+      .news-card-title { font-size: 0.68rem; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; flex-basis: 100%; margin-top: 4px; order: 10; color: rgba(232,234,240,0.85); }
+
+      /* --- Summary Tables --- */
+      .summary-tables-grid { gap: 16px; overflow-x: visible; }
+      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .table-container .table-wrap { min-width: 560px; }
+      .data-table { font-size: 0.72rem; }
+      .data-table th { padding: 8px 10px; font-size: 0.65rem; }
+      .data-table td { padding: 10px 10px; }
+      .data-table td:first-child { min-width: 90px; }
+      .company-label { font-size: 0.72rem; gap: 6px; }
+      .company-dot { width: 6px; height: 6px; }
+      .yoy-growth { font-size: 0.65rem; }
+      .margin-pill { font-size: 0.65rem; padding: 1px 6px; }
+      .table-meta { font-size: 0.78rem; }
+      /* モバイルで公表日列を非表示 */
+      #table-highlights thead th:nth-child(3),
+      #table-highlights tbody td:nth-child(3) { display: none; }
+
+      /* --- Projects Table --- */
       .map-section { height: 300px; }
+      .map-title-overlay { font-size: 0.78rem; padding: 6px 10px; top: 10px; left: 10px; }
       .map-pin-tooltip { display: none !important; }
+      #table-projects { font-size: 0.7rem; }
+      /* モバイルで規模・用途列を非表示 */
+      #table-projects thead th:nth-child(6),
+      #table-projects tbody td:nth-child(6),
+      #table-projects thead th:nth-child(7),
+      #table-projects tbody td:nth-child(7) { display: none; }
+
+      /* --- Footer --- */
+      .footer { padding: 20px 0; margin-top: 24px; }
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+      .footer-text { font-size: 0.68rem; }
+      .footer-links { gap: 14px; }
+      .footer-links a { font-size: 0.68rem; }
+    }
+
+    /* ==============================
+       SMALL MOBILE (max-width: 420px)
+       ============================== */
+    @media (max-width: 420px) {
+      .container { padding: 0 12px; }
+      .company-card { min-width: 240px; width: 240px; max-width: 240px; }
+      .hero-title { font-size: 1.2rem; }
+      .news-card-date { display: none; }
+      .news-card-company { font-size: 0.68rem; }
+      .news-card-title { font-size: 0.65rem; }
+      .table-container .table-wrap { min-width: 480px; }
+      /* 420px以下で経常利益列も非表示 */
+      #table-highlights thead th:nth-child(6),
+      #table-highlights tbody td:nth-child(6) { display: none; }
     }
   </style>
 </head>
