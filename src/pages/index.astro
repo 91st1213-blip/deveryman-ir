@@ -344,6 +344,14 @@ function getMarginClass(val: number) {
       #table-projects thead th:nth-child(7),
       #table-projects tbody td:nth-child(7) { display: none; }
 
+      /* --- Filter overflow fix --- */
+      .filter-group { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+      .filter-btn { padding: 5px 10px; font-size: 0.68rem; flex-shrink: 0; }
+
+      /* --- Projects Table horizontal scroll --- */
+      #projects .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      #projects .table-wrap > table { min-width: 640px; }
+
       /* --- Footer --- */
       .footer { padding: 20px 0; margin-top: 24px; }
       .footer-inner { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
@@ -503,7 +511,7 @@ function getMarginClass(val: number) {
     <div class="container">
       <div class="section-header">
         <div class="section-title-wrap">
-          <h2 class="section-title">📰 最新ニュース & IRリリース<span style="font-size:0.65rem; font-weight:400; color:rgba(255,255,255,0.4); margin-left:10px;">直近3ヶ月 · 主要ニュースのみ</span></h2>
+          <h2 class="section-title">📰 最新ニュース & IRリリース</h2><span style="font-size:0.65rem; font-weight:400; color:rgba(255,255,255,0.4); display:block; margin-top:2px;">直近3ヶ月 · 主要ニュースのみ</span>
         </div>
         <div class="filter-group" id="news-filter">
           <button class="filter-btn active" data-filter="all">すべて</button>
