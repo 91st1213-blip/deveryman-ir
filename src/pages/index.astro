@@ -1,10 +1,10 @@
 ---
 // deveryman-ir | src/pages/index.astro
+import BannerArea from '../components/BannerArea.astro';
 import { fetchCompanies } from '../lib/companies';
 import PerformanceSummary from '../components/ir/PerformanceSummary.astro';
 import { fetchProjects } from '../lib/projects';
 import { fetchNews } from '../lib/sheets';
-import PerformanceSummary from '../components/ir/PerformanceSummary.astro';
 const projects = await fetchProjects();
 const liveData = await fetchCompanies();
 const liveMap = Object.fromEntries(liveData.map(c => [c.code, c]));
@@ -318,13 +318,7 @@ function getMarginClass(val: number) {
     </div>
   </header>
 
-  <!-- HEADER AD BANNER -->
-  <div class="ad-banner ad-banner-header" id="ad-header">
-    <div class="ad-placeholder">
-      <span class="ad-placeholder-icon">📢</span>
-      AD SPACE — HEADER（728×90）
-    </div>
-  </div>
+  <BannerArea position="top" />
 
   <!-- HERO -->
   <section class="hero">
@@ -638,13 +632,7 @@ function getMarginClass(val: number) {
     </div>
   </section>
 
-  <!-- FOOTER AD BANNER -->
-  <div class="ad-banner ad-banner-footer" id="ad-footer">
-    <div class="ad-placeholder">
-      <span class="ad-placeholder-icon">📢</span>
-      AD SPACE — FOOTER（728×90）
-    </div>
-  </div>
+  <BannerArea position="bottom" />
 
   <!-- FOOTER -->
   <footer class="footer">
