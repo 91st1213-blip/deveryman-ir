@@ -11,11 +11,20 @@ export interface Company {
   prevClose: number | null;
   change:    number | null;
   updatedAt: string | null;
-  period:    string | null;
-  badge:     string | null;
+  period:      string | null;
+  announcedAt: string | null;
+  badge:       string | null;
   revenue:   number | null;
   op:        number | null;
   net:       number | null;
+  margin:    number | null;
+  revYoy:    number | null;
+  ord:       number | null;
+  ordYoy:    number | null;
+  netYoy:    number | null;
+  revFull:   number | null;
+  opFull:    number | null;
+  netFull:   number | null;
 }
 
 const SHEET_ID  = "1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI";
@@ -53,16 +62,25 @@ function parseRow(row: string[]): Company | null {
   const id = row[0]?.trim(), name = row[1]?.trim(), code = row[2]?.trim();
   if (!id || !name || !code || id === "id") return null;
   const n = (v?: string) => { if (!v?.trim()) return null; const x = parseFloat(v.replace(/,/g,"")); return isNaN(x) ? null : x; };
-  return { id, name, code, stock: n(row[14]), mCap: n(row[15]), roe: n(row[16]), pbr: n(row[17]), divYield: n(row[18]), shares: n(row[19]), prevClose: n(row[20]), change: n(row[21]), updatedAt: row[22]?.trim()||null, period: row[3]?.trim()||null, badge: row[4]?.trim()||null, revenue: n(row[5]), op: n(row[8]), net: n(row[12]) };
+  return { id, name, code, stock: n(row[15]), mCap: n(row[16]), roe: n(row[17]), pbr: n(row[18]), divYield: n(row[19]), shares: n(row[20]), prevClose: n(row[21]), change: n(row[22]), updatedAt: row[23]?.trim()||null, period: row[3]?.trim()||null, announcedAt: row[4]?.trim()||null, badge: row[5]?.trim()||null, revenue: n(row[6]), op: n(row[9]), net: n(row[13]),
+    margin:  n(row[10]),
+    revYoy:  n(row[8]),
+    ord:     n(row[11]),
+    ordYoy:  n(row[12]),
+    netYoy:  n(row[14]),
+    revFull: null,
+    opFull:  null,
+    netFull: null,
+  };
 }
 
 export const FALLBACK_COMPANIES: Company[] = [
-  { id:"mitsui",     name:"三井不動産",   code:"8801", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:2782189711, prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
-  { id:"mitsubishi", name:"三菱地所",     code:"8802", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:1217233706, prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
-  { id:"sumitomo",   name:"住友不動産",   code:"8830", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:936000000,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
-  { id:"tokyo",      name:"東京建物",     code:"8804", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:207978574,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
-  { id:"nomura",     name:"野村不動産HD", code:"3231", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:917895685,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
-  { id:"tokyu",      name:"東急不動産HD", code:"3289", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:719830974,  prevClose:null, change:null, updatedAt:null, period:null, badge:null, revenue:null, op:null, net:null },
+  { id:"mitsui",     name:"三井不動産",   code:"8801", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:2782189711, prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
+  { id:"mitsubishi", name:"三菱地所",     code:"8802", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:1217233706, prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
+  { id:"sumitomo",   name:"住友不動産",   code:"8830", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:936000000,  prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
+  { id:"tokyo",      name:"東京建物",     code:"8804", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:207978574,  prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
+  { id:"nomura",     name:"野村不動産HD", code:"3231", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:917895685,  prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
+  { id:"tokyu",      name:"東急不動産HD", code:"3289", stock:null, mCap:null, roe:null, pbr:null, divYield:null, shares:719830974,  prevClose:null, change:null, updatedAt:null, period:null, announcedAt:null, badge:null, revenue:null, op:null, net:null, margin:null, revYoy:null, ord:null, ordYoy:null, netYoy:null, revFull:null, opFull:null, netFull:null },
 ];
 
 export const changeClass   = (v: number|null) => v===null?"flat":v>0?"up":v<0?"down":"flat";

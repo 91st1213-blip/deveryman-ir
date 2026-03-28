@@ -1,0 +1,153 @@
+---
+import type { Company } from '../../lib/companies';
+
+export interface Props {
+  companies: Company[];
+}
+const { companies } = Astro.props;
+
+function fmtYoy(v: number | null): string {
+  if (v === null) return "—";
+  const abs = Math.abs(v).toFixed(1);
+  return v > 0 ? `+${abs}%` : `△${abs}%`;
+}
+function yoyClass(v: number | null): string {
+  if (v === null) return "yoy--flat";
+  return v > 0 ? "yoy--pos" : v < 0 ? "yoy--neg" : "yoy--flat";
+}
+function marginClass(v: number | null): string {
+  if (v === null) return "";
+  return v >= 25 ? "margin--high" : v >= 15 ? "margin--mid" : "margin--low";
+}
+function progress(actual: number | null, full: number | null): number | null {
+  if (!actual || !full) return null;
+  return Math.round((actual / full) * 100);
+}
+function progClass(v: number): string {
+  return v >= 80 ? "prog--good" : v >= 60 ? "prog--ok" : "prog--low";
+}
+function fmt(v: number | null): string {
+  if (v === null) return "—";
+  return v.toLocaleString();
+}
+---
+
+<section class="ir-perf" id="performance-summary">
+  <div class="ir-perf__header">
+    <div>
+      <span class="ir-perf__label">Performance Summary</span>
+      <h2 class="ir-perf__title">6社業績比較</h2>
+    </div>
+    <div class="ir-perf__meta"><span>単位：億円</span></div>
+  </div>
+
+  <div class="ir-perf__scroll">
+    <table class="ir-tbl">
+      <thead>
+        <tr class="ir-tbl__group-row">
+          <th rowspan="2" class="ir-tbl__th th--company">会社</th>
+          <th rowspan="2" class="ir-tbl__th th--period">決算期</th>
+          <th colspan="2" class="ir-tbl__th th--group">売上高</th>
+          <th colspan="2" class="ir-tbl__th th--group">営業利益</th>
+          <th rowspan="2" class="ir-tbl__th th--margin">利益率</th>
+          <th colspan="2" class="ir-tbl__th th--group">純利益</th>
+        </tr>
+        <tr class="ir-tbl__sub-row">
+          <th class="ir-tbl__th th--num">金額</th><th class="ir-tbl__th th--yoy">前期比</th>
+          <th class="ir-tbl__th th--num">金額</th><th class="ir-tbl__th th--yoy">前期比</th>
+          <th class="ir-tbl__th th--num">金額</th><th class="ir-tbl__th th--yoy">前期比</th>
+        </tr>
+      </thead>
+      <tbody>
+        {companies.map((c) => {
+          const isFinal = c.badge?.includes("確報") || c.badge?.includes("4Q");
+          return (
+            <tr class:list={["ir-tbl__row", isFinal && "ir-tbl__row--final"]} data-id={c.id}>
+              <td class="ir-tbl__td td--company">
+                <span class="co-name">{c.name}</span>
+                <span class="co-code">{c.code}</span>
+              </td>
+              <td class="ir-tbl__td td--period">
+                <span class:list={["ir-badge", isFinal ? "ir-badge--final" : "ir-badge--q"]}>
+                  {c.badge ?? "—"}
+                </span>
+                <span class="period-str">{c.period ?? "—"}</span>
+              </td>
+              <td class="ir-tbl__td td--num">{fmt(c.revenue)}</td>
+              <td class:list={["ir-tbl__td td--yoy", yoyClass(c.revYoy)]}>{fmtYoy(c.revYoy)}</td>
+              <td class="ir-tbl__td td--num">{fmt(c.op)}</td>
+              <td class:list={["ir-tbl__td td--yoy", yoyClass(c.ordYoy)]}>{fmtYoy(c.ordYoy)}</td>
+              <td class:list={["ir-tbl__td td--margin", marginClass(c.margin)]}>
+                {c.margin !== null ? `${c.margin.toFixed(1)}%` : "—"}
+              </td>
+              <td class="ir-tbl__td td--num">{fmt(c.net)}</td>
+              <td class:list={["ir-tbl__td td--yoy", yoyClass(c.netYoy)]}>{fmtYoy(c.netYoy)}</td>
+
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  <p class="ir-perf__note">
+    ※ 単位は億円。前期比の△はマイナス。利益率は営業利益÷売上高。通期進捗率は会社発表の通期予想に対する累計比率。
+  </p>
+</section>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+  .ir-perf {
+    --bg:#0c0e13; --surface:#13161d; --border:rgba(255,255,255,.07);
+    --text:#dde1eb; --muted:#5c6374; --accent:#5b8dee;
+    --pos:#3ecf8e; --neg:#f16b6b; --flat:#8b92a0;
+    --high:#3ecf8e; --mid:#f59e0b; --low:#f16b6b;
+    --good:#3ecf8e; --ok:#f59e0b; --over:#a78bfa;
+    --mono:'IBM Plex Mono',monospace;
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:14px; padding:1.75rem 2rem; color:var(--text);
+    font-family:'Noto Sans JP',sans-serif;
+  }
+  .ir-perf__header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:.75rem; }
+  .ir-perf__label { display:inline-block; font-size:.60rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); background:rgba(91,141,238,.1); border:1px solid rgba(91,141,238,.28); border-radius:4px; padding:2px 8px; margin-bottom:.4rem; }
+  .ir-perf__title { margin:0; font-size:1.18rem; font-weight:700; color:var(--text); }
+  .ir-perf__meta { font-size:.68rem; font-family:var(--mono); color:var(--muted); }
+  .ir-perf__scroll { overflow-x:auto; border-radius:8px; border:1px solid var(--border); }
+  .ir-tbl { width:100%; border-collapse:collapse; min-width:860px; font-size:.80rem; }
+  .ir-tbl__group-row th,.ir-tbl__sub-row th { background:rgba(255,255,255,.03); color:var(--muted); font-size:.62rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:.55rem .75rem; border-bottom:1px solid var(--border); text-align:center; white-space:nowrap; position:relative; }
+  .th--group::after { content:''; position:absolute; bottom:0; left:15%; right:15%; height:1px; background:var(--accent); opacity:.3; }
+  .th--accent { color:var(--accent) !important; }
+  .ir-tbl__sub-row th { font-size:.58rem !important; padding:.30rem .75rem !important; }
+  .ir-tbl__row { border-bottom:1px solid var(--border); transition:background .12s; }
+  .ir-tbl__row:hover { background:rgba(255,255,255,.022); }
+  .ir-tbl__row:last-child { border-bottom:none; }
+  .ir-tbl__row--final { background:rgba(245,158,11,.04); }
+  .ir-tbl__td { padding:.68rem .75rem; vertical-align:middle; }
+  .td--company { min-width:128px; }
+  .co-name { display:block; font-weight:600; font-size:.83rem; color:var(--text); }
+  .co-code { display:block; font-family:var(--mono); font-size:.62rem; color:var(--muted); }
+  .td--period { min-width:100px; white-space:nowrap; }
+  .ir-badge { display:inline-block; font-size:.54rem; font-weight:700; padding:1px 5px; border-radius:3px; margin-right:4px; }
+  .ir-badge--q { background:rgba(91,141,238,.14); color:var(--accent); border:1px solid rgba(91,141,238,.28); }
+  .ir-badge--final { background:rgba(245,158,11,.14); color:#f59e0b; border:1px solid rgba(245,158,11,.28); }
+  .period-str { font-family:var(--mono); font-size:.68rem; color:var(--muted); }
+  .td--num { text-align:right; min-width:68px; font-family:var(--mono); font-size:.80rem; font-weight:600; color:var(--text); }
+  .td--yoy { text-align:right; min-width:62px; font-family:var(--mono); font-size:.74rem; font-weight:600; }
+  .yoy--pos { color:var(--pos); } .yoy--neg { color:var(--neg); } .yoy--flat { color:var(--flat); }
+  .td--margin { text-align:right; min-width:58px; font-family:var(--mono); font-size:.78rem; font-weight:700; }
+  .margin--high { color:var(--high); } .margin--mid { color:var(--mid); } .margin--low { color:var(--low); }
+  .td--prog { min-width:88px; text-align:center; }
+  .na { color:var(--muted); font-size:.70rem; }
+  .prog-bar { display:flex; align-items:center; gap:5px; }
+  .prog-bar__track { flex:1; height:4px; background:rgba(255,255,255,.06); border-radius:2px; overflow:hidden; min-width:32px; }
+  .prog-bar__fill { height:100%; border-radius:2px; background:var(--accent); transition:width .4s ease; }
+  .prog-bar--good .prog-bar__fill { background:var(--good); }
+  .prog-bar--ok   .prog-bar__fill { background:var(--ok); }
+  .prog-bar--low  .prog-bar__fill { background:var(--low); }
+  .prog-bar--over .prog-bar__fill { background:var(--over); }
+  .prog-bar__val { font-family:var(--mono); font-size:.66rem; font-weight:600; min-width:30px; text-align:right; color:var(--muted); }
+  .prog-bar--good .prog-bar__val { color:var(--good); }
+  .prog-bar--ok   .prog-bar__val { color:var(--ok); }
+  .prog-bar--low  .prog-bar__val { color:var(--low); }
+  .prog-bar--over .prog-bar__val { color:var(--over); }
+  .ir-perf__note { margin-top:.85rem; font-size:.68rem; color:var(--muted); line-height:1.7; }
+</style>

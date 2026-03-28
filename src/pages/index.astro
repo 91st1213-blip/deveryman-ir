@@ -1,8 +1,10 @@
 ---
 // deveryman-ir | src/pages/index.astro
 import { fetchCompanies } from '../lib/companies';
+import PerformanceSummary from '../components/ir/PerformanceSummary.astro';
 import { fetchProjects } from '../lib/projects';
 import { fetchNews } from '../lib/sheets';
+import PerformanceSummary from '../components/ir/PerformanceSummary.astro';
 const projects = await fetchProjects();
 const liveData = await fetchCompanies();
 const liveMap = Object.fromEntries(liveData.map(c => [c.code, c]));
@@ -25,6 +27,26 @@ const companies = [
   { name: "野村不動産HD", code: "3231", initial: "野", period: "25/3", announcedAt: "25-02-12", badge: "FY2025 MAR 予想", revenue: 7200, revenueStr: "7,200", revYoy: 8.5, op: 1100, margin: 15.3, ord: 1050, ordYoy: 7.0, net: 600, netYoy: 5.4, stock: 3620, mCap: "6,500", roe: 10.2, pbr: 1.05, yield: 3.2, units: 4200, unitYoy: 8.5, unitMargin: 12.8, brandName: "プラウド / オハナ", deliveries: ["プラウドタワー小石川", "プラウド南青山"], irLink: "https://www.nomura-re-hd.co.jp/ir/" },
   { name: "東急不動産HD", code: "3289", initial: "急", period: "25/3", announcedAt: "25-02-14", badge: "FY2025 MAR 予想", revenue: 10500, revenueStr: "1.05", revYoy: 5.7, op: 1800, margin: 17.1, ord: 1700, ordYoy: 5.8, net: 950, netYoy: 6.0, stock: 888, mCap: "6,000", roe: 8.9, pbr: 0.95, yield: 3.0, units: 1600, unitYoy: -4.0, unitMargin: 11.5, brandName: "ブランズ / ソルフィエスタ", deliveries: ["ブランズタワー豊洲", "ブランズ目黒洗足"], irLink: "https://www.tokyu-fudosan-hd.co.jp/ir/" },
 ];
+
+// liveDataでcompanies配列の財務項目を上書き
+const mergedCompanies = companies.map(c => {
+  const live = liveData.find(l => l.code === c.code);
+  if (!live) return c;
+  return {
+    ...c,
+    period:      live.period      ?? c.period,
+    announcedAt: live.announcedAt ?? c.announcedAt,
+    badge:    live.badge    ?? c.badge,
+    revenue:  live.revenue  ?? c.revenue,
+    revYoy:   live.revYoy   ?? c.revYoy,
+    op:       live.op       ?? c.op,
+    margin:   live.margin   ?? c.margin,
+    ord:      live.ord      ?? c.ord,
+    ordYoy:   live.ordYoy   ?? c.ordYoy,
+    net:      live.net      ?? c.net,
+    netYoy:   live.netYoy   ?? c.netYoy,
+  };
+});
 
 const newsItems = await fetchNews();
 
@@ -454,7 +476,7 @@ function getMarginClass(val: number) {
                 </tr>
               </thead>
               <tbody>
-                {companies.map(c => {
+                {mergedCompanies.map(c => {
                   const col = COMPANY_COLORS[c.name] || { bg: "#555", accent: "#555" };
                   const yoyClass = c.revYoy >= 0 ? 'yoy-positive' : 'yoy-negative';
                   const ordYoyClass = c.ordYoy >= 0 ? 'yoy-positive' : 'yoy-negative';
@@ -506,7 +528,7 @@ function getMarginClass(val: number) {
                 </tr>
               </thead>
               <tbody>
-                {companies.map(c => {
+                {mergedCompanies.map(c => {
                   const col = COMPANY_COLORS[c.name] || { bg: "#555", accent: "#555" };
                   const unitYoyClass = c.unitYoy >= 0 ? 'yoy-positive' : 'yoy-negative';
                   return (
