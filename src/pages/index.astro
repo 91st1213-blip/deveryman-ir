@@ -352,7 +352,7 @@ function getMarginClass(val: number) {
                       <span class="stat-label-colored">株価</span>
                       <div class="stat-value-large">
                         {stockPrice ? stockPrice.toLocaleString() : "---"}<span class="unit-hero">円</span>
-                        {changeStr && <span style="display:block; margin-top:2px;"><span style="font-size:.60rem; color:rgba(255,255,255,0.4);">前日比 </span><span style={`font-size:.60rem; color:${change >= 0 ? "#2ecc8a" : "#e8504a"};`}>{changeStr}</span></span>}
+                        {changeStr && <span style="display:flex; flex-direction:column; align-items:flex-start; margin-left:6px; justify-content:center;"><span style="font-size:.55rem; color:rgba(255,255,255,0.4); line-height:1.2;">前日比</span><span style={`font-size:.60rem; color:${change >= 0 ? "#2ecc8a" : "#e8504a"}; line-height:1.2;`}>{changeStr}</span></span>}
                       </div>
                     </div>
                     <div class="stat-item">
@@ -462,7 +462,7 @@ function getMarginClass(val: number) {
                           {c.name}
                         </div>
                       </td>
-                      <td style="text-align:center">{c.period}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td>
+                      <td style="text-align:center">{c.period}</td><td style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.78rem;">{c.announcedAt}</td>
                       <td>
                         {c.revenue.toLocaleString()}
                         <span class={`yoy-growth ${yoyClass}`}>({c.revYoy > 0 ? '+' : ''}{c.revYoy.toFixed(1)}%)</span>
