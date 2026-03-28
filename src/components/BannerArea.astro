@@ -1,0 +1,198 @@
+---
+// BannerArea.astro
+// Sheets「banners」タブからバナーデータを取得し、クライアント側で重み付きランダム表示
+// H列: tracking_url（A8等の1×1計測ピクセル）に対応
+
+const SHEET_ID = '1U0OqbrHUcCpvnQeNYvBiOuWJF9U7PgRuf_WAez8gdZI';
+const SHEET_NAME = 'banners';
+
+interface Banner {
+  id: string;
+  category: string;
+  title: string;
+  imageUrl: string;
+  linkUrl: string;
+  active: boolean;
+  weight: number;
+  trackingUrl: string;
+}
+
+// 簡易CSVパーサー（ダブルクォート対応）
+function parseCsvRow(row: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') {
+      if (inQuotes && row[i + 1] === '"') { current += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (ch === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+let banners: Banner[] = [];
+
+try {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  const res = await fetch(url);
+  if (res.ok) {
+    const csv = await res.text();
+    const rows = csv.trim().split('\n');
+    banners = rows.slice(1)
+      .map(row => {
+        const c = parseCsvRow(row);
+        return {
+          id:          c[0] ?? '',
+          category:    c[1] ?? '',
+          title:       c[2] ?? '',
+          imageUrl:    c[3] ?? '',
+          linkUrl:     c[4] ?? '',
+          active:      (c[5] ?? '').toLowerCase() === 'true',
+          weight:      parseInt(c[6] ?? '1', 10) || 1,
+          trackingUrl: c[7] ?? '',
+        };
+      })
+      .filter(b => b.active && b.linkUrl);
+  }
+} catch (e) {
+  console.warn('[BannerArea] fetch failed:', e);
+}
+
+interface Props {
+  position: 'top' | 'bottom';
+}
+const { position } = Astro.props;
+
+const hasBanners = banners.length > 0;
+const bannersJson = JSON.stringify(banners);
+const uid = `banner-${position}-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+{hasBanners && (
+  <div id={uid} class:list={['affiliate-banner', `affiliate-banner--${position}`]}>
+    <div class="affiliate-banner__inner">
+      <noscript>
+        <a href={banners[0].linkUrl} target="_blank" rel="noopener noreferrer nofollow">
+          {banners[0].imageUrl
+            ? <img src={banners[0].imageUrl} alt={banners[0].title} width="728" height="90" />
+            : <span class="affiliate-banner__text">{banners[0].title}</span>
+          }
+        </a>
+        {banners[0].trackingUrl && <img src={banners[0].trackingUrl} width="1" height="1" alt="" style="position:absolute;opacity:0;pointer-events:none;" />}
+      </noscript>
+    </div>
+    <span class="affiliate-banner__label">PR</span>
+  </div>
+)}
+
+<script define:vars={{ bannersJson, uid }}>
+(function() {
+  var container = document.getElementById(uid);
+  if (!container) return;
+  var inner = container.querySelector('.affiliate-banner__inner');
+  if (!inner) return;
+
+  var banners;
+  try { banners = JSON.parse(bannersJson); } catch(e) { return; }
+  if (!banners || banners.length === 0) return;
+
+  // 重み付きランダム選択
+  var totalWeight = banners.reduce(function(s, b) { return s + b.weight; }, 0);
+  var r = Math.random() * totalWeight;
+  var cumulative = 0;
+  var selected = banners[0];
+  for (var i = 0; i < banners.length; i++) {
+    cumulative += banners[i].weight;
+    if (r <= cumulative) { selected = banners[i]; break; }
+  }
+
+  var html = '<a href="' + selected.linkUrl + '" target="_blank" rel="noopener noreferrer nofollow">';
+  if (selected.imageUrl) {
+    html += '<img src="' + selected.imageUrl + '" alt="' + selected.title + '" width="728" height="90" loading="lazy" />';
+  } else {
+    html += '<span class="affiliate-banner__text">' + selected.title + '</span>';
+  }
+  html += '</a>';
+  if (selected.trackingUrl) {
+    html += '<img src="' + selected.trackingUrl + '" width="1" height="1" alt="" style="position:absolute;opacity:0;pointer-events:none;" />';
+  }
+  inner.innerHTML = html;
+})();
+</script>
+
+<style>
+  .affiliate-banner {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 16px;
+    background: #0d0d0d;
+    min-height: 60px;
+  }
+
+  .affiliate-banner--top {
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .affiliate-banner--bottom {
+    border-top: 1px solid #1e1e1e;
+  }
+
+  .affiliate-banner__inner {
+    max-width: 728px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .affiliate-banner__inner a {
+    display: block;
+    line-height: 0;
+  }
+
+  .affiliate-banner__inner img {
+    width: 100%;
+    max-width: 728px;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .affiliate-banner__text {
+    display: block;
+    color: #a0a0a0;
+    font-size: 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 10px 16px;
+    text-align: center;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* PRラベル（景品表示法対応） */
+  .affiliate-banner__label {
+    position: absolute;
+    right: 8px;
+    bottom: 4px;
+    font-size: 0.6rem;
+    color: #444;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .affiliate-banner { padding: 4px 8px; min-height: 50px; }
+    .affiliate-banner__inner img { max-height: 50px; }
+  }
+</style>
