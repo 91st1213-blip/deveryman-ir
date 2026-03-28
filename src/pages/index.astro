@@ -782,7 +782,8 @@ function getMarginClass(val: number) {
       if (filterValue === 'all') {
         wrapper.style.overflowY = 'hidden';
         void track.offsetHeight;
-        track.style.animation = 'ticker-scroll-vertical 180s linear infinite';
+        var speed = window.innerWidth <= 768 ? 240 : 180;
+        track.style.animation = 'ticker-scroll-vertical ' + speed + 's linear infinite';
       } else {
         wrapper.style.overflowY = 'auto';
       }
