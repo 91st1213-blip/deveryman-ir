@@ -79,6 +79,10 @@ def scrape_mitsubishi(page):
         title = title.strip()
         if not title or is_excluded(title):
             continue
+        # グループ会社・PDF以外のURLを除外
+        skip_patterns = ["/group_news/", "/event_campaign/", "/assets/", "premiumoutlets", "royalparkhotels"]
+        if any(p in href for p in skip_patterns):
+            continue
         # URL正規化
         if href.startswith("/"):
             href = "https://www.mec.co.jp" + href
@@ -126,18 +130,31 @@ def get_sheets_service():
     )
     return build("sheets", "v4", credentials=creds)
 
+def get_existing_urls(service):
+    result = service.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range=f"{SHEET_NAME}!G:G"
+    ).execute()
+    values = result.get("values", [])
+    return set(row[0] for row in values if row)
+
 def append_to_sheets(service, rows):
     if not rows:
         print("追記するデータなし")
+        return
+    existing_urls = get_existing_urls(service)
+    new_rows = [r for r in rows if r[6] not in existing_urls]
+    if not new_rows:
+        print("新規ニュースなし（すべて既存）")
         return
     service.spreadsheets().values().append(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{SHEET_NAME}!A:G",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
-        body={"values": rows}
+        body={"values": new_rows}
     ).execute()
-    print(f"✅ {len(rows)}件をSheetsに追記しました")
+    print(f"✅ {len(new_rows)}件をSheetsに追記しました（{len(rows)-len(new_rows)}件は重複スキップ）")
 
 def main():
     print("🏢 三菱地所・野村 スクレイパー起動")
@@ -145,11 +162,6 @@ def main():
     with sync_playwright() as p:
         context = p.chromium.launch().new_context(locale="ja-JP")
         page = context.new_page()
-        
-        print("  三菱地所 スクレイピング中...")
-        mec = scrape_mitsubishi(page)
-        print(f"  ✅ 三菱地所: {len(mec)}件")
-        all_results.extend(mec)
         
         print("  野村不動産HD スクレイピング中...")
         nomura = scrape_nomura(page)
