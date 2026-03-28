@@ -34,7 +34,7 @@ jobs:
         run: |
           pip install playwright google-api-python-client google-auth
           playwright install chromium
-          python3 scrape-news.py
+          python3 scrape-nomura.py
 
       - name: Build
         env:

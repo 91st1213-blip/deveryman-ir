@@ -155,6 +155,35 @@ def append_to_sheets(service, rows):
         body={"values": new_rows}
     ).execute()
     print(f"✅ {len(new_rows)}件をSheetsに追記しました（{len(rows)-len(new_rows)}件は重複スキップ）")
+    sort_sheets(service)
+
+def sort_sheets(service):
+    # シートIDを取得
+    meta = service.spreadsheets().get(spreadsheetId=SPREADSHEET_ID).execute()
+    sheet_id = None
+    for s in meta["sheets"]:
+        if s["properties"]["title"] == SHEET_NAME:
+            sheet_id = s["properties"]["sheetId"]
+            break
+    if sheet_id is None:
+        print("⚠️ シートIDが見つかりません")
+        return
+    # A列（date）で降順ソート（ヘッダー行を除く）
+    service.spreadsheets().batchUpdate(
+        spreadsheetId=SPREADSHEET_ID,
+        body={"requests": [{
+            "sortRange": {
+                "range": {
+                    "sheetId": sheet_id,
+                    "startRowIndex": 1,
+                    "startColumnIndex": 0,
+                    "endColumnIndex": 7
+                },
+                "sortSpecs": [{"dimensionIndex": 0, "sortOrder": "DESCENDING"}]
+            }
+        }]}
+    ).execute()
+    print("✅ 日付順にソートしました")
 
 def main():
     print("🏢 三菱地所・野村 スクレイパー起動")
